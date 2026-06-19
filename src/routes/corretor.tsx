@@ -27,6 +27,8 @@ const groups: PortalNavGroup[] = [
   {
     label: "CRM e Gestão de Cliente",
     items: [
+      { label: "Scan IA", icon: Sparkles },
+      { label: "Flash IA", icon: Zap },
       {
         label: "CRM de Clientes",
         icon: Users,
