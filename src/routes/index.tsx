@@ -207,7 +207,38 @@ function LoginPage() {
                       className="w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-brand focus:ring-2 focus:ring-brand/15"
                     />
                   </div>
-                </>
+
+                  {/* Painel de credenciais de demonstração */}
+                  <div className="rounded-md border border-dashed border-brand/40 bg-brand/5 p-3">
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-brand mb-2">
+                      Acesso de demonstração
+                    </p>
+                    <p className="text-[11px] text-muted-foreground mb-2">
+                      Clique em um cliente mock para preencher e entrar:
+                    </p>
+                    <div className="space-y-1.5">
+                      {[
+                        { cpf: "12345678900", nome: "João da Silva", nasc: "1985-04-12" },
+                        { cpf: "98765432100", nome: "Maria Oliveira", nasc: "1990-09-23" },
+                        { cpf: "11122233344", nome: "Carlos Pereira", nasc: "1978-12-01" },
+                      ].map((c) => (
+                        <button
+                          key={c.cpf}
+                          type="button"
+                          onClick={() => {
+                            setCpf(formatCpf(c.cpf));
+                            setBirth(c.nasc);
+                            setError(null);
+                          }}
+                          className="flex w-full items-center justify-between rounded border border-border bg-background px-2.5 py-1.5 text-[11px] text-graphite hover:border-brand/60 hover:bg-accent"
+                        >
+                          <span className="font-medium">{c.nome}</span>
+                          <span className="text-muted-foreground">{formatCpf(c.cpf)} · {c.nasc.split("-").reverse().join("/")}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
               ) : (
                 <>
                   <div className="space-y-1.5">
