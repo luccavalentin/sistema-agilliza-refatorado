@@ -45,6 +45,7 @@ import { Route as CorrespondenteOperacionalPropostasRouteImport } from './routes
 import { Route as CorrespondenteOperacionalMinhasSimulacoesRouteImport } from './routes/correspondente.operacional.minhas-simulacoes'
 import { Route as CorrespondenteOperacionalDemandasRouteImport } from './routes/correspondente.operacional.demandas'
 import { Route as CorrespondenteOperacionalConsultasRouteImport } from './routes/correspondente.operacional.consultas'
+import { Route as CorrespondenteFinanceiroRecorrenciasRouteImport } from './routes/correspondente.financeiro.recorrencias'
 import { Route as CorrespondenteFinanceiroReceberRouteImport } from './routes/correspondente.financeiro.receber'
 import { Route as CorrespondenteFinanceiroPagarRouteImport } from './routes/correspondente.financeiro.pagar'
 import { Route as CorrespondenteFinanceiroFluxoRouteImport } from './routes/correspondente.financeiro.fluxo'
@@ -254,6 +255,12 @@ const CorrespondenteOperacionalConsultasRoute =
     path: '/consultas',
     getParentRoute: () => CorrespondenteOperacionalRoute,
   } as any)
+const CorrespondenteFinanceiroRecorrenciasRoute =
+  CorrespondenteFinanceiroRecorrenciasRouteImport.update({
+    id: '/recorrencias',
+    path: '/recorrencias',
+    getParentRoute: () => CorrespondenteFinanceiroRoute,
+  } as any)
 const CorrespondenteFinanceiroReceberRoute =
   CorrespondenteFinanceiroReceberRouteImport.update({
     id: '/receber',
@@ -325,6 +332,7 @@ export interface FileRoutesByFullPath {
   '/correspondente/financeiro/fluxo': typeof CorrespondenteFinanceiroFluxoRoute
   '/correspondente/financeiro/pagar': typeof CorrespondenteFinanceiroPagarRoute
   '/correspondente/financeiro/receber': typeof CorrespondenteFinanceiroReceberRoute
+  '/correspondente/financeiro/recorrencias': typeof CorrespondenteFinanceiroRecorrenciasRoute
   '/correspondente/operacional/consultas': typeof CorrespondenteOperacionalConsultasRoute
   '/correspondente/operacional/demandas': typeof CorrespondenteOperacionalDemandasRoute
   '/correspondente/operacional/minhas-simulacoes': typeof CorrespondenteOperacionalMinhasSimulacoesRoute
@@ -363,6 +371,7 @@ export interface FileRoutesByTo {
   '/correspondente/financeiro/fluxo': typeof CorrespondenteFinanceiroFluxoRoute
   '/correspondente/financeiro/pagar': typeof CorrespondenteFinanceiroPagarRoute
   '/correspondente/financeiro/receber': typeof CorrespondenteFinanceiroReceberRoute
+  '/correspondente/financeiro/recorrencias': typeof CorrespondenteFinanceiroRecorrenciasRoute
   '/correspondente/operacional/consultas': typeof CorrespondenteOperacionalConsultasRoute
   '/correspondente/operacional/demandas': typeof CorrespondenteOperacionalDemandasRoute
   '/correspondente/operacional/minhas-simulacoes': typeof CorrespondenteOperacionalMinhasSimulacoesRoute
@@ -410,6 +419,7 @@ export interface FileRoutesById {
   '/correspondente/financeiro/fluxo': typeof CorrespondenteFinanceiroFluxoRoute
   '/correspondente/financeiro/pagar': typeof CorrespondenteFinanceiroPagarRoute
   '/correspondente/financeiro/receber': typeof CorrespondenteFinanceiroReceberRoute
+  '/correspondente/financeiro/recorrencias': typeof CorrespondenteFinanceiroRecorrenciasRoute
   '/correspondente/operacional/consultas': typeof CorrespondenteOperacionalConsultasRoute
   '/correspondente/operacional/demandas': typeof CorrespondenteOperacionalDemandasRoute
   '/correspondente/operacional/minhas-simulacoes': typeof CorrespondenteOperacionalMinhasSimulacoesRoute
@@ -458,6 +468,7 @@ export interface FileRouteTypes {
     | '/correspondente/financeiro/fluxo'
     | '/correspondente/financeiro/pagar'
     | '/correspondente/financeiro/receber'
+    | '/correspondente/financeiro/recorrencias'
     | '/correspondente/operacional/consultas'
     | '/correspondente/operacional/demandas'
     | '/correspondente/operacional/minhas-simulacoes'
@@ -496,6 +507,7 @@ export interface FileRouteTypes {
     | '/correspondente/financeiro/fluxo'
     | '/correspondente/financeiro/pagar'
     | '/correspondente/financeiro/receber'
+    | '/correspondente/financeiro/recorrencias'
     | '/correspondente/operacional/consultas'
     | '/correspondente/operacional/demandas'
     | '/correspondente/operacional/minhas-simulacoes'
@@ -542,6 +554,7 @@ export interface FileRouteTypes {
     | '/correspondente/financeiro/fluxo'
     | '/correspondente/financeiro/pagar'
     | '/correspondente/financeiro/receber'
+    | '/correspondente/financeiro/recorrencias'
     | '/correspondente/operacional/consultas'
     | '/correspondente/operacional/demandas'
     | '/correspondente/operacional/minhas-simulacoes'
@@ -828,6 +841,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CorrespondenteOperacionalConsultasRouteImport
       parentRoute: typeof CorrespondenteOperacionalRoute
     }
+    '/correspondente/financeiro/recorrencias': {
+      id: '/correspondente/financeiro/recorrencias'
+      path: '/recorrencias'
+      fullPath: '/correspondente/financeiro/recorrencias'
+      preLoaderRoute: typeof CorrespondenteFinanceiroRecorrenciasRouteImport
+      parentRoute: typeof CorrespondenteFinanceiroRoute
+    }
     '/correspondente/financeiro/receber': {
       id: '/correspondente/financeiro/receber'
       path: '/receber'
@@ -923,6 +943,7 @@ interface CorrespondenteFinanceiroRouteChildren {
   CorrespondenteFinanceiroFluxoRoute: typeof CorrespondenteFinanceiroFluxoRoute
   CorrespondenteFinanceiroPagarRoute: typeof CorrespondenteFinanceiroPagarRoute
   CorrespondenteFinanceiroReceberRoute: typeof CorrespondenteFinanceiroReceberRoute
+  CorrespondenteFinanceiroRecorrenciasRoute: typeof CorrespondenteFinanceiroRecorrenciasRoute
   CorrespondenteFinanceiroIndexRoute: typeof CorrespondenteFinanceiroIndexRoute
 }
 
@@ -935,6 +956,8 @@ const CorrespondenteFinanceiroRouteChildren: CorrespondenteFinanceiroRouteChildr
     CorrespondenteFinanceiroFluxoRoute: CorrespondenteFinanceiroFluxoRoute,
     CorrespondenteFinanceiroPagarRoute: CorrespondenteFinanceiroPagarRoute,
     CorrespondenteFinanceiroReceberRoute: CorrespondenteFinanceiroReceberRoute,
+    CorrespondenteFinanceiroRecorrenciasRoute:
+      CorrespondenteFinanceiroRecorrenciasRoute,
     CorrespondenteFinanceiroIndexRoute: CorrespondenteFinanceiroIndexRoute,
   }
 
