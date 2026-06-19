@@ -20,6 +20,7 @@ import { Route as CorretorOperacionalRouteImport } from './routes/corretor.opera
 import { Route as CorretorCrmRouteImport } from './routes/corretor.crm'
 import { Route as CorrespondenteOperacionalRouteImport } from './routes/correspondente.operacional'
 import { Route as CorrespondenteCrmRouteImport } from './routes/correspondente.crm'
+import { Route as ClientePropostaRouteImport } from './routes/cliente.proposta'
 import { Route as CorretorOperacionalIndexRouteImport } from './routes/corretor.operacional.index'
 import { Route as CorretorCrmIndexRouteImport } from './routes/corretor.crm.index'
 import { Route as CorrespondenteOperacionalIndexRouteImport } from './routes/correspondente.operacional.index'
@@ -101,6 +102,11 @@ const CorrespondenteCrmRoute = CorrespondenteCrmRouteImport.update({
   id: '/crm',
   path: '/crm',
   getParentRoute: () => CorrespondenteRoute,
+} as any)
+const ClientePropostaRoute = ClientePropostaRouteImport.update({
+  id: '/proposta',
+  path: '/proposta',
+  getParentRoute: () => ClienteRoute,
 } as any)
 const CorretorOperacionalIndexRoute =
   CorretorOperacionalIndexRouteImport.update({
@@ -253,6 +259,7 @@ export interface FileRoutesByFullPath {
   '/cliente': typeof ClienteRouteWithChildren
   '/correspondente': typeof CorrespondenteRouteWithChildren
   '/corretor': typeof CorretorRouteWithChildren
+  '/cliente/proposta': typeof ClientePropostaRoute
   '/correspondente/crm': typeof CorrespondenteCrmRouteWithChildren
   '/correspondente/operacional': typeof CorrespondenteOperacionalRouteWithChildren
   '/corretor/crm': typeof CorretorCrmRouteWithChildren
@@ -288,6 +295,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/cliente/proposta': typeof ClientePropostaRoute
   '/cliente': typeof ClienteIndexRoute
   '/correspondente': typeof CorrespondenteIndexRoute
   '/corretor': typeof CorretorIndexRoute
@@ -323,6 +331,7 @@ export interface FileRoutesById {
   '/cliente': typeof ClienteRouteWithChildren
   '/correspondente': typeof CorrespondenteRouteWithChildren
   '/corretor': typeof CorretorRouteWithChildren
+  '/cliente/proposta': typeof ClientePropostaRoute
   '/correspondente/crm': typeof CorrespondenteCrmRouteWithChildren
   '/correspondente/operacional': typeof CorrespondenteOperacionalRouteWithChildren
   '/corretor/crm': typeof CorretorCrmRouteWithChildren
@@ -363,6 +372,7 @@ export interface FileRouteTypes {
     | '/cliente'
     | '/correspondente'
     | '/corretor'
+    | '/cliente/proposta'
     | '/correspondente/crm'
     | '/correspondente/operacional'
     | '/corretor/crm'
@@ -398,6 +408,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/cliente/proposta'
     | '/cliente'
     | '/correspondente'
     | '/corretor'
@@ -432,6 +443,7 @@ export interface FileRouteTypes {
     | '/cliente'
     | '/correspondente'
     | '/corretor'
+    | '/cliente/proposta'
     | '/correspondente/crm'
     | '/correspondente/operacional'
     | '/corretor/crm'
@@ -551,6 +563,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/correspondente/crm'
       preLoaderRoute: typeof CorrespondenteCrmRouteImport
       parentRoute: typeof CorrespondenteRoute
+    }
+    '/cliente/proposta': {
+      id: '/cliente/proposta'
+      path: '/proposta'
+      fullPath: '/cliente/proposta'
+      preLoaderRoute: typeof ClientePropostaRouteImport
+      parentRoute: typeof ClienteRoute
     }
     '/corretor/operacional/': {
       id: '/corretor/operacional/'
@@ -731,10 +750,12 @@ declare module '@tanstack/react-router' {
 }
 
 interface ClienteRouteChildren {
+  ClientePropostaRoute: typeof ClientePropostaRoute
   ClienteIndexRoute: typeof ClienteIndexRoute
 }
 
 const ClienteRouteChildren: ClienteRouteChildren = {
+  ClientePropostaRoute: ClientePropostaRoute,
   ClienteIndexRoute: ClienteIndexRoute,
 }
 

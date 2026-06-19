@@ -7,7 +7,7 @@ const groups: PortalNavGroup[] = [
     label: "Visão Geral",
     items: [
       { label: "Painel de Monitoramento", to: "/cliente", icon: LayoutDashboard },
-      { label: "Acompanhar Minha Proposta", icon: FileSearch },
+      { label: "Acompanhar Minha Proposta", to: "/cliente/proposta", icon: FileSearch },
     ],
   },
 ];
