@@ -24,7 +24,7 @@ const sections: ConfigSection[] = [
         fields: [
           { kind: "text", label: "Nome completo", defaultValue: "Juliana Pires" },
           { kind: "text", label: "E-mail", type: "email", defaultValue: "juliana@imobhorizonte.com" },
-          { kind: "text", label: "Telefone", type: "tel", defaultValue: "(11) 98888-1234" },
+          { kind: "mask", label: "Telefone", mask: "phone", defaultValue: "11988881234" },
           { kind: "text", label: "Foto de perfil (URL)", placeholder: "https://…" },
           { kind: "select", label: "Página inicial padrão", options: ["Painel", "CRM", "Operacional", "Financeiro"] },
         ],

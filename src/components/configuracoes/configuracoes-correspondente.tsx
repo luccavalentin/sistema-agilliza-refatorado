@@ -31,7 +31,7 @@ const sections: ConfigSection[] = [
           { kind: "text", label: "Nome completo", defaultValue: "Marcos Andrade" },
           { kind: "text", label: "Cargo/função", defaultValue: "Diretor Operacional" },
           { kind: "text", label: "E-mail", type: "email", defaultValue: "marcos@correspondente.com.br" },
-          { kind: "text", label: "Telefone", type: "tel", defaultValue: "(11) 99999-0000" },
+          { kind: "mask", label: "Telefone", mask: "phone", defaultValue: "11999990000" },
           { kind: "text", label: "Foto de perfil (URL)", placeholder: "https://…" },
           { kind: "select", label: "Tela inicial padrão", options: ["Painel de Monitoramento", "CRM", "Operacional", "Financeiro"] },
         ],
@@ -135,10 +135,11 @@ const sections: ConfigSection[] = [
       {
         fields: [
           { kind: "text", label: "Razão social", placeholder: "Imobiliária Exemplo Ltda." },
-          { kind: "text", label: "CNPJ", placeholder: "00.000.000/0001-00" },
+          { kind: "mask", label: "CNPJ", mask: "cnpj", placeholder: "00.000.000/0001-00", validate: "cnpj" },
           { kind: "text", label: "Responsável", placeholder: "Nome do responsável" },
           { kind: "text", label: "E-mail", type: "email" },
-          { kind: "text", label: "Telefone", type: "tel" },
+          { kind: "mask", label: "Telefone", mask: "phone", placeholder: "(11) 99999-9999" },
+          { kind: "mask", label: "CEP", mask: "cep", placeholder: "00000-000" },
           { kind: "text", label: "Endereço" },
           { kind: "textarea", label: "Observações" },
         ],
