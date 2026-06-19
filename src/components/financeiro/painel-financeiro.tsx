@@ -209,12 +209,12 @@ function PainelFinanceiroInner({ escopo }: { escopo: Escopo }) {
             const pagParc = sumN(pagDados, "Parcelado");
             return (
               <>
-                <KpiCard label="Esporádico a receber" value={formatBRL(recEsp)} accent={TOKENS.muted} icon={Receipt} />
-                <KpiCard label="Recorrente a receber" value={formatBRL(recRec)} accent={TOKENS.brand} icon={Clock} />
-                <KpiCard label="Parcelado a receber" value={formatBRL(recParc)} accent={TOKENS.info} icon={Receipt} />
-                <KpiCard label="Esporádico a pagar" value={formatBRL(pagEsp)} accent={TOKENS.muted} icon={Receipt} />
-                <KpiCard label="Recorrente a pagar" value={formatBRL(pagRec)} accent={TOKENS.direction} icon={Clock} />
-                <KpiCard label="Parcelado a pagar" value={formatBRL(pagParc)} accent={TOKENS.warning} icon={Receipt} />
+                <KpiCard label="Esporádico a receber" value={formatBRL(recEsp)} accent={TOKENS.muted} icon={Receipt} onClick={() => drill("Esporádico a receber", formatBRL(recEsp), 12)} />
+                <KpiCard label="Recorrente a receber" value={formatBRL(recRec)} accent={TOKENS.brand} icon={Clock} onClick={() => drill("Recorrente a receber", formatBRL(recRec), 12)} />
+                <KpiCard label="Parcelado a receber" value={formatBRL(recParc)} accent={TOKENS.info} icon={Receipt} onClick={() => drill("Parcelado a receber", formatBRL(recParc), 12)} />
+                <KpiCard label="Esporádico a pagar" value={formatBRL(pagEsp)} accent={TOKENS.muted} icon={Receipt} onClick={() => drill("Esporádico a pagar", formatBRL(pagEsp), 12)} />
+                <KpiCard label="Recorrente a pagar" value={formatBRL(pagRec)} accent={TOKENS.direction} icon={Clock} onClick={() => drill("Recorrente a pagar", formatBRL(pagRec), 12)} />
+                <KpiCard label="Parcelado a pagar" value={formatBRL(pagParc)} accent={TOKENS.warning} icon={Receipt} onClick={() => drill("Parcelado a pagar", formatBRL(pagParc), 12)} />
               </>
             );
           })()}
