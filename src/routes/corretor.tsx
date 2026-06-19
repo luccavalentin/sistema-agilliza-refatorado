@@ -11,6 +11,7 @@ import {
   Wallet,
   PieChart,
   Settings,
+  Search,
 } from "lucide-react";
 import { PortalShell, type PortalNavGroup } from "@/components/portal-shell";
 
@@ -23,7 +24,18 @@ const groups: PortalNavGroup[] = [
   },
   {
     label: "CRM e Gestão de Cliente",
-    items: [{ label: "CRM de Cliente", icon: Users }],
+    items: [
+      {
+        label: "CRM de Clientes",
+        icon: Users,
+        children: [
+          { label: "Dashboard de Clientes", to: "/corretor/crm", icon: LayoutDashboard },
+          { label: "Cadastro de Cliente", to: "/corretor/crm/cadastro", icon: Users },
+          { label: "Consultas", to: "/corretor/crm/consultas", icon: Search },
+          { label: "Relatórios", to: "/corretor/crm/relatorios", icon: PieChart },
+        ],
+      },
+    ],
   },
   {
     label: "Operacional",

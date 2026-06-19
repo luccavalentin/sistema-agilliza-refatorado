@@ -1,11 +1,12 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { useState, type ComponentType, type ReactNode } from "react";
+import { useMemo, useState, type ComponentType, type ReactNode } from "react";
 import {
   Bell,
   Menu,
   X,
   ChevronsLeft,
   ChevronsRight,
+  ChevronDown,
   LogOut,
   ShieldCheck,
   Building2,
@@ -16,6 +17,7 @@ export type PortalNavItem = {
   label: string;
   to?: string;
   icon: ComponentType<{ className?: string; strokeWidth?: number }>;
+  children?: PortalNavItem[];
 };
 
 export type PortalNavGroup = {
@@ -43,6 +45,110 @@ const kindMeta: Record<PortalKind, { label: string; description: string; user: s
   },
 };
 
+function NavLeaf({
+  item,
+  active,
+  collapsed,
+  onNavigate,
+  indent = false,
+}: {
+  item: PortalNavItem;
+  active: boolean;
+  collapsed: boolean;
+  onNavigate: () => void;
+  indent?: boolean;
+}) {
+  const Icon = item.icon;
+  const baseCls = [
+    "group relative flex w-full items-center gap-3 rounded-md py-2 text-left text-[13px] font-medium transition-colors",
+    indent ? "pl-8 pr-3" : "px-3",
+    active
+      ? "bg-white text-brand shadow-sm"
+      : "text-white/85 hover:bg-white/10 hover:text-white",
+  ].join(" ");
+  const content = (
+    <>
+      {active && (
+        <span
+          className="absolute inset-y-1.5 -left-1 w-1 rounded-r bg-direction"
+          aria-hidden
+        />
+      )}
+      <Icon className="h-4 w-4 shrink-0" strokeWidth={active ? 2.5 : 2} />
+      {!collapsed && <span className="truncate">{item.label}</span>}
+    </>
+  );
+  return item.to ? (
+    <Link
+      to={item.to}
+      onClick={onNavigate}
+      className={baseCls}
+      title={collapsed ? item.label : undefined}
+    >
+      {content}
+    </Link>
+  ) : (
+    <button type="button" className={baseCls} title={collapsed ? item.label : undefined}>
+      {content}
+    </button>
+  );
+}
+
+function NavBranch({
+  item,
+  pathname,
+  collapsed,
+  onNavigate,
+  defaultOpen,
+}: {
+  item: PortalNavItem;
+  pathname: string;
+  collapsed: boolean;
+  onNavigate: () => void;
+  defaultOpen: boolean;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+  const Icon = item.icon;
+  const anyActive = !!item.children?.some((c) => c.to && pathname.startsWith(c.to));
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className={[
+          "group relative flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-[13px] font-medium transition-colors",
+          anyActive ? "text-white" : "text-white/85 hover:bg-white/10 hover:text-white",
+        ].join(" ")}
+        title={collapsed ? item.label : undefined}
+      >
+        <Icon className="h-4 w-4 shrink-0" strokeWidth={anyActive ? 2.5 : 2} />
+        {!collapsed && (
+          <>
+            <span className="truncate">{item.label}</span>
+            <ChevronDown
+              className={`ml-auto h-3.5 w-3.5 transition-transform ${open ? "rotate-180" : ""}`}
+            />
+          </>
+        )}
+      </button>
+      {open && !collapsed && item.children && (
+        <div className="mt-1 space-y-1">
+          {item.children.map((child) => (
+            <NavLeaf
+              key={child.label}
+              item={child}
+              active={!!child.to && pathname === child.to}
+              collapsed={collapsed}
+              onNavigate={onNavigate}
+              indent
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function PortalShell({
   kind,
   groups,
@@ -57,9 +163,18 @@ export function PortalShell({
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const meta = kindMeta[kind];
 
+  const openBranches = useMemo(() => {
+    const open = new Set<string>();
+    groups.forEach((g) =>
+      g.items.forEach((i) => {
+        if (i.children?.some((c) => c.to && pathname.startsWith(c.to))) open.add(i.label);
+      }),
+    );
+    return open;
+  }, [groups, pathname]);
+
   return (
     <div className="flex min-h-screen bg-secondary text-foreground">
-      {/* Mobile overlay */}
       {mobileOpen && (
         <button
           aria-label="Fechar menu"
@@ -68,7 +183,6 @@ export function PortalShell({
         />
       )}
 
-      {/* Sidebar */}
       <aside
         className={[
           "fixed inset-y-0 left-0 z-40 flex flex-col bg-sidebar text-sidebar-foreground transition-all duration-200",
@@ -83,7 +197,6 @@ export function PortalShell({
             "linear-gradient(180deg, #001bbf 0%, #000f9f 55%, #000a7a 100%)",
         }}
       >
-        {/* Brand */}
         <div className="flex h-16 items-center gap-3 border-b border-sidebar-border px-4">
           <div className="grid h-9 w-9 shrink-0 place-items-center rounded-md bg-white text-brand">
             <Building2 className="h-5 w-5" strokeWidth={2.5} />
@@ -104,7 +217,6 @@ export function PortalShell({
           </button>
         </div>
 
-        {/* Nav */}
         <nav className="mt-4 flex-1 space-y-5 overflow-y-auto px-3 pb-4">
           {groups.map((group) => (
             <div key={group.label} className="space-y-1">
@@ -114,53 +226,30 @@ export function PortalShell({
                 </p>
               )}
               {collapsed && <div className="mx-2 h-px bg-white/10" />}
-              {group.items.map((item) => {
-                const Icon = item.icon;
-                const active = !!item.to && pathname === item.to;
-                const baseCls = [
-                  "group relative flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-[13px] font-medium transition-colors",
-                  active
-                    ? "bg-white text-brand shadow-sm"
-                    : "text-white/85 hover:bg-white/10 hover:text-white",
-                ].join(" ");
-                const content = (
-                  <>
-                    {active && (
-                      <span
-                        className="absolute inset-y-1.5 -left-1 w-1 rounded-r bg-direction"
-                        aria-hidden
-                      />
-                    )}
-                    <Icon className="h-4 w-4 shrink-0" strokeWidth={active ? 2.5 : 2} />
-                    {!collapsed && <span className="truncate">{item.label}</span>}
-                  </>
-                );
-                return item.to ? (
-                  <Link
+              {group.items.map((item) =>
+                item.children?.length ? (
+                  <NavBranch
                     key={item.label}
-                    to={item.to}
-                    onClick={() => setMobileOpen(false)}
-                    className={baseCls}
-                    title={collapsed ? item.label : undefined}
-                  >
-                    {content}
-                  </Link>
+                    item={item}
+                    pathname={pathname}
+                    collapsed={collapsed}
+                    onNavigate={() => setMobileOpen(false)}
+                    defaultOpen={openBranches.has(item.label)}
+                  />
                 ) : (
-                  <button
+                  <NavLeaf
                     key={item.label}
-                    type="button"
-                    className={baseCls}
-                    title={collapsed ? item.label : undefined}
-                  >
-                    {content}
-                  </button>
-                );
-              })}
+                    item={item}
+                    active={!!item.to && pathname === item.to}
+                    collapsed={collapsed}
+                    onNavigate={() => setMobileOpen(false)}
+                  />
+                ),
+              )}
             </div>
           ))}
         </nav>
 
-        {/* Footer */}
         <div className="border-t border-sidebar-border p-2">
           {!collapsed && (
             <div className="mx-1 mb-2 rounded-md bg-white/5 px-3 py-2">
@@ -195,9 +284,7 @@ export function PortalShell({
         </div>
       </aside>
 
-      {/* Main column */}
       <div className="flex min-w-0 flex-1 flex-col">
-        {/* Topbar */}
         <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-border bg-background px-4 sm:px-6">
           <button
             type="button"
