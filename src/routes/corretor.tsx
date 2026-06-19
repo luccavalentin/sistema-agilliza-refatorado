@@ -12,6 +12,8 @@ import {
   PieChart,
   Settings,
   Search,
+  Sparkles,
+  Zap,
 } from "lucide-react";
 import { PortalShell, type PortalNavGroup } from "@/components/portal-shell";
 
