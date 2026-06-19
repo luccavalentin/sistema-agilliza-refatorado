@@ -94,15 +94,15 @@
   --warning: #d97706;
   --info: #2563eb;
 
-  /* Sidebar */
-  --sidebar: #ffffff;
-  --sidebar-foreground: #1a1f2e;
-  --sidebar-primary: #000f9f;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #eef0fb;
+  /* Sidebar — dark blue institutional */
+  --sidebar: #000f9f;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #ffffff;
+  --sidebar-primary-foreground: #000f9f;
+  --sidebar-accent: #ffffff;
   --sidebar-accent-foreground: #000f9f;
-  --sidebar-border: #e5e7eb;
-  --sidebar-ring: #000f9f;
+  --sidebar-border: rgba(255, 255, 255, 0.12);
+  --sidebar-ring: #ffffff;
 }
 
 @layer base {
