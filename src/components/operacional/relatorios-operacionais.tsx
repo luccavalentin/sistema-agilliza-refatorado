@@ -293,7 +293,7 @@ export function RelatoriosOperacionais({ escopo }: { escopo: Escopo }) {
                   innerRadius={60}
                   outerRadius={90}
                   paddingAngle={3}
-                  stroke="hsl(var(--background))"
+                  stroke="var(--background)"
                   strokeWidth={2}
                 >
                   {porProduto.map((entry, i) => (
@@ -389,8 +389,8 @@ export function RelatoriosOperacionais({ escopo }: { escopo: Escopo }) {
 }
 
 const tooltipStyle = {
-  background: "hsl(var(--card))",
-  border: "1px solid hsl(var(--border))",
+  background: "var(--card)",
+  border: "1px solid var(--border)",
   borderRadius: 8,
   fontSize: 12,
   padding: "8px 10px",
