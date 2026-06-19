@@ -17,6 +17,7 @@ import { Route as CorretorIndexRouteImport } from './routes/corretor.index'
 import { Route as CorrespondenteIndexRouteImport } from './routes/correspondente.index'
 import { Route as ClienteIndexRouteImport } from './routes/cliente.index'
 import { Route as CorretorOperacionalRouteImport } from './routes/corretor.operacional'
+import { Route as CorretorFinanceiroRouteImport } from './routes/corretor.financeiro'
 import { Route as CorretorCrmRouteImport } from './routes/corretor.crm'
 import { Route as CorrespondenteOperacionalRouteImport } from './routes/correspondente.operacional'
 import { Route as CorrespondenteFinanceiroRouteImport } from './routes/correspondente.financeiro'
@@ -95,6 +96,11 @@ const ClienteIndexRoute = ClienteIndexRouteImport.update({
 const CorretorOperacionalRoute = CorretorOperacionalRouteImport.update({
   id: '/operacional',
   path: '/operacional',
+  getParentRoute: () => CorretorRoute,
+} as any)
+const CorretorFinanceiroRoute = CorretorFinanceiroRouteImport.update({
+  id: '/financeiro',
+  path: '/financeiro',
   getParentRoute: () => CorretorRoute,
 } as any)
 const CorretorCrmRoute = CorretorCrmRouteImport.update({
@@ -334,6 +340,7 @@ export interface FileRoutesByFullPath {
   '/correspondente/financeiro': typeof CorrespondenteFinanceiroRouteWithChildren
   '/correspondente/operacional': typeof CorrespondenteOperacionalRouteWithChildren
   '/corretor/crm': typeof CorretorCrmRouteWithChildren
+  '/corretor/financeiro': typeof CorretorFinanceiroRoute
   '/corretor/operacional': typeof CorretorOperacionalRouteWithChildren
   '/cliente/': typeof ClienteIndexRoute
   '/correspondente/': typeof CorrespondenteIndexRoute
@@ -376,6 +383,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/cliente/proposta': typeof ClientePropostaRoute
+  '/corretor/financeiro': typeof CorretorFinanceiroRoute
   '/cliente': typeof ClienteIndexRoute
   '/correspondente': typeof CorrespondenteIndexRoute
   '/corretor': typeof CorretorIndexRoute
@@ -425,6 +433,7 @@ export interface FileRoutesById {
   '/correspondente/financeiro': typeof CorrespondenteFinanceiroRouteWithChildren
   '/correspondente/operacional': typeof CorrespondenteOperacionalRouteWithChildren
   '/corretor/crm': typeof CorretorCrmRouteWithChildren
+  '/corretor/financeiro': typeof CorretorFinanceiroRoute
   '/corretor/operacional': typeof CorretorOperacionalRouteWithChildren
   '/cliente/': typeof ClienteIndexRoute
   '/correspondente/': typeof CorrespondenteIndexRoute
@@ -476,6 +485,7 @@ export interface FileRouteTypes {
     | '/correspondente/financeiro'
     | '/correspondente/operacional'
     | '/corretor/crm'
+    | '/corretor/financeiro'
     | '/corretor/operacional'
     | '/cliente/'
     | '/correspondente/'
@@ -518,6 +528,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/cliente/proposta'
+    | '/corretor/financeiro'
     | '/cliente'
     | '/correspondente'
     | '/corretor'
@@ -566,6 +577,7 @@ export interface FileRouteTypes {
     | '/correspondente/financeiro'
     | '/correspondente/operacional'
     | '/corretor/crm'
+    | '/corretor/financeiro'
     | '/corretor/operacional'
     | '/cliente/'
     | '/correspondente/'
@@ -669,6 +681,13 @@ declare module '@tanstack/react-router' {
       path: '/operacional'
       fullPath: '/corretor/operacional'
       preLoaderRoute: typeof CorretorOperacionalRouteImport
+      parentRoute: typeof CorretorRoute
+    }
+    '/corretor/financeiro': {
+      id: '/corretor/financeiro'
+      path: '/financeiro'
+      fullPath: '/corretor/financeiro'
+      preLoaderRoute: typeof CorretorFinanceiroRouteImport
       parentRoute: typeof CorretorRoute
     }
     '/corretor/crm': {
@@ -1113,12 +1132,14 @@ const CorretorOperacionalRouteWithChildren =
 
 interface CorretorRouteChildren {
   CorretorCrmRoute: typeof CorretorCrmRouteWithChildren
+  CorretorFinanceiroRoute: typeof CorretorFinanceiroRoute
   CorretorOperacionalRoute: typeof CorretorOperacionalRouteWithChildren
   CorretorIndexRoute: typeof CorretorIndexRoute
 }
 
 const CorretorRouteChildren: CorretorRouteChildren = {
   CorretorCrmRoute: CorretorCrmRouteWithChildren,
+  CorretorFinanceiroRoute: CorretorFinanceiroRoute,
   CorretorOperacionalRoute: CorretorOperacionalRouteWithChildren,
   CorretorIndexRoute: CorretorIndexRoute,
 }
