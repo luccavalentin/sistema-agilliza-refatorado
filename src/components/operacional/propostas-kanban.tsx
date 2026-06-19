@@ -372,25 +372,15 @@ function PropostaDetalhe({
             </ul>
           )}
           {aba === "chat" && (
-            <div className="space-y-3">
-              {[
-                { de: usuarios[0], msg: "Documentação do imóvel pendente — solicitar matrícula atualizada.", h: "há 2h" },
-                { de: usuarios[2], msg: "Cliente confirmou envio do comprovante de renda hoje.", h: "há 1h" },
-                { de: usuarios[5], msg: "Análise jurídica iniciada. Retorno previsto em 3 dias úteis.", h: "há 25min" },
-              ].map((m, i) => (
-                <div key={i} className="rounded-md border border-border bg-card p-3">
-                  <div className="flex items-center justify-between">
-                    <p className="text-xs font-semibold text-graphite">{m.de.nome}</p>
-                    <span className="text-[10px] text-muted-foreground">{m.h}</span>
-                  </div>
-                  <p className="mt-1 text-xs text-muted-foreground">{m.msg}</p>
-                </div>
-              ))}
-              <div className="flex gap-2">
-                <Input placeholder="Escrever mensagem para a equipe…" />
-                <Button>Enviar</Button>
-              </div>
-            </div>
+            <PopoutChat
+              titulo={`Chat interno — ${proposta.codigo ?? proposta.id}`}
+              storageKey={`proposta-${proposta.id}`}
+              mensagens={[
+                { autor: usuarios[0].nome, texto: "Documentação do imóvel pendente — solicitar matrícula atualizada.", quando: "há 2h" },
+                { autor: usuarios[2].nome, texto: "Cliente confirmou envio do comprovante de renda hoje.", quando: "há 1h" },
+                { autor: usuarios[5].nome, texto: "Análise jurídica iniciada. Retorno previsto em 3 dias úteis.", quando: "há 25min" },
+              ]}
+            />
           )}
           {aba === "documentos" && (
             <ul className="divide-y divide-border rounded-md border border-border bg-card">
