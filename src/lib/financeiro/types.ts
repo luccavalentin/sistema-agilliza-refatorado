@@ -89,10 +89,38 @@ export type ContaFinanceira = {
   saldoAtual: number;
 };
 
+export type NaturezaLancamento = "Esporádico" | "Recorrente" | "Parcelado";
+
+export type ConfigRecorrencia = {
+  frequencia: Frequencia;
+  diaVencimento: number;
+  dataInicio: string;
+  dataFinal?: string;
+  indefinido: boolean;
+  valorFixo: boolean;
+  permitirAlteracao: boolean;
+  gerarFuturosAuto: boolean;
+  mesesPreGerar: number;
+  status: "Ativa" | "Pausada" | "Cancelada" | "Encerrada";
+};
+
+export type ConfigParcelamento = {
+  totalParcelas: number;
+  parcelaAtual: number; // 1..N
+  valorTotal: number;
+  valorParcela: number;
+  primeiroVencimento: string;
+  frequencia: Frequencia;
+  diaVencimento: number;
+  entrada?: number;
+  grupoId: string; // todas as parcelas do mesmo lançamento compartilham
+};
+
 export type Lancamento = {
   id: string;
   descricao: string;
   tipo: "receber" | "pagar";
+  natureza: NaturezaLancamento;
   clienteId?: string;
   propostaId?: string;
   simulacaoId?: string;
@@ -104,6 +132,7 @@ export type Lancamento = {
   categoriaId: string;
   centroCustoId?: string;
   valor: number;
+  valorPrevisto?: number;
   valorPago?: number;
   emissao: string;
   vencimento: string;
@@ -114,6 +143,10 @@ export type Lancamento = {
   observacoes?: string;
   anexos?: string[];
   recorrenciaId?: string;
+  recorrencia?: ConfigRecorrencia;
+  parcelamento?: ConfigParcelamento;
+  lancamentoOriginalId?: string;
+  responsavel?: string;
   criadoPor: string;
   criadoEm: string;
   alteradoPor?: string;
