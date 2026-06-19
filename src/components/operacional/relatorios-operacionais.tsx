@@ -216,9 +216,9 @@ export function RelatoriosOperacionais({ escopo }: { escopo: Escopo }) {
             <p className="text-xs text-muted-foreground">Simulações, propostas e aprovações ao longo do ano</p>
           </div>
           <Legenda items={[
-            { cor: "#2563eb", label: "Simulações" },
-            { cor: "#7c3aed", label: "Propostas" },
-            { cor: "#16a34a", label: "Aprovadas" },
+            { cor: "'#000f9f'", label: "Simulações" },
+            { cor: "'#f5333f'", label: "Propostas" },
+            { cor: "'#15803d'", label: "Aprovadas" },
           ]} />
         </header>
         <div className="h-[280px]">
@@ -226,25 +226,25 @@ export function RelatoriosOperacionais({ escopo }: { escopo: Escopo }) {
             <AreaChart data={evolucao} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
               <defs>
                 <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#2563eb" stopOpacity={0.35} />
-                  <stop offset="100%" stopColor="#2563eb" stopOpacity={0} />
+                  <stop offset="0%" stopColor="'#000f9f'" stopOpacity={0.35} />
+                  <stop offset="100%" stopColor="'#000f9f'" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#7c3aed" stopOpacity={0.3} />
-                  <stop offset="100%" stopColor="#7c3aed" stopOpacity={0} />
+                  <stop offset="0%" stopColor="'#f5333f'" stopOpacity={0.3} />
+                  <stop offset="100%" stopColor="'#f5333f'" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="g3" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#16a34a" stopOpacity={0.3} />
-                  <stop offset="100%" stopColor="#16a34a" stopOpacity={0} />
+                  <stop offset="0%" stopColor="'#15803d'" stopOpacity={0.3} />
+                  <stop offset="100%" stopColor="'#15803d'" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
-              <XAxis dataKey="mes" stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} />
-              <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} width={40} />
+              <CartesianGrid strokeDasharray="3 3" stroke="'#e5e7eb'" vertical={false} />
+              <XAxis dataKey="mes" stroke="'#9ca3af'" fontSize={11} tickLine={false} axisLine={false} />
+              <YAxis stroke="'#9ca3af'" fontSize={11} tickLine={false} axisLine={false} width={40} />
               <Tooltip contentStyle={tooltipStyle} />
-              <Area type="monotone" dataKey="simulacoes" stroke="#2563eb" strokeWidth={2} fill="url(#g1)" />
-              <Area type="monotone" dataKey="propostas" stroke="#7c3aed" strokeWidth={2} fill="url(#g2)" />
-              <Area type="monotone" dataKey="aprovadas" stroke="#16a34a" strokeWidth={2} fill="url(#g3)" />
+              <Area type="monotone" dataKey="simulacoes" stroke="'#000f9f'" strokeWidth={2} fill="url(#g1)" />
+              <Area type="monotone" dataKey="propostas" stroke="'#f5333f'" strokeWidth={2} fill="url(#g2)" />
+              <Area type="monotone" dataKey="aprovadas" stroke="'#15803d'" strokeWidth={2} fill="url(#g3)" />
             </AreaChart>
           </ResponsiveContainer>
         </div>
@@ -263,9 +263,9 @@ export function RelatoriosOperacionais({ escopo }: { escopo: Escopo }) {
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={funil} layout="vertical" margin={{ top: 5, right: 16, left: 8, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" horizontal={false} />
-                <XAxis type="number" stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} />
-                <YAxis dataKey="etapa" type="category" stroke="#475569" fontSize={11} tickLine={false} axisLine={false} width={150} />
+                <CartesianGrid strokeDasharray="3 3" stroke="'#e5e7eb'" horizontal={false} />
+                <XAxis type="number" stroke="'#9ca3af'" fontSize={11} tickLine={false} axisLine={false} />
+                <YAxis dataKey="etapa" type="category" stroke="'#1a1f2e'" fontSize={11} tickLine={false} axisLine={false} width={150} />
                 <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "rgba(37,99,235,0.05)" }} />
                 <Bar dataKey="valor" radius={[0, 6, 6, 0]}>
                   {funil.map((entry, i) => (
@@ -328,13 +328,13 @@ export function RelatoriosOperacionais({ escopo }: { escopo: Escopo }) {
           <div className="h-[260px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={porBanco} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
-                <XAxis dataKey="banco" stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} />
-                <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} width={40} />
+                <CartesianGrid strokeDasharray="3 3" stroke="'#e5e7eb'" vertical={false} />
+                <XAxis dataKey="banco" stroke="'#9ca3af'" fontSize={11} tickLine={false} axisLine={false} />
+                <YAxis stroke="'#9ca3af'" fontSize={11} tickLine={false} axisLine={false} width={40} />
                 <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "rgba(37,99,235,0.05)" }} />
                 <Legend wrapperStyle={{ fontSize: 11 }} />
-                <Bar dataKey="propostas" name="Propostas" fill="#2563eb" radius={[6, 6, 0, 0]} />
-                <Bar dataKey="aprovadas" name="Aprovadas" fill="#16a34a" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="propostas" name="Propostas" fill="'#000f9f'" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="aprovadas" name="Aprovadas" fill="'#15803d'" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -349,11 +349,11 @@ export function RelatoriosOperacionais({ escopo }: { escopo: Escopo }) {
           <div className="h-[260px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={slaEtapa} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
-                <XAxis dataKey="etapa" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} angle={-20} textAnchor="end" height={50} />
-                <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} width={40} />
+                <CartesianGrid strokeDasharray="3 3" stroke="'#e5e7eb'" vertical={false} />
+                <XAxis dataKey="etapa" stroke="'#9ca3af'" fontSize={10} tickLine={false} axisLine={false} angle={-20} textAnchor="end" height={50} />
+                <YAxis stroke="'#9ca3af'" fontSize={11} tickLine={false} axisLine={false} width={40} />
                 <Tooltip contentStyle={tooltipStyle} />
-                <Line type="monotone" dataKey="dias" stroke="#f59e0b" strokeWidth={3} dot={{ r: 4, fill: "#f59e0b" }} activeDot={{ r: 6 }} />
+                <Line type="monotone" dataKey="dias" stroke="'#d97706'" strokeWidth={3} dot={{ r: 4, fill: "'#d97706'" }} activeDot={{ r: 6 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -372,14 +372,14 @@ export function RelatoriosOperacionais({ escopo }: { escopo: Escopo }) {
         <div className="h-[280px]">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={porUsuario} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
-              <XAxis dataKey="nome" stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} />
-              <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} width={40} />
+              <CartesianGrid strokeDasharray="3 3" stroke="'#e5e7eb'" vertical={false} />
+              <XAxis dataKey="nome" stroke="'#9ca3af'" fontSize={11} tickLine={false} axisLine={false} />
+              <YAxis stroke="'#9ca3af'" fontSize={11} tickLine={false} axisLine={false} width={40} />
               <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "rgba(124,58,237,0.05)" }} />
               <Legend wrapperStyle={{ fontSize: 11 }} />
-              <Bar dataKey="simulacoes" name="Simulações" stackId="a" fill="#2563eb" />
-              <Bar dataKey="propostas" name="Propostas" stackId="a" fill="#7c3aed" />
-              <Bar dataKey="demandas" name="Demandas" stackId="a" fill="#0ea5e9" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="simulacoes" name="Simulações" stackId="a" fill="'#000f9f'" />
+              <Bar dataKey="propostas" name="Propostas" stackId="a" fill="'#f5333f'" />
+              <Bar dataKey="demandas" name="Demandas" stackId="a" fill="'#2563eb'" radius={[6, 6, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
