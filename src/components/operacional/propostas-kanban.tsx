@@ -477,10 +477,10 @@ function PropKpi({
   label, value, tone, isText,
 }: { label: string; value: number | string; tone?: "emerald"|"red"|"blue"|"amber"; isText?: boolean }) {
   const accent =
-    tone === "emerald" ? "#16a34a" :
-    tone === "red" ? "#dc2626" :
-    tone === "blue" ? "#2563eb" :
-    tone === "amber" ? "#d97706" : "#475569";
+    tone === "emerald" ? "var(--success)" :
+    tone === "red" ? "var(--direction)" :
+    tone === "blue" ? "var(--brand)" :
+    tone === "amber" ? "var(--warning)" : "var(--muted-foreground)";
   return (
     <article className="overflow-hidden rounded-lg border border-border bg-card shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
       <div className="h-1" style={{ backgroundColor: accent }} />

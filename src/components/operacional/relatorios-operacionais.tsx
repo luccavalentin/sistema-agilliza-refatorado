@@ -24,8 +24,24 @@ type Escopo = "correspondente" | "corretor";
 
 const periodos = ["7 dias", "30 dias", "90 dias", "Ano"];
 
-// Paleta executiva
-const PALETA = ["#2563eb", "#7c3aed", "#0ea5e9", "#16a34a", "#f59e0b", "#dc2626", "#0891b2", "#db2777"];
+// Paleta institucional — tokens do sistema
+const TOKENS = {
+  brand: "#000f9f",
+  brandSoft: "#4a55c4",
+  direction: "#f5333f",
+  directionSoft: "#f8757e",
+  success: "#15803d",
+  successSoft: "#4ea870",
+  warning: "#d97706",
+  info: "#2563eb",
+  graphite: "#1a1f2e",
+  muted: "#6b7280",
+  grid: "#e5e7eb",
+};
+const PALETA = [
+  TOKENS.brand, TOKENS.direction, TOKENS.success, TOKENS.warning,
+  TOKENS.info, TOKENS.brandSoft, TOKENS.directionSoft, TOKENS.successSoft,
+];
 
 export function RelatoriosOperacionais({ escopo }: { escopo: Escopo }) {
   const [periodo, setPeriodo] = useState("30 dias");
@@ -98,7 +114,7 @@ export function RelatoriosOperacionais({ escopo }: { escopo: Escopo }) {
     return tipos.map((t, i) => ({
       name: t,
       value: props.filter((p) => p.produto === t).length,
-      fill: i === 0 ? "#2563eb" : "#7c3aed",
+      fill: i === 0 ? TOKENS.brand : TOKENS.direction,
     }));
   }, [props]);
 
@@ -161,7 +177,7 @@ export function RelatoriosOperacionais({ escopo }: { escopo: Escopo }) {
           delta="+12,4%"
           positivo
           icon={<Wallet className="h-4 w-4" />}
-          gradient="from-blue-600 to-indigo-600"
+          gradient={`linear-gradient(135deg, ${TOKENS.brand}, ${TOKENS.brandSoft})`}
         />
         <KpiCard
           label="Taxa de conversão"
@@ -169,7 +185,7 @@ export function RelatoriosOperacionais({ escopo }: { escopo: Escopo }) {
           delta="+3,1%"
           positivo
           icon={<TrendingUp className="h-4 w-4" />}
-          gradient="from-violet-600 to-fuchsia-600"
+          gradient={`linear-gradient(135deg, ${TOKENS.info}, ${TOKENS.brand})`}
           sub={`${totalSim} sim. → ${totalProp} prop.`}
         />
         <KpiCard
@@ -178,7 +194,7 @@ export function RelatoriosOperacionais({ escopo }: { escopo: Escopo }) {
           delta="+5,8%"
           positivo
           icon={<Target className="h-4 w-4" />}
-          gradient="from-emerald-600 to-teal-600"
+          gradient={`linear-gradient(135deg, ${TOKENS.success}, ${TOKENS.successSoft})`}
           sub={`${aprovadas} aprovadas`}
         />
         <KpiCard
@@ -187,7 +203,7 @@ export function RelatoriosOperacionais({ escopo }: { escopo: Escopo }) {
           delta="-2"
           positivo
           icon={<BarChart3 className="h-4 w-4" />}
-          gradient="from-amber-500 to-orange-600"
+          gradient={`linear-gradient(135deg, ${TOKENS.direction}, ${TOKENS.warning})`}
           sub={`${transf} transferências`}
         />
       </section>
@@ -200,9 +216,9 @@ export function RelatoriosOperacionais({ escopo }: { escopo: Escopo }) {
             <p className="text-xs text-muted-foreground">Simulações, propostas e aprovações ao longo do ano</p>
           </div>
           <Legenda items={[
-            { cor: "#2563eb", label: "Simulações" },
-            { cor: "#7c3aed", label: "Propostas" },
-            { cor: "#16a34a", label: "Aprovadas" },
+            { cor: "#000f9f", label: "Simulações" },
+            { cor: "#f5333f", label: "Propostas" },
+            { cor: "#15803d", label: "Aprovadas" },
           ]} />
         </header>
         <div className="h-[280px]">
@@ -210,25 +226,25 @@ export function RelatoriosOperacionais({ escopo }: { escopo: Escopo }) {
             <AreaChart data={evolucao} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
               <defs>
                 <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#2563eb" stopOpacity={0.35} />
-                  <stop offset="100%" stopColor="#2563eb" stopOpacity={0} />
+                  <stop offset="0%" stopColor="#000f9f" stopOpacity={0.35} />
+                  <stop offset="100%" stopColor="#000f9f" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#7c3aed" stopOpacity={0.3} />
-                  <stop offset="100%" stopColor="#7c3aed" stopOpacity={0} />
+                  <stop offset="0%" stopColor="#f5333f" stopOpacity={0.3} />
+                  <stop offset="100%" stopColor="#f5333f" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="g3" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#16a34a" stopOpacity={0.3} />
-                  <stop offset="100%" stopColor="#16a34a" stopOpacity={0} />
+                  <stop offset="0%" stopColor="#15803d" stopOpacity={0.3} />
+                  <stop offset="100%" stopColor="#15803d" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
-              <XAxis dataKey="mes" stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} />
-              <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} width={40} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
+              <XAxis dataKey="mes" stroke="#9ca3af" fontSize={11} tickLine={false} axisLine={false} />
+              <YAxis stroke="#9ca3af" fontSize={11} tickLine={false} axisLine={false} width={40} />
               <Tooltip contentStyle={tooltipStyle} />
-              <Area type="monotone" dataKey="simulacoes" stroke="#2563eb" strokeWidth={2} fill="url(#g1)" />
-              <Area type="monotone" dataKey="propostas" stroke="#7c3aed" strokeWidth={2} fill="url(#g2)" />
-              <Area type="monotone" dataKey="aprovadas" stroke="#16a34a" strokeWidth={2} fill="url(#g3)" />
+              <Area type="monotone" dataKey="simulacoes" stroke="#000f9f" strokeWidth={2} fill="url(#g1)" />
+              <Area type="monotone" dataKey="propostas" stroke="#f5333f" strokeWidth={2} fill="url(#g2)" />
+              <Area type="monotone" dataKey="aprovadas" stroke="#15803d" strokeWidth={2} fill="url(#g3)" />
             </AreaChart>
           </ResponsiveContainer>
         </div>
@@ -247,9 +263,9 @@ export function RelatoriosOperacionais({ escopo }: { escopo: Escopo }) {
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={funil} layout="vertical" margin={{ top: 5, right: 16, left: 8, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" horizontal={false} />
-                <XAxis type="number" stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} />
-                <YAxis dataKey="etapa" type="category" stroke="#475569" fontSize={11} tickLine={false} axisLine={false} width={150} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" horizontal={false} />
+                <XAxis type="number" stroke="#9ca3af" fontSize={11} tickLine={false} axisLine={false} />
+                <YAxis dataKey="etapa" type="category" stroke="#1a1f2e" fontSize={11} tickLine={false} axisLine={false} width={150} />
                 <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "rgba(37,99,235,0.05)" }} />
                 <Bar dataKey="valor" radius={[0, 6, 6, 0]}>
                   {funil.map((entry, i) => (
@@ -277,7 +293,7 @@ export function RelatoriosOperacionais({ escopo }: { escopo: Escopo }) {
                   innerRadius={60}
                   outerRadius={90}
                   paddingAngle={3}
-                  stroke="hsl(var(--background))"
+                  stroke="var(--background)"
                   strokeWidth={2}
                 >
                   {porProduto.map((entry, i) => (
@@ -312,13 +328,13 @@ export function RelatoriosOperacionais({ escopo }: { escopo: Escopo }) {
           <div className="h-[260px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={porBanco} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
-                <XAxis dataKey="banco" stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} />
-                <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} width={40} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
+                <XAxis dataKey="banco" stroke="#9ca3af" fontSize={11} tickLine={false} axisLine={false} />
+                <YAxis stroke="#9ca3af" fontSize={11} tickLine={false} axisLine={false} width={40} />
                 <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "rgba(37,99,235,0.05)" }} />
                 <Legend wrapperStyle={{ fontSize: 11 }} />
-                <Bar dataKey="propostas" name="Propostas" fill="#2563eb" radius={[6, 6, 0, 0]} />
-                <Bar dataKey="aprovadas" name="Aprovadas" fill="#16a34a" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="propostas" name="Propostas" fill="#000f9f" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="aprovadas" name="Aprovadas" fill="#15803d" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -333,11 +349,11 @@ export function RelatoriosOperacionais({ escopo }: { escopo: Escopo }) {
           <div className="h-[260px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={slaEtapa} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
-                <XAxis dataKey="etapa" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} angle={-20} textAnchor="end" height={50} />
-                <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} width={40} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
+                <XAxis dataKey="etapa" stroke="#9ca3af" fontSize={10} tickLine={false} axisLine={false} angle={-20} textAnchor="end" height={50} />
+                <YAxis stroke="#9ca3af" fontSize={11} tickLine={false} axisLine={false} width={40} />
                 <Tooltip contentStyle={tooltipStyle} />
-                <Line type="monotone" dataKey="dias" stroke="#f59e0b" strokeWidth={3} dot={{ r: 4, fill: "#f59e0b" }} activeDot={{ r: 6 }} />
+                <Line type="monotone" dataKey="dias" stroke="#d97706" strokeWidth={3} dot={{ r: 4, fill: "#d97706" }} activeDot={{ r: 6 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -356,14 +372,14 @@ export function RelatoriosOperacionais({ escopo }: { escopo: Escopo }) {
         <div className="h-[280px]">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={porUsuario} margin={{ top: 5, right: 10, left: -10, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
-              <XAxis dataKey="nome" stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} />
-              <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} width={40} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
+              <XAxis dataKey="nome" stroke="#9ca3af" fontSize={11} tickLine={false} axisLine={false} />
+              <YAxis stroke="#9ca3af" fontSize={11} tickLine={false} axisLine={false} width={40} />
               <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "rgba(124,58,237,0.05)" }} />
               <Legend wrapperStyle={{ fontSize: 11 }} />
-              <Bar dataKey="simulacoes" name="Simulações" stackId="a" fill="#2563eb" />
-              <Bar dataKey="propostas" name="Propostas" stackId="a" fill="#7c3aed" />
-              <Bar dataKey="demandas" name="Demandas" stackId="a" fill="#0ea5e9" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="simulacoes" name="Simulações" stackId="a" fill="#000f9f" />
+              <Bar dataKey="propostas" name="Propostas" stackId="a" fill="#f5333f" />
+              <Bar dataKey="demandas" name="Demandas" stackId="a" fill="#2563eb" radius={[6, 6, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -373,8 +389,8 @@ export function RelatoriosOperacionais({ escopo }: { escopo: Escopo }) {
 }
 
 const tooltipStyle = {
-  background: "hsl(var(--card))",
-  border: "1px solid hsl(var(--border))",
+  background: "var(--card)",
+  border: "1px solid var(--border)",
   borderRadius: 8,
   fontSize: 12,
   padding: "8px 10px",
@@ -394,7 +410,7 @@ function KpiCard({
 }) {
   return (
     <article className="group relative overflow-hidden rounded-xl border border-border bg-card shadow-[0_1px_3px_rgba(15,23,42,0.04)] transition hover:shadow-[0_8px_24px_rgba(15,23,42,0.08)]">
-      <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${gradient}`} />
+      <div className="absolute inset-x-0 top-0 h-1" style={{ background: gradient }} />
       <div className="p-4">
         <div className="flex items-start justify-between gap-3">
           <div>
@@ -402,18 +418,18 @@ function KpiCard({
             <p className="mt-1.5 text-2xl font-bold tracking-tight text-graphite">{valor}</p>
             {sub && <p className="mt-1 text-[11px] text-muted-foreground">{sub}</p>}
           </div>
-          <div className={`grid h-9 w-9 place-items-center rounded-lg bg-gradient-to-br ${gradient} text-white shadow-sm`}>
+          <div className="grid h-9 w-9 place-items-center rounded-lg text-white shadow-sm" style={{ background: gradient }}>
             {icon}
           </div>
         </div>
         {delta && (
           <div className="mt-3 flex items-center gap-1 text-[11px]">
             {positivo ? (
-              <ArrowUpRight className="h-3 w-3 text-emerald-600" />
+              <ArrowUpRight className="h-3 w-3" style={{ color: TOKENS.success }} />
             ) : (
-              <ArrowDownRight className="h-3 w-3 text-red-600" />
+              <ArrowDownRight className="h-3 w-3" style={{ color: TOKENS.direction }} />
             )}
-            <span className={positivo ? "font-semibold text-emerald-700" : "font-semibold text-red-700"}>{delta}</span>
+            <span className="font-semibold" style={{ color: positivo ? TOKENS.success : TOKENS.direction }}>{delta}</span>
             <span className="text-muted-foreground">vs período anterior</span>
           </div>
         )}
