@@ -62,14 +62,6 @@ const groups: PortalNavGroup[] = [
     ],
   },
   {
-    label: "Financeiro",
-    items: [
-      { label: "Contas a Pagar", icon: ArrowUpCircle },
-      { label: "Contas a Receber", icon: ArrowDownCircle },
-      { label: "Relatórios Financeiros e Métricas", icon: FileBarChart },
-    ],
-  },
-  {
     label: "Gestão Financeira",
     items: [
       { label: "Painel Financeiro", to: "/correspondente/financeiro", icon: Wallet },
