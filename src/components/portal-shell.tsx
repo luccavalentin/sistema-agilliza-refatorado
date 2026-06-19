@@ -14,7 +14,7 @@ import {
 
 export type PortalNavItem = {
   label: string;
-  to: string;
+  to?: string;
   icon: ComponentType<{ className?: string; strokeWidth?: number }>;
 };
 
@@ -110,26 +110,41 @@ export function PortalShell({
         <nav className="mt-4 flex-1 space-y-1 px-2">
           {items.map((item) => {
             const Icon = item.icon;
-            const active = pathname === item.to;
-            return (
-              <Link
-                key={item.to}
-                to={item.to}
-                onClick={() => setMobileOpen(false)}
-                className={[
-                  "group relative flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors",
-                  active
-                    ? "bg-accent text-brand"
-                    : "text-sidebar-foreground hover:bg-accent/60 hover:text-brand",
-                ].join(" ")}
-                title={collapsed ? item.label : undefined}
-              >
+            const active = !!item.to && pathname === item.to;
+            const baseCls = [
+              "group relative flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-left text-sm font-medium transition-colors",
+              active
+                ? "bg-accent text-brand"
+                : "text-sidebar-foreground hover:bg-accent/60 hover:text-brand",
+            ].join(" ");
+            const content = (
+              <>
                 {active && (
                   <span className="absolute inset-y-1.5 left-0 w-0.5 rounded-r bg-brand" aria-hidden />
                 )}
-                <Icon className="h-4.5 w-4.5 shrink-0" strokeWidth={active ? 2.25 : 1.75} />
+                <Icon className="h-4 w-4 shrink-0" strokeWidth={active ? 2.25 : 1.75} />
                 {!collapsed && <span className="truncate">{item.label}</span>}
+              </>
+            );
+            return item.to ? (
+              <Link
+                key={item.label}
+                to={item.to}
+                onClick={() => setMobileOpen(false)}
+                className={baseCls}
+                title={collapsed ? item.label : undefined}
+              >
+                {content}
               </Link>
+            ) : (
+              <button
+                key={item.label}
+                type="button"
+                className={baseCls}
+                title={collapsed ? item.label : undefined}
+              >
+                {content}
+              </button>
             );
           })}
         </nav>

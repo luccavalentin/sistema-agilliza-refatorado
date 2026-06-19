@@ -10,10 +10,10 @@ import { PortalShell, type PortalNavItem } from "@/components/portal-shell";
 
 const items: PortalNavItem[] = [
   { label: "Visão Geral", to: "/correspondente", icon: LayoutDashboard },
-  { label: "CRM e Gestão de Cliente", to: "/correspondente/crm", icon: Users },
-  { label: "Operacional", to: "/correspondente/operacional", icon: Briefcase },
-  { label: "Gestão Financeira", to: "/correspondente/financeiro", icon: Wallet },
-  { label: "Gestão Administrativa", to: "/correspondente/administrativo", icon: Settings2 },
+  { label: "CRM e Gestão de Cliente", icon: Users },
+  { label: "Operacional", icon: Briefcase },
+  { label: "Gestão Financeira", icon: Wallet },
+  { label: "Gestão Administrativa", icon: Settings2 },
 ];
 
 export const Route = createFileRoute("/correspondente")({
