@@ -45,6 +45,7 @@ import { Route as CorrespondenteOperacionalPropostasRouteImport } from './routes
 import { Route as CorrespondenteOperacionalMinhasSimulacoesRouteImport } from './routes/correspondente.operacional.minhas-simulacoes'
 import { Route as CorrespondenteOperacionalDemandasRouteImport } from './routes/correspondente.operacional.demandas'
 import { Route as CorrespondenteOperacionalConsultasRouteImport } from './routes/correspondente.operacional.consultas'
+import { Route as CorrespondenteFinanceiroReceberRouteImport } from './routes/correspondente.financeiro.receber'
 import { Route as CorrespondenteCrmRelatoriosRouteImport } from './routes/correspondente.crm.relatorios'
 import { Route as CorrespondenteCrmConsultasRouteImport } from './routes/correspondente.crm.consultas'
 import { Route as CorrespondenteCrmCadastroRouteImport } from './routes/correspondente.crm.cadastro'
@@ -249,6 +250,12 @@ const CorrespondenteOperacionalConsultasRoute =
     path: '/consultas',
     getParentRoute: () => CorrespondenteOperacionalRoute,
   } as any)
+const CorrespondenteFinanceiroReceberRoute =
+  CorrespondenteFinanceiroReceberRouteImport.update({
+    id: '/receber',
+    path: '/receber',
+    getParentRoute: () => CorrespondenteFinanceiroRoute,
+  } as any)
 const CorrespondenteCrmRelatoriosRoute =
   CorrespondenteCrmRelatoriosRouteImport.update({
     id: '/relatorios',
@@ -285,6 +292,7 @@ export interface FileRoutesByFullPath {
   '/correspondente/crm/cadastro': typeof CorrespondenteCrmCadastroRoute
   '/correspondente/crm/consultas': typeof CorrespondenteCrmConsultasRoute
   '/correspondente/crm/relatorios': typeof CorrespondenteCrmRelatoriosRoute
+  '/correspondente/financeiro/receber': typeof CorrespondenteFinanceiroReceberRoute
   '/correspondente/operacional/consultas': typeof CorrespondenteOperacionalConsultasRoute
   '/correspondente/operacional/demandas': typeof CorrespondenteOperacionalDemandasRoute
   '/correspondente/operacional/minhas-simulacoes': typeof CorrespondenteOperacionalMinhasSimulacoesRoute
@@ -318,6 +326,7 @@ export interface FileRoutesByTo {
   '/correspondente/crm/cadastro': typeof CorrespondenteCrmCadastroRoute
   '/correspondente/crm/consultas': typeof CorrespondenteCrmConsultasRoute
   '/correspondente/crm/relatorios': typeof CorrespondenteCrmRelatoriosRoute
+  '/correspondente/financeiro/receber': typeof CorrespondenteFinanceiroReceberRoute
   '/correspondente/operacional/consultas': typeof CorrespondenteOperacionalConsultasRoute
   '/correspondente/operacional/demandas': typeof CorrespondenteOperacionalDemandasRoute
   '/correspondente/operacional/minhas-simulacoes': typeof CorrespondenteOperacionalMinhasSimulacoesRoute
@@ -360,6 +369,7 @@ export interface FileRoutesById {
   '/correspondente/crm/cadastro': typeof CorrespondenteCrmCadastroRoute
   '/correspondente/crm/consultas': typeof CorrespondenteCrmConsultasRoute
   '/correspondente/crm/relatorios': typeof CorrespondenteCrmRelatoriosRoute
+  '/correspondente/financeiro/receber': typeof CorrespondenteFinanceiroReceberRoute
   '/correspondente/operacional/consultas': typeof CorrespondenteOperacionalConsultasRoute
   '/correspondente/operacional/demandas': typeof CorrespondenteOperacionalDemandasRoute
   '/correspondente/operacional/minhas-simulacoes': typeof CorrespondenteOperacionalMinhasSimulacoesRoute
@@ -403,6 +413,7 @@ export interface FileRouteTypes {
     | '/correspondente/crm/cadastro'
     | '/correspondente/crm/consultas'
     | '/correspondente/crm/relatorios'
+    | '/correspondente/financeiro/receber'
     | '/correspondente/operacional/consultas'
     | '/correspondente/operacional/demandas'
     | '/correspondente/operacional/minhas-simulacoes'
@@ -436,6 +447,7 @@ export interface FileRouteTypes {
     | '/correspondente/crm/cadastro'
     | '/correspondente/crm/consultas'
     | '/correspondente/crm/relatorios'
+    | '/correspondente/financeiro/receber'
     | '/correspondente/operacional/consultas'
     | '/correspondente/operacional/demandas'
     | '/correspondente/operacional/minhas-simulacoes'
@@ -477,6 +489,7 @@ export interface FileRouteTypes {
     | '/correspondente/crm/cadastro'
     | '/correspondente/crm/consultas'
     | '/correspondente/crm/relatorios'
+    | '/correspondente/financeiro/receber'
     | '/correspondente/operacional/consultas'
     | '/correspondente/operacional/demandas'
     | '/correspondente/operacional/minhas-simulacoes'
@@ -763,6 +776,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CorrespondenteOperacionalConsultasRouteImport
       parentRoute: typeof CorrespondenteOperacionalRoute
     }
+    '/correspondente/financeiro/receber': {
+      id: '/correspondente/financeiro/receber'
+      path: '/receber'
+      fullPath: '/correspondente/financeiro/receber'
+      preLoaderRoute: typeof CorrespondenteFinanceiroReceberRouteImport
+      parentRoute: typeof CorrespondenteFinanceiroRoute
+    }
     '/correspondente/crm/relatorios': {
       id: '/correspondente/crm/relatorios'
       path: '/relatorios'
@@ -818,11 +838,13 @@ const CorrespondenteCrmRouteWithChildren =
   CorrespondenteCrmRoute._addFileChildren(CorrespondenteCrmRouteChildren)
 
 interface CorrespondenteFinanceiroRouteChildren {
+  CorrespondenteFinanceiroReceberRoute: typeof CorrespondenteFinanceiroReceberRoute
   CorrespondenteFinanceiroIndexRoute: typeof CorrespondenteFinanceiroIndexRoute
 }
 
 const CorrespondenteFinanceiroRouteChildren: CorrespondenteFinanceiroRouteChildren =
   {
+    CorrespondenteFinanceiroReceberRoute: CorrespondenteFinanceiroReceberRoute,
     CorrespondenteFinanceiroIndexRoute: CorrespondenteFinanceiroIndexRoute,
   }
 
