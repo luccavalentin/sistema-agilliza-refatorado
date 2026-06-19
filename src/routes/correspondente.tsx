@@ -70,6 +70,20 @@ const groups: PortalNavGroup[] = [
     ],
   },
   {
+    label: "Gestão Financeira",
+    items: [
+      { label: "Painel Financeiro", to: "/correspondente/financeiro", icon: Wallet },
+      { label: "Contas a Receber", to: "/correspondente/financeiro/receber", icon: ArrowDownCircle },
+      { label: "Contas a Pagar", to: "/correspondente/financeiro/pagar", icon: ArrowUpCircle },
+      { label: "Comissões", to: "/correspondente/financeiro/comissoes", icon: Banknote },
+      { label: "Fluxo de Caixa", to: "/correspondente/financeiro/fluxo", icon: TrendingUp },
+      { label: "Conciliação", to: "/correspondente/financeiro/conciliacao", icon: CheckSquare },
+      { label: "Recorrências", to: "/correspondente/financeiro/recorrencias", icon: RefreshCw },
+      { label: "Categorias Financeiras", to: "/correspondente/financeiro/categorias", icon: Layers },
+      { label: "Relatórios Financeiros", to: "/correspondente/financeiro/relatorios", icon: FileBarChart },
+    ],
+  },
+  {
     label: "Gestão Administrativa",
     items: [{ label: "Cadastros Gerais", icon: Database }],
   },
