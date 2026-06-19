@@ -9,7 +9,7 @@ import {
   Calculator,
   CheckCircle2,
   Clock,
-  Kanban,
+  
   ListChecks,
   BarChart3,
   ArrowDownCircle,
@@ -51,7 +51,7 @@ const groups: PortalNavGroup[] = [
       { label: "Simulações", icon: Calculator },
       { label: "Propostas", icon: CheckCircle2 },
       { label: "Demandas & SLA", icon: Clock },
-      { label: "Backlog (Kanban)", icon: Kanban },
+      
       { label: "Minhas Tarefas", icon: ListChecks },
       { label: "Relatórios e Métricas Operacionais", icon: BarChart3 },
     ],
