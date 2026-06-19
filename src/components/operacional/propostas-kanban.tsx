@@ -94,6 +94,14 @@ export function PropostasKanban({
     return ids.map((id) => bancoById(id)!).filter(Boolean);
   }, [data]);
 
+  // KPIs
+  const totalVal = filtradas.reduce((s, p) => s + p.valor, 0);
+  const aprovadas = filtradas.filter((p) => p.status === "Aprovada" || p.status === "Contrato emitido" || p.status === "Finalizada").length;
+  const emAnalise = filtradas.filter((p) => ["Em aprovação","Aguardando banco","Análise jurídica","Em tratativa"].includes(p.status)).length;
+  const pendDoc = filtradas.filter((p) => p.status === "Documentação pendente" || p.pendencias > 0).length;
+  const slaVencidas = filtradas.filter((p) => new Date(p.slaPrazo).getTime() < Date.now()).length;
+  const reprovadas = filtradas.filter((p) => p.status === "Reprovada").length;
+
   return (
     <div className="space-y-5">
       <PanelHeader
@@ -106,6 +114,18 @@ export function PropostasKanban({
           </Badge>
         }
       />
+
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+        <PropKpi label="Total" value={filtradas.length} />
+        <PropKpi label="Em análise" value={emAnalise} tone="blue" />
+        <PropKpi label="Pendentes" value={pendDoc} tone="amber" />
+        <PropKpi label="SLA vencido" value={slaVencidas} tone="red" />
+        <PropKpi label="Aprovadas" value={aprovadas} tone="emerald" />
+        <PropKpi label="Volume R$" value={formatBRL(totalVal)} isText />
+      </div>
+      {reprovadas > 0 && (
+        <p className="text-[11px] text-muted-foreground">Reprovadas: {reprovadas}</p>
+      )}
 
       <section className="rounded-lg border border-border bg-card p-3 sm:p-4">
         <div className="flex flex-wrap items-center gap-3">
@@ -450,5 +470,24 @@ function PropostaDetalhe({
         </footer>
       </aside>
     </div>
+  );
+}
+
+function PropKpi({
+  label, value, tone, isText,
+}: { label: string; value: number | string; tone?: "emerald"|"red"|"blue"|"amber"; isText?: boolean }) {
+  const accent =
+    tone === "emerald" ? "#16a34a" :
+    tone === "red" ? "#dc2626" :
+    tone === "blue" ? "#2563eb" :
+    tone === "amber" ? "#d97706" : "#475569";
+  return (
+    <article className="overflow-hidden rounded-lg border border-border bg-card shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
+      <div className="h-1" style={{ backgroundColor: accent }} />
+      <div className="p-3">
+        <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</p>
+        <p className={`mt-1 font-bold text-graphite ${isText ? "text-base" : "text-2xl"}`}>{value}</p>
+      </div>
+    </article>
   );
 }
