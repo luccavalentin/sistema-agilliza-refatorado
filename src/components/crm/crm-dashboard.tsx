@@ -42,6 +42,33 @@ const COLOR = {
 export type CrmScope = "correspondente" | "corretor";
 
 export function CrmDashboard({ scope }: { scope: CrmScope }) {
+  return (
+    <DashboardDetailProvider>
+      <CrmDashboardInner scope={scope} />
+    </DashboardDetailProvider>
+  );
+}
+
+function CrmDashboardInner({ scope }: { scope: CrmScope }) {
+  const { open } = useDashboardDetail();
+  const drill = (
+    title: string,
+    value: string,
+    count = 16,
+    extra?: { banco?: string; status?: string },
+  ) =>
+    open({
+      title,
+      subtitle: `CRM · ${scope === "correspondente" ? "Correspondente" : "Corretor"}`,
+      period: "Últimos 30 dias",
+      kpis: [
+        { label: title, value },
+        { label: "Período", value: "30 dias" },
+        { label: "Escopo", value: scope === "correspondente" ? "Ecossistema" : "Minha carteira" },
+        { label: "Registros", value: String(count) },
+      ],
+      rows: buildMockRows(count, extra),
+    });
   const isCorr = scope === "correspondente";
   const totalClientes = isCorr ? "1.284" : "186";
   const novosMes = isCorr ? "142" : "21";
