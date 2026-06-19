@@ -9,38 +9,128 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as CorretorRouteImport } from './routes/corretor'
+import { Route as CorrespondenteRouteImport } from './routes/correspondente'
+import { Route as ClienteRouteImport } from './routes/cliente'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CorretorIndexRouteImport } from './routes/corretor.index'
+import { Route as CorrespondenteIndexRouteImport } from './routes/correspondente.index'
+import { Route as ClienteIndexRouteImport } from './routes/cliente.index'
 
+const CorretorRoute = CorretorRouteImport.update({
+  id: '/corretor',
+  path: '/corretor',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CorrespondenteRoute = CorrespondenteRouteImport.update({
+  id: '/correspondente',
+  path: '/correspondente',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ClienteRoute = ClienteRouteImport.update({
+  id: '/cliente',
+  path: '/cliente',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CorretorIndexRoute = CorretorIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CorretorRoute,
+} as any)
+const CorrespondenteIndexRoute = CorrespondenteIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CorrespondenteRoute,
+} as any)
+const ClienteIndexRoute = ClienteIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ClienteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/cliente': typeof ClienteRouteWithChildren
+  '/correspondente': typeof CorrespondenteRouteWithChildren
+  '/corretor': typeof CorretorRouteWithChildren
+  '/cliente/': typeof ClienteIndexRoute
+  '/correspondente/': typeof CorrespondenteIndexRoute
+  '/corretor/': typeof CorretorIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/cliente': typeof ClienteIndexRoute
+  '/correspondente': typeof CorrespondenteIndexRoute
+  '/corretor': typeof CorretorIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/cliente': typeof ClienteRouteWithChildren
+  '/correspondente': typeof CorrespondenteRouteWithChildren
+  '/corretor': typeof CorretorRouteWithChildren
+  '/cliente/': typeof ClienteIndexRoute
+  '/correspondente/': typeof CorrespondenteIndexRoute
+  '/corretor/': typeof CorretorIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/cliente'
+    | '/correspondente'
+    | '/corretor'
+    | '/cliente/'
+    | '/correspondente/'
+    | '/corretor/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/cliente' | '/correspondente' | '/corretor'
+  id:
+    | '__root__'
+    | '/'
+    | '/cliente'
+    | '/correspondente'
+    | '/corretor'
+    | '/cliente/'
+    | '/correspondente/'
+    | '/corretor/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ClienteRoute: typeof ClienteRouteWithChildren
+  CorrespondenteRoute: typeof CorrespondenteRouteWithChildren
+  CorretorRoute: typeof CorretorRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/corretor': {
+      id: '/corretor'
+      path: '/corretor'
+      fullPath: '/corretor'
+      preLoaderRoute: typeof CorretorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/correspondente': {
+      id: '/correspondente'
+      path: '/correspondente'
+      fullPath: '/correspondente'
+      preLoaderRoute: typeof CorrespondenteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cliente': {
+      id: '/cliente'
+      path: '/cliente'
+      fullPath: '/cliente'
+      preLoaderRoute: typeof ClienteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +138,71 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/corretor/': {
+      id: '/corretor/'
+      path: '/'
+      fullPath: '/corretor/'
+      preLoaderRoute: typeof CorretorIndexRouteImport
+      parentRoute: typeof CorretorRoute
+    }
+    '/correspondente/': {
+      id: '/correspondente/'
+      path: '/'
+      fullPath: '/correspondente/'
+      preLoaderRoute: typeof CorrespondenteIndexRouteImport
+      parentRoute: typeof CorrespondenteRoute
+    }
+    '/cliente/': {
+      id: '/cliente/'
+      path: '/'
+      fullPath: '/cliente/'
+      preLoaderRoute: typeof ClienteIndexRouteImport
+      parentRoute: typeof ClienteRoute
+    }
   }
 }
 
+interface ClienteRouteChildren {
+  ClienteIndexRoute: typeof ClienteIndexRoute
+}
+
+const ClienteRouteChildren: ClienteRouteChildren = {
+  ClienteIndexRoute: ClienteIndexRoute,
+}
+
+const ClienteRouteWithChildren =
+  ClienteRoute._addFileChildren(ClienteRouteChildren)
+
+interface CorrespondenteRouteChildren {
+  CorrespondenteIndexRoute: typeof CorrespondenteIndexRoute
+}
+
+const CorrespondenteRouteChildren: CorrespondenteRouteChildren = {
+  CorrespondenteIndexRoute: CorrespondenteIndexRoute,
+}
+
+const CorrespondenteRouteWithChildren = CorrespondenteRoute._addFileChildren(
+  CorrespondenteRouteChildren,
+)
+
+interface CorretorRouteChildren {
+  CorretorIndexRoute: typeof CorretorIndexRoute
+}
+
+const CorretorRouteChildren: CorretorRouteChildren = {
+  CorretorIndexRoute: CorretorIndexRoute,
+}
+
+const CorretorRouteWithChildren = CorretorRoute._addFileChildren(
+  CorretorRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ClienteRoute: ClienteRouteWithChildren,
+  CorrespondenteRoute: CorrespondenteRouteWithChildren,
+  CorretorRoute: CorretorRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
