@@ -193,7 +193,7 @@ function PainelFinanceiroInner({ escopo }: { escopo: Escopo }) {
 
       {/* KPIs */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {cards.map(c => <KpiCard key={c.label} {...c} />)}
+        {cards.map(c => <KpiCard key={c.label} {...c} onClick={() => drill(c.label, c.value, 18)} />)}
       </div>
 
       {/* KPIs por natureza de lançamento */}
