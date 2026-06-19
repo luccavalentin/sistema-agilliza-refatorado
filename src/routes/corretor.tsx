@@ -45,7 +45,7 @@ const groups: PortalNavGroup[] = [
     label: "Operacional",
     items: [
       { label: "Simulações", icon: Calculator },
-      { label: "Aprovação", icon: CheckCircle2 },
+      { label: "Propostas", icon: CheckCircle2 },
       { label: "Demandas & SLA", icon: Clock },
       { label: "Minhas Tarefas", icon: ListChecks },
       { label: "Atualizar Status de Proposta", icon: RefreshCw },

@@ -49,7 +49,7 @@ const groups: PortalNavGroup[] = [
       { label: "Painel", icon: Activity },
       { label: "Consultas", icon: Search },
       { label: "Simulações", icon: Calculator },
-      { label: "Aprovações", icon: CheckCircle2 },
+      { label: "Propostas", icon: CheckCircle2 },
       { label: "Demandas & SLA", icon: Clock },
       { label: "Backlog (Kanban)", icon: Kanban },
       { label: "Minhas Tarefas", icon: ListChecks },
