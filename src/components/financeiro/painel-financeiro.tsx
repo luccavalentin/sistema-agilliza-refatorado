@@ -37,6 +37,28 @@ const filtrosCorr = ["Período", "Mês", "Ano", "Centro de custo", "Categoria", 
 const filtrosCor = ["Período", "Produto", "Cliente", "Proposta", "Status", "Categoria", "Forma de pagamento"];
 
 export function PainelFinanceiro({ escopo }: { escopo: Escopo }) {
+  return (
+    <DashboardDetailProvider>
+      <PainelFinanceiroInner escopo={escopo} />
+    </DashboardDetailProvider>
+  );
+}
+
+function PainelFinanceiroInner({ escopo }: { escopo: Escopo }) {
+  const { open } = useDashboardDetail();
+  const drill = (title: string, value: string, count = 16) =>
+    open({
+      title,
+      subtitle: `Painel Financeiro · ${escopo === "correspondente" ? "Correspondente" : "Corretor"}`,
+      period: "Últimos 30 dias",
+      kpis: [
+        { label: title, value },
+        { label: "Período", value: "30 dias" },
+        { label: "Escopo", value: escopo === "correspondente" ? "Ecossistema" : "Meus dados" },
+        { label: "Registros", value: String(count) },
+      ],
+      rows: buildMockRows(count),
+    });
   const corretorId = "u-cor-1";
   const [periodo, setPeriodo] = useState("30 dias");
 
