@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { MaskedInput } from "@/components/ui/masked-input";
+import { parseBRL } from "@/lib/formatters";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Paperclip, Calendar as CalIcon, RotateCcw, Layers, FileText } from "lucide-react";
@@ -59,7 +61,7 @@ export function LancamentoFormDialog({ open, onOpenChange, tipo, onSave }: Props
 
   const submit = () => {
     const baseId = `lan-${Date.now()}`;
-    const valorNum = Number(valor) || 0;
+    const valorNum = parseBRL(valor);
     const status: any = tipo === "receber" ? "Em aberto" : "Em aberto";
     const common = {
       tipo, natureza, descricao: descricao || "(sem descrição)",
@@ -91,8 +93,8 @@ export function LancamentoFormDialog({ open, onOpenChange, tipo, onSave }: Props
         } as Lancamento);
       }
     } else {
-      const total = Number(valorTotal) || valorNum * totalParcelas;
-      const valorP = +(((total - (Number(entrada) || 0)) / totalParcelas).toFixed(2));
+      const total = parseBRL(valorTotal) || valorNum * totalParcelas;
+      const valorP = +(((total - parseBRL(entrada)) / totalParcelas).toFixed(2));
       const primeiro = primeiroVenc ? new Date(primeiroVenc) : new Date();
       const grupoId = `grp-${baseId}`;
       for (let p = 0; p < totalParcelas; p++) {
@@ -107,7 +109,7 @@ export function LancamentoFormDialog({ open, onOpenChange, tipo, onSave }: Props
           parcelamento: {
             totalParcelas, parcelaAtual: p + 1, valorTotal: total, valorParcela: valorP,
             primeiroVencimento: primeiro.toISOString(), frequencia: freqParc,
-            diaVencimento: diaVencParc, entrada: Number(entrada) || undefined, grupoId,
+            diaVencimento: diaVencParc, entrada: parseBRL(entrada) || undefined, grupoId,
           },
         } as Lancamento);
       }
@@ -154,7 +156,7 @@ export function LancamentoFormDialog({ open, onOpenChange, tipo, onSave }: Props
               {categorias.map(c => <option key={c.id} value={c.id}>{c.nome}</option>)}
             </select>
           </div>
-          <div><Label>Valor (R$)</Label><Input type="number" value={valor} onChange={e => setValor(e.target.value)} /></div>
+          <div><Label>Valor</Label><MaskedInput mask="currency" value={valor} onValueChange={setValor} placeholder="R$ 0,00" /></div>
           {natureza === "Esporádico" && (
             <div><Label>Data de vencimento</Label><Input type="date" value={vencimento} onChange={e => setVencimento(e.target.value)} /></div>
           )}
@@ -208,8 +210,8 @@ export function LancamentoFormDialog({ open, onOpenChange, tipo, onSave }: Props
             <div className="text-xs font-bold uppercase tracking-wider text-brand flex items-center gap-1.5"><Layers className="h-3.5 w-3.5" />Configuração de parcelamento</div>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               <div><Label>Quantidade de parcelas</Label><Input type="number" min={2} max={120} value={totalParcelas} onChange={e => setTotalParcelas(Number(e.target.value))} /></div>
-              <div><Label>Valor total (R$)</Label><Input type="number" value={valorTotal} onChange={e => setValorTotal(e.target.value)} placeholder="Opcional" /></div>
-              <div><Label>Entrada (R$)</Label><Input type="number" value={entrada} onChange={e => setEntrada(e.target.value)} placeholder="Opcional" /></div>
+              <div><Label>Valor total</Label><MaskedInput mask="currency" value={valorTotal} onValueChange={setValorTotal} placeholder="R$ 0,00 (opcional)" /></div>
+              <div><Label>Entrada</Label><MaskedInput mask="currency" value={entrada} onValueChange={setEntrada} placeholder="R$ 0,00 (opcional)" /></div>
               <div><Label>Primeiro vencimento</Label><Input type="date" value={primeiroVenc} onChange={e => setPrimeiroVenc(e.target.value)} /></div>
               <div><Label>Frequência</Label>
                 <select className="w-full h-9 rounded-md border border-input bg-background px-2 text-sm" value={freqParc} onChange={e => setFreqParc(e.target.value as Frequencia)}>
