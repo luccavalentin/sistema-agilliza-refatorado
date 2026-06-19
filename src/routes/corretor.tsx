@@ -2,18 +2,52 @@ import { createFileRoute, Outlet } from "@tanstack/react-router";
 import {
   LayoutDashboard,
   Users,
-  Briefcase,
-  Wallet,
+  Calculator,
+  CheckCircle2,
+  Clock,
+  ListChecks,
+  RefreshCw,
   BarChart3,
+  Wallet,
+  PieChart,
+  Settings,
 } from "lucide-react";
-import { PortalShell, type PortalNavItem } from "@/components/portal-shell";
+import { PortalShell, type PortalNavGroup } from "@/components/portal-shell";
 
-const items: PortalNavItem[] = [
-  { label: "Visão Geral", to: "/corretor", icon: LayoutDashboard },
-  { label: "CRM e Gestão de Clientes", icon: Users },
-  { label: "Operacional", icon: Briefcase },
-  { label: "Gestão Financeira", icon: Wallet },
-  { label: "Relatórios e Dashboards", icon: BarChart3 },
+const groups: PortalNavGroup[] = [
+  {
+    label: "Visão Geral",
+    items: [
+      { label: "Painel de Monitoramento", to: "/corretor", icon: LayoutDashboard },
+    ],
+  },
+  {
+    label: "CRM e Gestão de Cliente",
+    items: [{ label: "CRM de Cliente", icon: Users }],
+  },
+  {
+    label: "Operacional",
+    items: [
+      { label: "Simulações", icon: Calculator },
+      { label: "Aprovação", icon: CheckCircle2 },
+      { label: "Demandas & SLA", icon: Clock },
+      { label: "Minhas Tarefas", icon: ListChecks },
+      { label: "Atualizar Status de Proposta", icon: RefreshCw },
+      { label: "Relatórios e Métricas Operacionais", icon: BarChart3 },
+    ],
+  },
+  {
+    label: "Financeiro Pessoal",
+    items: [{ label: "Contas a Pagar e Receber", icon: Wallet }],
+  },
+  {
+    label: "Relatórios e Dashboards",
+    items: [{ label: "Relatórios Completos", icon: PieChart }],
+  },
+  {
+    label: "Configurações",
+    items: [{ label: "Configurações", icon: Settings }],
+  },
 ];
 
 export const Route = createFileRoute("/corretor")({
@@ -21,7 +55,7 @@ export const Route = createFileRoute("/corretor")({
     meta: [{ title: "Corretor — Plataforma de Crédito" }],
   }),
   component: () => (
-    <PortalShell kind="corretor" items={items}>
+    <PortalShell kind="corretor" groups={groups}>
       <Outlet />
     </PortalShell>
   ),

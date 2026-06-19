@@ -18,6 +18,11 @@ export type PortalNavItem = {
   icon: ComponentType<{ className?: string; strokeWidth?: number }>;
 };
 
+export type PortalNavGroup = {
+  label: string;
+  items: PortalNavItem[];
+};
+
 export type PortalKind = "correspondente" | "corretor" | "cliente";
 
 const kindMeta: Record<PortalKind, { label: string; description: string; user: string }> = {
@@ -40,11 +45,11 @@ const kindMeta: Record<PortalKind, { label: string; description: string; user: s
 
 export function PortalShell({
   kind,
-  items,
+  groups,
   children,
 }: {
   kind: PortalKind;
-  items: PortalNavItem[];
+  groups: PortalNavGroup[];
   children: ReactNode;
 }) {
   const [collapsed, setCollapsed] = useState(false);
@@ -100,54 +105,59 @@ export function PortalShell({
         </div>
 
         {/* Nav */}
-        <nav className="mt-5 flex-1 space-y-1 overflow-y-auto px-3 pb-4">
-          {!collapsed && (
-            <p className="px-2 pb-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/55">
-              Navegação principal
-            </p>
-          )}
-          {items.map((item) => {
-            const Icon = item.icon;
-            const active = !!item.to && pathname === item.to;
-            const baseCls = [
-              "group relative flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-left text-sm font-medium transition-colors",
-              active
-                ? "bg-white text-brand shadow-sm"
-                : "text-white/85 hover:bg-white/10 hover:text-white",
-            ].join(" ");
-            const content = (
-              <>
-                {active && (
-                  <span
-                    className="absolute inset-y-1.5 -left-1 w-1 rounded-r bg-direction"
-                    aria-hidden
-                  />
-                )}
-                <Icon className="h-4 w-4 shrink-0" strokeWidth={active ? 2.5 : 2} />
-                {!collapsed && <span className="truncate">{item.label}</span>}
-              </>
-            );
-            return item.to ? (
-              <Link
-                key={item.label}
-                to={item.to}
-                onClick={() => setMobileOpen(false)}
-                className={baseCls}
-                title={collapsed ? item.label : undefined}
-              >
-                {content}
-              </Link>
-            ) : (
-              <button
-                key={item.label}
-                type="button"
-                className={baseCls}
-                title={collapsed ? item.label : undefined}
-              >
-                {content}
-              </button>
-            );
-          })}
+        <nav className="mt-4 flex-1 space-y-5 overflow-y-auto px-3 pb-4">
+          {groups.map((group) => (
+            <div key={group.label} className="space-y-1">
+              {!collapsed && (
+                <p className="px-2 pb-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/55">
+                  {group.label}
+                </p>
+              )}
+              {collapsed && <div className="mx-2 h-px bg-white/10" />}
+              {group.items.map((item) => {
+                const Icon = item.icon;
+                const active = !!item.to && pathname === item.to;
+                const baseCls = [
+                  "group relative flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-[13px] font-medium transition-colors",
+                  active
+                    ? "bg-white text-brand shadow-sm"
+                    : "text-white/85 hover:bg-white/10 hover:text-white",
+                ].join(" ");
+                const content = (
+                  <>
+                    {active && (
+                      <span
+                        className="absolute inset-y-1.5 -left-1 w-1 rounded-r bg-direction"
+                        aria-hidden
+                      />
+                    )}
+                    <Icon className="h-4 w-4 shrink-0" strokeWidth={active ? 2.5 : 2} />
+                    {!collapsed && <span className="truncate">{item.label}</span>}
+                  </>
+                );
+                return item.to ? (
+                  <Link
+                    key={item.label}
+                    to={item.to}
+                    onClick={() => setMobileOpen(false)}
+                    className={baseCls}
+                    title={collapsed ? item.label : undefined}
+                  >
+                    {content}
+                  </Link>
+                ) : (
+                  <button
+                    key={item.label}
+                    type="button"
+                    className={baseCls}
+                    title={collapsed ? item.label : undefined}
+                  >
+                    {content}
+                  </button>
+                );
+              })}
+            </div>
+          ))}
         </nav>
 
         {/* Footer */}
