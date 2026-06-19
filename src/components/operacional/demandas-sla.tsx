@@ -277,28 +277,15 @@ function DemandaDetalhe({ demanda, onClose }: { demanda: Demanda; onClose: () =>
         </header>
 
         <div className="flex-1 overflow-y-auto p-5">
-          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Chat em tempo real
-          </h3>
-          <div className="space-y-3">
-            {[
-              { de: criador!, msg: demanda.descricao, h: formatDataHora(demanda.criadaEm) },
-              { de: resp!, msg: "Aceito e em andamento. Vou retornar até amanhã.", h: "há 1h" },
-              { de: criador!, msg: "Combinado, obrigado!", h: "há 30min" },
-            ].filter((m) => m.de).map((m, i) => (
-              <div key={i} className="rounded-md border border-border bg-card p-3">
-                <div className="flex items-center justify-between">
-                  <p className="text-xs font-semibold text-graphite">{m.de.nome}</p>
-                  <span className="text-[10px] text-muted-foreground">{m.h}</span>
-                </div>
-                <p className="mt-1 text-xs text-muted-foreground">{m.msg}</p>
-              </div>
-            ))}
-          </div>
-          <div className="mt-4 flex gap-2">
-            <Input placeholder="Mensagem…" />
-            <Button>Enviar</Button>
-          </div>
+          <PopoutChat
+            titulo={`Demanda — ${demanda.titulo}`}
+            storageKey={`demanda-${demanda.id}`}
+            mensagens={[
+              criador && { autor: criador.nome, texto: demanda.descricao, quando: formatDataHora(demanda.criadaEm) },
+              resp && { autor: resp.nome, texto: "Aceito e em andamento. Vou retornar até amanhã.", quando: "há 1h" },
+              criador && { autor: criador.nome, texto: "Combinado, obrigado!", quando: "há 30min" },
+            ].filter(Boolean) as { autor: string; texto: string; quando: string }[]}
+          />
         </div>
       </aside>
     </div>
