@@ -65,11 +65,20 @@ export type KpiCardProps = {
   sub?: { k: string; v: string }[];
   footer?: { label: string; value: string };
   caption?: string;
+  onClick?: () => void;
+  onSubClick?: (key: string) => void;
 };
 
-export function KpiCard({ label, value, accent, icon: Icon, sub, footer, caption }: KpiCardProps) {
+export function KpiCard({ label, value, accent, icon: Icon, sub, footer, caption, onClick, onSubClick }: KpiCardProps) {
+  const interactive = !!onClick;
   return (
-    <article className="overflow-hidden rounded-lg border border-border bg-card shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
+    <article
+      onClick={onClick}
+      role={interactive ? "button" : undefined}
+      tabIndex={interactive ? 0 : undefined}
+      onKeyDown={interactive ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick?.(); } } : undefined}
+      className={`overflow-hidden rounded-lg border border-border bg-card shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition ${interactive ? "cursor-pointer hover:border-brand/40 hover:shadow-md" : ""}`}
+    >
       <div className="h-1 w-full" style={{ backgroundColor: accent }} />
       <div className="p-4">
         <div className="flex items-start justify-between gap-3">
@@ -92,12 +101,17 @@ export function KpiCard({ label, value, accent, icon: Icon, sub, footer, caption
         {sub && (
           <div className="mt-3 grid grid-cols-2 gap-1.5">
             {sub.map((s) => (
-              <div key={s.k} className="rounded-md border border-border bg-background px-2 py-1.5">
+              <button
+                type="button"
+                key={s.k}
+                onClick={(e) => { e.stopPropagation(); onSubClick?.(s.k); }}
+                className="rounded-md border border-border bg-background px-2 py-1.5 text-left hover:border-brand/40"
+              >
                 <p className="text-[9px] font-medium uppercase tracking-wider text-muted-foreground">
                   {s.k}
                 </p>
                 <p className="mt-0.5 text-xs font-bold text-graphite">{s.v}</p>
-              </div>
+              </button>
             ))}
           </div>
         )}
@@ -118,20 +132,27 @@ export function Panel({
   right,
   children,
   className = "",
+  onClick,
 }: {
   title: string;
   icon?: ComponentType<{ className?: string }>;
   right?: ReactNode;
   children: ReactNode;
   className?: string;
+  onClick?: () => void;
 }) {
   return (
     <section className={`rounded-lg border border-border bg-card p-5 ${className}`}>
       <div className="mb-4 flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2 text-graphite">
+        <button
+          type="button"
+          onClick={onClick}
+          disabled={!onClick}
+          className={`flex items-center gap-2 text-graphite ${onClick ? "cursor-pointer hover:text-brand" : "cursor-default"}`}
+        >
           {Icon && <Icon className="h-4 w-4 text-brand" />}
           <h2 className="text-sm font-bold tracking-tight">{title}</h2>
-        </div>
+        </button>
         {right}
       </div>
       {children}
@@ -155,9 +176,11 @@ export function Legend({ items }: { items: { c: string; l: string }[] }) {
 export function MultiBarChart({
   data,
   series,
+  onBarClick,
 }: {
   data: { label: string; values: number[] }[];
   series: { color: string; label: string }[];
+  onBarClick?: (period: string, seriesLabel: string, value: number) => void;
 }) {
   const max = Math.max(...data.flatMap((d) => d.values), 1);
   return (
@@ -167,13 +190,16 @@ export function MultiBarChart({
           <div key={d.label} className="flex h-full flex-1 flex-col justify-end gap-1">
             <div className="flex flex-1 items-end gap-0.5">
               {d.values.map((v, i) => (
-                <div
+                <button
+                  type="button"
                   key={i}
-                  className="flex-1 rounded-t-sm transition-all"
+                  onClick={() => onBarClick?.(d.label, series[i].label, v)}
+                  className="flex-1 rounded-t-sm transition-all hover:opacity-100"
                   style={{
                     height: `${(v / max) * 100}%`,
                     background: series[i].color,
-                    opacity: 0.9,
+                    opacity: 0.85,
+                    cursor: onBarClick ? "pointer" : "default",
                   }}
                   title={`${series[i].label}: ${v}`}
                 />
@@ -195,25 +221,34 @@ export function MultiBarChart({
 export function HBarList({
   rows,
   accent = "var(--brand)",
+  onRowClick,
 }: {
   rows: { label: string; value: number; sub?: string }[];
   accent?: string;
+  onRowClick?: (label: string, value: number, sub?: string) => void;
 }) {
   const max = Math.max(...rows.map((r) => r.value), 1);
   return (
     <ul className="space-y-2.5">
       {rows.map((r) => (
         <li key={r.label}>
-          <div className="flex items-center justify-between gap-2 text-xs">
-            <span className="truncate font-medium text-graphite">{r.label}</span>
-            <span className="shrink-0 font-bold text-graphite">{r.sub ?? r.value}</span>
-          </div>
-          <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-secondary">
-            <div
-              className="h-full rounded-full"
-              style={{ width: `${(r.value / max) * 100}%`, background: accent }}
-            />
-          </div>
+          <button
+            type="button"
+            onClick={() => onRowClick?.(r.label, r.value, r.sub)}
+            disabled={!onRowClick}
+            className={`w-full text-left ${onRowClick ? "cursor-pointer hover:opacity-80" : ""}`}
+          >
+            <div className="flex items-center justify-between gap-2 text-xs">
+              <span className="truncate font-medium text-graphite">{r.label}</span>
+              <span className="shrink-0 font-bold text-graphite">{r.sub ?? r.value}</span>
+            </div>
+            <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-secondary">
+              <div
+                className="h-full rounded-full"
+                style={{ width: `${(r.value / max) * 100}%`, background: accent }}
+              />
+            </div>
+          </button>
         </li>
       ))}
     </ul>
@@ -224,10 +259,12 @@ export function Donut({
   segments,
   centerLabel,
   centerValue,
+  onSegmentClick,
 }: {
   segments: { value: number; color: string; label: string }[];
   centerLabel: string;
   centerValue: string;
+  onSegmentClick?: (label: string, value: number) => void;
 }) {
   const total = segments.reduce((a, s) => a + s.value, 0);
   let offset = 0;
@@ -250,6 +287,8 @@ export function Donut({
               strokeWidth="16"
               strokeDasharray={`${len} ${c - len}`}
               strokeDashoffset={-offset}
+              style={{ cursor: onSegmentClick ? "pointer" : "default" }}
+              onClick={() => onSegmentClick?.(s.label, s.value)}
             />
           );
           offset += len;
@@ -263,14 +302,21 @@ export function Donut({
         <p className="text-xl font-bold text-graphite">{centerValue}</p>
         <ul className="mt-3 space-y-1.5">
           {segments.map((s) => (
-            <li key={s.label} className="flex items-center justify-between gap-3 text-xs">
-              <span className="inline-flex min-w-0 items-center gap-2">
-                <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: s.color }} />
-                <span className="truncate text-graphite">{s.label}</span>
-              </span>
-              <span className="font-bold text-graphite">
-                {Math.round((s.value / total) * 100)}%
-              </span>
+            <li key={s.label}>
+              <button
+                type="button"
+                onClick={() => onSegmentClick?.(s.label, s.value)}
+                disabled={!onSegmentClick}
+                className={`flex w-full items-center justify-between gap-3 text-xs ${onSegmentClick ? "cursor-pointer hover:text-brand" : ""}`}
+              >
+                <span className="inline-flex min-w-0 items-center gap-2">
+                  <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: s.color }} />
+                  <span className="truncate text-graphite">{s.label}</span>
+                </span>
+                <span className="font-bold text-graphite">
+                  {Math.round((s.value / total) * 100)}%
+                </span>
+              </button>
             </li>
           ))}
         </ul>
@@ -281,8 +327,10 @@ export function Donut({
 
 export function Funnel({
   steps,
+  onStepClick,
 }: {
   steps: { label: string; value: number; color: string }[];
+  onStepClick?: (label: string, value: number) => void;
 }) {
   const max = steps[0]?.value ?? 1;
   return (
@@ -290,19 +338,26 @@ export function Funnel({
       {steps.map((s) => {
         const pct = (s.value / max) * 100;
         return (
-          <li key={s.label} className="flex items-center gap-3">
-            <span className="w-40 shrink-0 text-xs font-medium text-graphite">{s.label}</span>
-            <div className="relative h-7 flex-1 overflow-hidden rounded-md bg-secondary">
-              <div
-                className="absolute inset-y-0 left-0 flex items-center justify-end pr-2 text-[11px] font-bold text-white"
-                style={{ width: `${pct}%`, background: s.color }}
-              >
-                {s.value}
+          <li key={s.label}>
+            <button
+              type="button"
+              onClick={() => onStepClick?.(s.label, s.value)}
+              disabled={!onStepClick}
+              className={`flex w-full items-center gap-3 ${onStepClick ? "cursor-pointer hover:opacity-90" : ""}`}
+            >
+              <span className="w-40 shrink-0 text-left text-xs font-medium text-graphite">{s.label}</span>
+              <div className="relative h-7 flex-1 overflow-hidden rounded-md bg-secondary">
+                <div
+                  className="absolute inset-y-0 left-0 flex items-center justify-end pr-2 text-[11px] font-bold text-white"
+                  style={{ width: `${pct}%`, background: s.color }}
+                >
+                  {s.value}
+                </div>
               </div>
-            </div>
-            <span className="w-12 shrink-0 text-right text-[11px] text-muted-foreground">
-              {Math.round(pct)}%
-            </span>
+              <span className="w-12 shrink-0 text-right text-[11px] text-muted-foreground">
+                {Math.round(pct)}%
+              </span>
+            </button>
           </li>
         );
       })}
@@ -312,8 +367,10 @@ export function Funnel({
 
 export function AlertList({
   items,
+  onItemClick,
 }: {
   items: { tone: "critical" | "warning" | "info"; title: string; meta?: string }[];
+  onItemClick?: (title: string, tone: string) => void;
 }) {
   const toneMap = {
     critical: { bg: "color-mix(in oklab, var(--direction) 8%, transparent)", c: "var(--direction)" },
@@ -340,6 +397,7 @@ export function AlertList({
             </div>
             <button
               type="button"
+              onClick={() => onItemClick?.(a.title, a.tone)}
               className="rounded border border-border bg-background px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-graphite hover:border-brand/40 hover:text-brand"
             >
               Ver
@@ -347,6 +405,32 @@ export function AlertList({
           </li>
         );
       })}
+    </ul>
+  );
+}
+
+export function MonitorBlocks({
+  blocks,
+  onBlockClick,
+}: {
+  blocks: { l: string; v: string; c: string }[];
+  onBlockClick?: (label: string, value: string) => void;
+}) {
+  return (
+    <ul className="grid grid-cols-2 gap-2 text-[11px]">
+      {blocks.map((b) => (
+        <li key={b.l}>
+          <button
+            type="button"
+            onClick={() => onBlockClick?.(b.l, b.v)}
+            className="w-full rounded-md border border-border bg-background p-3 text-left hover:border-brand/40"
+            style={{ borderLeftWidth: 3, borderLeftColor: b.c }}
+          >
+            <p className="font-semibold text-muted-foreground">{b.l}</p>
+            <p className="mt-1 text-lg font-bold text-graphite">{b.v}</p>
+          </button>
+        </li>
+      ))}
     </ul>
   );
 }
