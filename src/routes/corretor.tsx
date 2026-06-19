@@ -12,6 +12,8 @@ import {
   PieChart,
   Settings,
   Search,
+  Sparkles,
+  Zap,
 } from "lucide-react";
 import { PortalShell, type PortalNavGroup } from "@/components/portal-shell";
 
@@ -25,6 +27,8 @@ const groups: PortalNavGroup[] = [
   {
     label: "CRM e Gestão de Cliente",
     items: [
+      { label: "Scan IA", icon: Sparkles },
+      { label: "Flash IA", icon: Zap },
       {
         label: "CRM de Clientes",
         icon: Users,
