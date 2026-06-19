@@ -17,6 +17,7 @@ import {
 } from "@/lib/operacional/mock-data";
 import { formatBRL, formatData } from "@/lib/operacional/formatters";
 import { ETAPAS_PROPOSTA, type EtapaProposta, type Prioridade, type Proposta } from "@/lib/operacional/types";
+import { PopoutChat } from "@/components/operacional/popout-chat";
 
 const prioridadeStyle: Record<Prioridade, string> = {
   "Baixa": "bg-slate-100 text-slate-700",
