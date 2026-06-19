@@ -107,14 +107,15 @@ function NavBranch({
   onNavigate: () => void;
   defaultOpen: boolean;
 }) {
-  const [open, setOpen] = useState(defaultOpen);
-  const Icon = item.icon;
   const anyActive = !!item.children?.some((c) => c.to && pathname.startsWith(c.to));
+  const [userOpen, setUserOpen] = useState<boolean | null>(defaultOpen ? true : null);
+  const open = userOpen ?? anyActive;
+  const Icon = item.icon;
   return (
     <div>
       <button
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => setUserOpen(!open)}
         className={[
           "group relative flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-[13px] font-medium transition-colors",
           anyActive ? "text-white" : "text-white/85 hover:bg-white/10 hover:text-white",
