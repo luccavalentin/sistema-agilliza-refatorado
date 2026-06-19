@@ -48,7 +48,7 @@ const groups: PortalNavGroup[] = [
       { label: "Consultas", to: "/corretor/operacional/consultas", icon: Search },
       { label: "Simulações", to: "/corretor/operacional/simulacoes", icon: Calculator },
       { label: "Minhas Simulações", to: "/corretor/operacional/minhas-simulacoes", icon: Sparkles },
-      { label: "Propostas", icon: CheckCircle2 },
+      { label: "Propostas", to: "/corretor/operacional/propostas", icon: CheckCircle2 },
       { label: "Demandas & SLA", icon: Clock },
       { label: "Minhas Tarefas", icon: ListChecks },
       { label: "Atualizar Status de Proposta", icon: RefreshCw },
