@@ -16,6 +16,14 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as CorretorIndexRouteImport } from './routes/corretor.index'
 import { Route as CorrespondenteIndexRouteImport } from './routes/correspondente.index'
 import { Route as ClienteIndexRouteImport } from './routes/cliente.index'
+import { Route as CorretorCrmIndexRouteImport } from './routes/corretor.crm.index'
+import { Route as CorrespondenteCrmIndexRouteImport } from './routes/correspondente.crm.index'
+import { Route as CorretorCrmRelatoriosRouteImport } from './routes/corretor.crm.relatorios'
+import { Route as CorretorCrmConsultasRouteImport } from './routes/corretor.crm.consultas'
+import { Route as CorretorCrmCadastroRouteImport } from './routes/corretor.crm.cadastro'
+import { Route as CorrespondenteCrmRelatoriosRouteImport } from './routes/correspondente.crm.relatorios'
+import { Route as CorrespondenteCrmConsultasRouteImport } from './routes/correspondente.crm.consultas'
+import { Route as CorrespondenteCrmCadastroRouteImport } from './routes/correspondente.crm.cadastro'
 
 const CorretorRoute = CorretorRouteImport.update({
   id: '/corretor',
@@ -52,6 +60,49 @@ const ClienteIndexRoute = ClienteIndexRouteImport.update({
   path: '/',
   getParentRoute: () => ClienteRoute,
 } as any)
+const CorretorCrmIndexRoute = CorretorCrmIndexRouteImport.update({
+  id: '/crm/',
+  path: '/crm/',
+  getParentRoute: () => CorretorRoute,
+} as any)
+const CorrespondenteCrmIndexRoute = CorrespondenteCrmIndexRouteImport.update({
+  id: '/crm/',
+  path: '/crm/',
+  getParentRoute: () => CorrespondenteRoute,
+} as any)
+const CorretorCrmRelatoriosRoute = CorretorCrmRelatoriosRouteImport.update({
+  id: '/crm/relatorios',
+  path: '/crm/relatorios',
+  getParentRoute: () => CorretorRoute,
+} as any)
+const CorretorCrmConsultasRoute = CorretorCrmConsultasRouteImport.update({
+  id: '/crm/consultas',
+  path: '/crm/consultas',
+  getParentRoute: () => CorretorRoute,
+} as any)
+const CorretorCrmCadastroRoute = CorretorCrmCadastroRouteImport.update({
+  id: '/crm/cadastro',
+  path: '/crm/cadastro',
+  getParentRoute: () => CorretorRoute,
+} as any)
+const CorrespondenteCrmRelatoriosRoute =
+  CorrespondenteCrmRelatoriosRouteImport.update({
+    id: '/crm/relatorios',
+    path: '/crm/relatorios',
+    getParentRoute: () => CorrespondenteRoute,
+  } as any)
+const CorrespondenteCrmConsultasRoute =
+  CorrespondenteCrmConsultasRouteImport.update({
+    id: '/crm/consultas',
+    path: '/crm/consultas',
+    getParentRoute: () => CorrespondenteRoute,
+  } as any)
+const CorrespondenteCrmCadastroRoute =
+  CorrespondenteCrmCadastroRouteImport.update({
+    id: '/crm/cadastro',
+    path: '/crm/cadastro',
+    getParentRoute: () => CorrespondenteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -61,12 +112,28 @@ export interface FileRoutesByFullPath {
   '/cliente/': typeof ClienteIndexRoute
   '/correspondente/': typeof CorrespondenteIndexRoute
   '/corretor/': typeof CorretorIndexRoute
+  '/correspondente/crm/cadastro': typeof CorrespondenteCrmCadastroRoute
+  '/correspondente/crm/consultas': typeof CorrespondenteCrmConsultasRoute
+  '/correspondente/crm/relatorios': typeof CorrespondenteCrmRelatoriosRoute
+  '/corretor/crm/cadastro': typeof CorretorCrmCadastroRoute
+  '/corretor/crm/consultas': typeof CorretorCrmConsultasRoute
+  '/corretor/crm/relatorios': typeof CorretorCrmRelatoriosRoute
+  '/correspondente/crm/': typeof CorrespondenteCrmIndexRoute
+  '/corretor/crm/': typeof CorretorCrmIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/cliente': typeof ClienteIndexRoute
   '/correspondente': typeof CorrespondenteIndexRoute
   '/corretor': typeof CorretorIndexRoute
+  '/correspondente/crm/cadastro': typeof CorrespondenteCrmCadastroRoute
+  '/correspondente/crm/consultas': typeof CorrespondenteCrmConsultasRoute
+  '/correspondente/crm/relatorios': typeof CorrespondenteCrmRelatoriosRoute
+  '/corretor/crm/cadastro': typeof CorretorCrmCadastroRoute
+  '/corretor/crm/consultas': typeof CorretorCrmConsultasRoute
+  '/corretor/crm/relatorios': typeof CorretorCrmRelatoriosRoute
+  '/correspondente/crm': typeof CorrespondenteCrmIndexRoute
+  '/corretor/crm': typeof CorretorCrmIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -77,6 +144,14 @@ export interface FileRoutesById {
   '/cliente/': typeof ClienteIndexRoute
   '/correspondente/': typeof CorrespondenteIndexRoute
   '/corretor/': typeof CorretorIndexRoute
+  '/correspondente/crm/cadastro': typeof CorrespondenteCrmCadastroRoute
+  '/correspondente/crm/consultas': typeof CorrespondenteCrmConsultasRoute
+  '/correspondente/crm/relatorios': typeof CorrespondenteCrmRelatoriosRoute
+  '/corretor/crm/cadastro': typeof CorretorCrmCadastroRoute
+  '/corretor/crm/consultas': typeof CorretorCrmConsultasRoute
+  '/corretor/crm/relatorios': typeof CorretorCrmRelatoriosRoute
+  '/correspondente/crm/': typeof CorrespondenteCrmIndexRoute
+  '/corretor/crm/': typeof CorretorCrmIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -88,8 +163,28 @@ export interface FileRouteTypes {
     | '/cliente/'
     | '/correspondente/'
     | '/corretor/'
+    | '/correspondente/crm/cadastro'
+    | '/correspondente/crm/consultas'
+    | '/correspondente/crm/relatorios'
+    | '/corretor/crm/cadastro'
+    | '/corretor/crm/consultas'
+    | '/corretor/crm/relatorios'
+    | '/correspondente/crm/'
+    | '/corretor/crm/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/cliente' | '/correspondente' | '/corretor'
+  to:
+    | '/'
+    | '/cliente'
+    | '/correspondente'
+    | '/corretor'
+    | '/correspondente/crm/cadastro'
+    | '/correspondente/crm/consultas'
+    | '/correspondente/crm/relatorios'
+    | '/corretor/crm/cadastro'
+    | '/corretor/crm/consultas'
+    | '/corretor/crm/relatorios'
+    | '/correspondente/crm'
+    | '/corretor/crm'
   id:
     | '__root__'
     | '/'
@@ -99,6 +194,14 @@ export interface FileRouteTypes {
     | '/cliente/'
     | '/correspondente/'
     | '/corretor/'
+    | '/correspondente/crm/cadastro'
+    | '/correspondente/crm/consultas'
+    | '/correspondente/crm/relatorios'
+    | '/corretor/crm/cadastro'
+    | '/corretor/crm/consultas'
+    | '/corretor/crm/relatorios'
+    | '/correspondente/crm/'
+    | '/corretor/crm/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -159,6 +262,62 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ClienteIndexRouteImport
       parentRoute: typeof ClienteRoute
     }
+    '/corretor/crm/': {
+      id: '/corretor/crm/'
+      path: '/crm'
+      fullPath: '/corretor/crm/'
+      preLoaderRoute: typeof CorretorCrmIndexRouteImport
+      parentRoute: typeof CorretorRoute
+    }
+    '/correspondente/crm/': {
+      id: '/correspondente/crm/'
+      path: '/crm'
+      fullPath: '/correspondente/crm/'
+      preLoaderRoute: typeof CorrespondenteCrmIndexRouteImport
+      parentRoute: typeof CorrespondenteRoute
+    }
+    '/corretor/crm/relatorios': {
+      id: '/corretor/crm/relatorios'
+      path: '/crm/relatorios'
+      fullPath: '/corretor/crm/relatorios'
+      preLoaderRoute: typeof CorretorCrmRelatoriosRouteImport
+      parentRoute: typeof CorretorRoute
+    }
+    '/corretor/crm/consultas': {
+      id: '/corretor/crm/consultas'
+      path: '/crm/consultas'
+      fullPath: '/corretor/crm/consultas'
+      preLoaderRoute: typeof CorretorCrmConsultasRouteImport
+      parentRoute: typeof CorretorRoute
+    }
+    '/corretor/crm/cadastro': {
+      id: '/corretor/crm/cadastro'
+      path: '/crm/cadastro'
+      fullPath: '/corretor/crm/cadastro'
+      preLoaderRoute: typeof CorretorCrmCadastroRouteImport
+      parentRoute: typeof CorretorRoute
+    }
+    '/correspondente/crm/relatorios': {
+      id: '/correspondente/crm/relatorios'
+      path: '/crm/relatorios'
+      fullPath: '/correspondente/crm/relatorios'
+      preLoaderRoute: typeof CorrespondenteCrmRelatoriosRouteImport
+      parentRoute: typeof CorrespondenteRoute
+    }
+    '/correspondente/crm/consultas': {
+      id: '/correspondente/crm/consultas'
+      path: '/crm/consultas'
+      fullPath: '/correspondente/crm/consultas'
+      preLoaderRoute: typeof CorrespondenteCrmConsultasRouteImport
+      parentRoute: typeof CorrespondenteRoute
+    }
+    '/correspondente/crm/cadastro': {
+      id: '/correspondente/crm/cadastro'
+      path: '/crm/cadastro'
+      fullPath: '/correspondente/crm/cadastro'
+      preLoaderRoute: typeof CorrespondenteCrmCadastroRouteImport
+      parentRoute: typeof CorrespondenteRoute
+    }
   }
 }
 
@@ -175,10 +334,18 @@ const ClienteRouteWithChildren =
 
 interface CorrespondenteRouteChildren {
   CorrespondenteIndexRoute: typeof CorrespondenteIndexRoute
+  CorrespondenteCrmCadastroRoute: typeof CorrespondenteCrmCadastroRoute
+  CorrespondenteCrmConsultasRoute: typeof CorrespondenteCrmConsultasRoute
+  CorrespondenteCrmRelatoriosRoute: typeof CorrespondenteCrmRelatoriosRoute
+  CorrespondenteCrmIndexRoute: typeof CorrespondenteCrmIndexRoute
 }
 
 const CorrespondenteRouteChildren: CorrespondenteRouteChildren = {
   CorrespondenteIndexRoute: CorrespondenteIndexRoute,
+  CorrespondenteCrmCadastroRoute: CorrespondenteCrmCadastroRoute,
+  CorrespondenteCrmConsultasRoute: CorrespondenteCrmConsultasRoute,
+  CorrespondenteCrmRelatoriosRoute: CorrespondenteCrmRelatoriosRoute,
+  CorrespondenteCrmIndexRoute: CorrespondenteCrmIndexRoute,
 }
 
 const CorrespondenteRouteWithChildren = CorrespondenteRoute._addFileChildren(
@@ -187,10 +354,18 @@ const CorrespondenteRouteWithChildren = CorrespondenteRoute._addFileChildren(
 
 interface CorretorRouteChildren {
   CorretorIndexRoute: typeof CorretorIndexRoute
+  CorretorCrmCadastroRoute: typeof CorretorCrmCadastroRoute
+  CorretorCrmConsultasRoute: typeof CorretorCrmConsultasRoute
+  CorretorCrmRelatoriosRoute: typeof CorretorCrmRelatoriosRoute
+  CorretorCrmIndexRoute: typeof CorretorCrmIndexRoute
 }
 
 const CorretorRouteChildren: CorretorRouteChildren = {
   CorretorIndexRoute: CorretorIndexRoute,
+  CorretorCrmCadastroRoute: CorretorCrmCadastroRoute,
+  CorretorCrmConsultasRoute: CorretorCrmConsultasRoute,
+  CorretorCrmRelatoriosRoute: CorretorCrmRelatoriosRoute,
+  CorretorCrmIndexRoute: CorretorCrmIndexRoute,
 }
 
 const CorretorRouteWithChildren = CorretorRoute._addFileChildren(

@@ -31,7 +31,16 @@ const groups: PortalNavGroup[] = [
     items: [
       { label: "Scan IA", icon: Sparkles },
       { label: "Flash IA", icon: Zap },
-      { label: "CRM de Clientes", icon: Users },
+      {
+        label: "CRM de Clientes",
+        icon: Users,
+        children: [
+          { label: "Dashboard de Clientes", to: "/correspondente/crm", icon: LayoutDashboard },
+          { label: "Cadastro de Cliente", to: "/correspondente/crm/cadastro", icon: Users },
+          { label: "Consultas", to: "/correspondente/crm/consultas", icon: Search },
+          { label: "Relatórios", to: "/correspondente/crm/relatorios", icon: BarChart3 },
+        ],
+      },
     ],
   },
   {
