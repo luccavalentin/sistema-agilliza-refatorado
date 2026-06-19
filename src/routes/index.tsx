@@ -46,8 +46,45 @@ export const Route = createFileRoute("/")({
 });
 
 function LoginPage() {
+  const navigate = useNavigate();
   const [selected, setSelected] = useState<Profile>("correspondente");
+  const [cpf, setCpf] = useState("");
+  const [birth, setBirth] = useState("");
+  const [error, setError] = useState<string | null>(null);
   const current = profiles.find((p) => p.id === selected)!;
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    if (selected === "cliente") {
+      if (!isValidCpfFormat(cpf)) {
+        setError("Informe um CPF válido (11 dígitos).");
+        return;
+      }
+      if (!birth) {
+        setError("Informe sua data de nascimento.");
+        return;
+      }
+      const match = findCrmClientByLogin(cpf, birth);
+      if (!match) {
+        setError("CPF não encontrado no CRM ou data de nascimento incorreta.");
+        return;
+      }
+      try {
+        sessionStorage.setItem(
+          "cliente_session",
+          JSON.stringify({ cpf: onlyDigits(cpf), nome: match.nome }),
+        );
+      } catch {
+        // sessionStorage indisponível — segue sem persistir
+      }
+      navigate({ to: "/cliente" });
+      return;
+    }
+
+    navigate({ to: current.route });
+  };
 
   return (
     <div className="min-h-screen bg-secondary flex flex-col">
