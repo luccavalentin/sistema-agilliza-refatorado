@@ -14,6 +14,7 @@ import {
 } from "@/lib/operacional/mock-data";
 import { formatData, formatDataHora } from "@/lib/operacional/formatters";
 import type { Demanda, Prioridade, StatusDemanda } from "@/lib/operacional/types";
+import { PopoutChat } from "@/components/operacional/popout-chat";
 
 const COLUNAS: StatusDemanda[] = [
   "Nova", "Aguardando aceite", "Em andamento",
