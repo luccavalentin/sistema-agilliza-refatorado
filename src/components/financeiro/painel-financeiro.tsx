@@ -169,6 +169,40 @@ export function PainelFinanceiro({ escopo }: { escopo: Escopo }) {
         {cards.map(c => <KpiCard key={c.label} {...c} />)}
       </div>
 
+      {/* KPIs por natureza de lançamento */}
+      <Panel title="Resumo por natureza do lançamento" icon={Receipt}>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+          {(() => {
+            const sumN = (arr: typeof recDados, n: string) => arr.filter(r => r.natureza === n).reduce((s, r) => s + r.valor, 0);
+            const recEsp = sumN(recDados, "Esporádico");
+            const recRec = sumN(recDados, "Recorrente");
+            const recParc = sumN(recDados, "Parcelado");
+            const pagEsp = sumN(pagDados, "Esporádico");
+            const pagRec = sumN(pagDados, "Recorrente");
+            const pagParc = sumN(pagDados, "Parcelado");
+            return (
+              <>
+                <KpiCard label="Esporádico a receber" value={formatBRL(recEsp)} accent={TOKENS.muted} icon={Receipt} />
+                <KpiCard label="Recorrente a receber" value={formatBRL(recRec)} accent={TOKENS.brand} icon={Clock} />
+                <KpiCard label="Parcelado a receber" value={formatBRL(recParc)} accent={TOKENS.info} icon={Receipt} />
+                <KpiCard label="Esporádico a pagar" value={formatBRL(pagEsp)} accent={TOKENS.muted} icon={Receipt} />
+                <KpiCard label="Recorrente a pagar" value={formatBRL(pagRec)} accent={TOKENS.direction} icon={Clock} />
+                <KpiCard label="Parcelado a pagar" value={formatBRL(pagParc)} accent={TOKENS.warning} icon={Receipt} />
+              </>
+            );
+          })()}
+        </div>
+        <div className="mt-3 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 text-xs">
+          <div className="rounded-md border border-border p-3"><div className="text-muted-foreground">Recorrências ativas</div><div className="font-bold text-graphite text-base mt-0.5">{[...recDados, ...pagDados].filter(d => d.natureza === "Recorrente").length}</div></div>
+          <div className="rounded-md border border-border p-3"><div className="text-muted-foreground">Recorrências pausadas</div><div className="font-bold text-graphite text-base mt-0.5">{recorrencias.filter(r => r.status === "Pausada").length}</div></div>
+          <div className="rounded-md border border-border p-3"><div className="text-muted-foreground">Parcelamentos ativos</div><div className="font-bold text-graphite text-base mt-0.5">{new Set([...recDados, ...pagDados].filter(d => d.parcelamento).map(d => d.parcelamento!.grupoId)).size}</div></div>
+          <div className="rounded-md border border-border p-3"><div className="text-muted-foreground">Parcelas vencidas</div><div className="font-bold text-graphite text-base mt-0.5">{[...recDados, ...pagDados].filter(d => d.parcelamento && d.status === "Vencido").length}</div></div>
+          <div className="rounded-md border border-border p-3"><div className="text-muted-foreground">Próximas recorrências (30d)</div><div className="font-bold text-graphite text-base mt-0.5">{[...recDados, ...pagDados].filter(d => d.natureza === "Recorrente" && new Date(d.vencimento).getTime() - Date.now() < 30 * 86400000 && new Date(d.vencimento).getTime() > Date.now()).length}</div></div>
+          <div className="rounded-md border border-border p-3"><div className="text-muted-foreground">Próximas parcelas (30d)</div><div className="font-bold text-graphite text-base mt-0.5">{[...recDados, ...pagDados].filter(d => d.natureza === "Parcelado" && new Date(d.vencimento).getTime() - Date.now() < 30 * 86400000 && new Date(d.vencimento).getTime() > Date.now()).length}</div></div>
+        </div>
+      </Panel>
+
+
       {/* Gráficos principais */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Panel title="Fluxo de Caixa: Previsto x Realizado" icon={TrendingUp} className="lg:col-span-2">
