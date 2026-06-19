@@ -172,55 +172,95 @@ function LoginPage() {
 
             <p className="mt-3 text-xs text-muted-foreground">{current.description}</p>
 
-            <form
-              className="mt-6 space-y-4"
-              onSubmit={(e) => {
-                e.preventDefault();
-              }}
-            >
-              <div className="space-y-1.5">
-                <label htmlFor="email" className="text-xs font-medium text-graphite">
-                  E-mail corporativo
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  autoComplete="email"
-                  placeholder="nome@empresa.com.br"
-                  className="w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-brand focus:ring-2 focus:ring-brand/15"
-                />
-              </div>
+            <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
+              {selected === "cliente" ? (
+                <>
+                  <div className="space-y-1.5">
+                    <label htmlFor="cpf" className="text-xs font-medium text-graphite flex items-center gap-1.5">
+                      <IdCard className="h-3.5 w-3.5 text-brand" />
+                      CPF do titular (cadastrado no CRM)
+                    </label>
+                    <input
+                      id="cpf"
+                      type="text"
+                      inputMode="numeric"
+                      autoComplete="username"
+                      placeholder="000.000.000-00"
+                      value={cpf}
+                      onChange={(e) => setCpf(formatCpf(e.target.value))}
+                      maxLength={14}
+                      className="w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-brand focus:ring-2 focus:ring-brand/15"
+                    />
+                  </div>
 
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <label htmlFor="password" className="text-xs font-medium text-graphite">
-                    Senha
-                  </label>
-                  <button type="button" className="text-xs font-medium text-brand hover:underline">
-                    Esqueci minha senha
-                  </button>
-                </div>
-                <input
-                  id="password"
-                  type="password"
-                  autoComplete="current-password"
-                  placeholder="••••••••••"
-                  className="w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-brand focus:ring-2 focus:ring-brand/15"
-                />
-              </div>
+                  <div className="space-y-1.5">
+                    <label htmlFor="birth" className="text-xs font-medium text-graphite flex items-center gap-1.5">
+                      <Calendar className="h-3.5 w-3.5 text-brand" />
+                      Data de nascimento (senha)
+                    </label>
+                    <input
+                      id="birth"
+                      type="date"
+                      autoComplete="bday"
+                      value={birth}
+                      onChange={(e) => setBirth(e.target.value)}
+                      className="w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-brand focus:ring-2 focus:ring-brand/15"
+                    />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="space-y-1.5">
+                    <label htmlFor="email" className="text-xs font-medium text-graphite">
+                      E-mail corporativo
+                    </label>
+                    <input
+                      id="email"
+                      type="email"
+                      autoComplete="email"
+                      placeholder="nome@empresa.com.br"
+                      className="w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-brand focus:ring-2 focus:ring-brand/15"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <label htmlFor="password" className="text-xs font-medium text-graphite">
+                        Senha
+                      </label>
+                      <button type="button" className="text-xs font-medium text-brand hover:underline">
+                        Esqueci minha senha
+                      </button>
+                    </div>
+                    <input
+                      id="password"
+                      type="password"
+                      autoComplete="current-password"
+                      placeholder="••••••••••"
+                      className="w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-brand focus:ring-2 focus:ring-brand/15"
+                    />
+                  </div>
+                </>
+              )}
+
+              {error && (
+                <p className="rounded-md border border-direction/30 bg-direction/5 px-3 py-2 text-xs font-medium text-direction">
+                  {error}
+                </p>
+              )}
 
               <label className="flex items-center gap-2 text-xs text-muted-foreground">
                 <input type="checkbox" className="h-3.5 w-3.5 rounded border-input accent-[color:var(--brand)]" />
                 Manter sessão neste dispositivo
               </label>
 
-              <Link
-                to={current.route}
+              <button
+                type="submit"
                 className="group inline-flex w-full items-center justify-center gap-2 rounded-md bg-brand px-4 py-2.5 text-sm font-semibold text-brand-foreground transition-colors hover:bg-brand/90"
               >
                 Entrar como {current.title}
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-              </Link>
+              </button>
 
               <div className="flex items-center justify-center gap-2 text-[11px] text-muted-foreground">
                 <Lock className="h-3 w-3" />
