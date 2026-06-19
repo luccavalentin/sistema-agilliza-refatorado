@@ -472,3 +472,22 @@ function PropostaDetalhe({
     </div>
   );
 }
+
+function PropKpi({
+  label, value, tone, isText,
+}: { label: string; value: number | string; tone?: "emerald"|"red"|"blue"|"amber"; isText?: boolean }) {
+  const accent =
+    tone === "emerald" ? "#16a34a" :
+    tone === "red" ? "#dc2626" :
+    tone === "blue" ? "#2563eb" :
+    tone === "amber" ? "#d97706" : "#475569";
+  return (
+    <article className="overflow-hidden rounded-lg border border-border bg-card shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
+      <div className="h-1" style={{ backgroundColor: accent }} />
+      <div className="p-3">
+        <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</p>
+        <p className={`mt-1 font-bold text-graphite ${isText ? "text-base" : "text-2xl"}`}>{value}</p>
+      </div>
+    </article>
+  );
+}
