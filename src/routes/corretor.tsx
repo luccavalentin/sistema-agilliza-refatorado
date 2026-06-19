@@ -56,12 +56,16 @@ const groups: PortalNavGroup[] = [
     ],
   },
   {
-    label: "Financeiro Pessoal",
-    items: [{ label: "Contas a Pagar e Receber", icon: Wallet }],
-  },
-  {
-    label: "Relatórios e Dashboards",
-    items: [{ label: "Relatórios Completos", icon: PieChart }],
+    label: "Gestão Financeira",
+    items: [
+      { label: "Painel Financeiro", to: "/corretor/financeiro", icon: Wallet },
+      { label: "Meus Recebíveis", to: "/corretor/financeiro/recebiveis", icon: BarChart3 },
+      { label: "Minhas Comissões", to: "/corretor/financeiro/comissoes", icon: PieChart },
+      { label: "Minhas Despesas", to: "/corretor/financeiro/despesas", icon: Wallet },
+      { label: "Fluxo de Caixa", to: "/corretor/financeiro/fluxo", icon: BarChart3 },
+      { label: "Recorrências", to: "/corretor/financeiro/recorrencias", icon: RefreshCw },
+      { label: "Relatórios Financeiros", to: "/corretor/financeiro/relatorios", icon: PieChart },
+    ],
   },
   {
     label: "Configurações",
