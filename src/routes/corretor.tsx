@@ -64,7 +64,7 @@ const groups: PortalNavGroup[] = [
       { label: "Minhas Despesas", to: "/corretor/financeiro/despesas", icon: Wallet },
       { label: "Fluxo de Caixa", to: "/corretor/financeiro/fluxo", icon: BarChart3 },
       { label: "Recorrências", to: "/corretor/financeiro/recorrencias", icon: RefreshCw },
-      { label: "Relatórios Financeiros", to: "/corretor/financeiro/relatorios", icon: PieChart },
+      { label: "Relatórios Financeiros e Métricas Operacionais", to: "/corretor/financeiro/relatorios", icon: PieChart },
     ],
   },
   {

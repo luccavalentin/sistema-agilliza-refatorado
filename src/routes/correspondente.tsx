@@ -72,7 +72,7 @@ const groups: PortalNavGroup[] = [
       { label: "Conciliação", to: "/correspondente/financeiro/conciliacao", icon: CheckSquare },
       { label: "Recorrências", to: "/correspondente/financeiro/recorrencias", icon: RefreshCw },
       { label: "Categorias Financeiras", to: "/correspondente/financeiro/categorias", icon: Layers },
-      { label: "Relatórios Financeiros", to: "/correspondente/financeiro/relatorios", icon: FileBarChart },
+      { label: "Relatórios Financeiros e Métricas Operacionais", to: "/correspondente/financeiro/relatorios", icon: FileBarChart },
     ],
   },
   {

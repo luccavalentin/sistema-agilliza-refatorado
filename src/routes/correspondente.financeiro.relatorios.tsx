@@ -1,3 +1,3 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { RelatoriosFinanceiros } from "@/components/financeiro/relatorios-financeiros";
-export const Route = createFileRoute("/correspondente/financeiro/relatorios")({ component: () => <RelatoriosFinanceiros escopo="correspondente" /> });
+import { RelatoriosGerenciais } from "@/components/financeiro/relatorios-gerenciais";
+export const Route = createFileRoute("/correspondente/financeiro/relatorios")({ component: () => <RelatoriosGerenciais escopo="correspondente" /> });
