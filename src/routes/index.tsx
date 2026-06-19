@@ -1,6 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Building2, Users, User, ShieldCheck, Lock, ArrowRight } from "lucide-react";
+import { Building2, Users, User, ShieldCheck, Lock, ArrowRight, IdCard, Calendar } from "lucide-react";
+import { findCrmClientByLogin, formatCpf, isValidCpfFormat, onlyDigits } from "@/lib/crm-clients";
 
 type Profile = "correspondente" | "corretor" | "cliente";
 
