@@ -208,6 +208,7 @@ export function RelatoriosGerenciais({ escopo }: { escopo: "correspondente" | "c
   return (
     <div className="space-y-6">
       <PanelHeader
+        eyebrow="Gestão Financeira"
         title="Relatórios Financeiros e Métricas Operacionais"
         subtitle="Cruzamento entre dados financeiros e operacionais"
         right={
