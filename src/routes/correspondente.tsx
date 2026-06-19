@@ -53,7 +53,7 @@ const groups: PortalNavGroup[] = [
       { label: "Propostas", to: "/correspondente/operacional/propostas", icon: CheckCircle2 },
       { label: "Demandas & SLA", to: "/correspondente/operacional/demandas", icon: Clock },
       { label: "Minhas Tarefas", to: "/correspondente/operacional/tarefas", icon: ListChecks },
-      { label: "Relatórios e Métricas Operacionais", icon: BarChart3 },
+      { label: "Relatórios e Métricas Operacionais", to: "/correspondente/operacional/relatorios", icon: BarChart3 },
     ],
   },
   {

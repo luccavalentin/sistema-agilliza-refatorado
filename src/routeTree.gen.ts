@@ -26,15 +26,18 @@ import { Route as CorrespondenteOperacionalIndexRouteImport } from './routes/cor
 import { Route as CorrespondenteCrmIndexRouteImport } from './routes/correspondente.crm.index'
 import { Route as CorretorOperacionalTarefasRouteImport } from './routes/corretor.operacional.tarefas'
 import { Route as CorretorOperacionalSimulacoesRouteImport } from './routes/corretor.operacional.simulacoes'
+import { Route as CorretorOperacionalRelatoriosRouteImport } from './routes/corretor.operacional.relatorios'
 import { Route as CorretorOperacionalPropostasRouteImport } from './routes/corretor.operacional.propostas'
 import { Route as CorretorOperacionalMinhasSimulacoesRouteImport } from './routes/corretor.operacional.minhas-simulacoes'
 import { Route as CorretorOperacionalDemandasRouteImport } from './routes/corretor.operacional.demandas'
 import { Route as CorretorOperacionalConsultasRouteImport } from './routes/corretor.operacional.consultas'
+import { Route as CorretorOperacionalAtualizacaoRouteImport } from './routes/corretor.operacional.atualizacao'
 import { Route as CorretorCrmRelatoriosRouteImport } from './routes/corretor.crm.relatorios'
 import { Route as CorretorCrmConsultasRouteImport } from './routes/corretor.crm.consultas'
 import { Route as CorretorCrmCadastroRouteImport } from './routes/corretor.crm.cadastro'
 import { Route as CorrespondenteOperacionalTarefasRouteImport } from './routes/correspondente.operacional.tarefas'
 import { Route as CorrespondenteOperacionalSimulacoesRouteImport } from './routes/correspondente.operacional.simulacoes'
+import { Route as CorrespondenteOperacionalRelatoriosRouteImport } from './routes/correspondente.operacional.relatorios'
 import { Route as CorrespondenteOperacionalPropostasRouteImport } from './routes/correspondente.operacional.propostas'
 import { Route as CorrespondenteOperacionalMinhasSimulacoesRouteImport } from './routes/correspondente.operacional.minhas-simulacoes'
 import { Route as CorrespondenteOperacionalDemandasRouteImport } from './routes/correspondente.operacional.demandas'
@@ -133,6 +136,12 @@ const CorretorOperacionalSimulacoesRoute =
     path: '/simulacoes',
     getParentRoute: () => CorretorOperacionalRoute,
   } as any)
+const CorretorOperacionalRelatoriosRoute =
+  CorretorOperacionalRelatoriosRouteImport.update({
+    id: '/relatorios',
+    path: '/relatorios',
+    getParentRoute: () => CorretorOperacionalRoute,
+  } as any)
 const CorretorOperacionalPropostasRoute =
   CorretorOperacionalPropostasRouteImport.update({
     id: '/propostas',
@@ -155,6 +164,12 @@ const CorretorOperacionalConsultasRoute =
   CorretorOperacionalConsultasRouteImport.update({
     id: '/consultas',
     path: '/consultas',
+    getParentRoute: () => CorretorOperacionalRoute,
+  } as any)
+const CorretorOperacionalAtualizacaoRoute =
+  CorretorOperacionalAtualizacaoRouteImport.update({
+    id: '/atualizacao',
+    path: '/atualizacao',
     getParentRoute: () => CorretorOperacionalRoute,
   } as any)
 const CorretorCrmRelatoriosRoute = CorretorCrmRelatoriosRouteImport.update({
@@ -182,6 +197,12 @@ const CorrespondenteOperacionalSimulacoesRoute =
   CorrespondenteOperacionalSimulacoesRouteImport.update({
     id: '/simulacoes',
     path: '/simulacoes',
+    getParentRoute: () => CorrespondenteOperacionalRoute,
+  } as any)
+const CorrespondenteOperacionalRelatoriosRoute =
+  CorrespondenteOperacionalRelatoriosRouteImport.update({
+    id: '/relatorios',
+    path: '/relatorios',
     getParentRoute: () => CorrespondenteOperacionalRoute,
   } as any)
 const CorrespondenteOperacionalPropostasRoute =
@@ -246,15 +267,18 @@ export interface FileRoutesByFullPath {
   '/correspondente/operacional/demandas': typeof CorrespondenteOperacionalDemandasRoute
   '/correspondente/operacional/minhas-simulacoes': typeof CorrespondenteOperacionalMinhasSimulacoesRoute
   '/correspondente/operacional/propostas': typeof CorrespondenteOperacionalPropostasRoute
+  '/correspondente/operacional/relatorios': typeof CorrespondenteOperacionalRelatoriosRoute
   '/correspondente/operacional/simulacoes': typeof CorrespondenteOperacionalSimulacoesRoute
   '/correspondente/operacional/tarefas': typeof CorrespondenteOperacionalTarefasRoute
   '/corretor/crm/cadastro': typeof CorretorCrmCadastroRoute
   '/corretor/crm/consultas': typeof CorretorCrmConsultasRoute
   '/corretor/crm/relatorios': typeof CorretorCrmRelatoriosRoute
+  '/corretor/operacional/atualizacao': typeof CorretorOperacionalAtualizacaoRoute
   '/corretor/operacional/consultas': typeof CorretorOperacionalConsultasRoute
   '/corretor/operacional/demandas': typeof CorretorOperacionalDemandasRoute
   '/corretor/operacional/minhas-simulacoes': typeof CorretorOperacionalMinhasSimulacoesRoute
   '/corretor/operacional/propostas': typeof CorretorOperacionalPropostasRoute
+  '/corretor/operacional/relatorios': typeof CorretorOperacionalRelatoriosRoute
   '/corretor/operacional/simulacoes': typeof CorretorOperacionalSimulacoesRoute
   '/corretor/operacional/tarefas': typeof CorretorOperacionalTarefasRoute
   '/correspondente/crm/': typeof CorrespondenteCrmIndexRoute
@@ -274,15 +298,18 @@ export interface FileRoutesByTo {
   '/correspondente/operacional/demandas': typeof CorrespondenteOperacionalDemandasRoute
   '/correspondente/operacional/minhas-simulacoes': typeof CorrespondenteOperacionalMinhasSimulacoesRoute
   '/correspondente/operacional/propostas': typeof CorrespondenteOperacionalPropostasRoute
+  '/correspondente/operacional/relatorios': typeof CorrespondenteOperacionalRelatoriosRoute
   '/correspondente/operacional/simulacoes': typeof CorrespondenteOperacionalSimulacoesRoute
   '/correspondente/operacional/tarefas': typeof CorrespondenteOperacionalTarefasRoute
   '/corretor/crm/cadastro': typeof CorretorCrmCadastroRoute
   '/corretor/crm/consultas': typeof CorretorCrmConsultasRoute
   '/corretor/crm/relatorios': typeof CorretorCrmRelatoriosRoute
+  '/corretor/operacional/atualizacao': typeof CorretorOperacionalAtualizacaoRoute
   '/corretor/operacional/consultas': typeof CorretorOperacionalConsultasRoute
   '/corretor/operacional/demandas': typeof CorretorOperacionalDemandasRoute
   '/corretor/operacional/minhas-simulacoes': typeof CorretorOperacionalMinhasSimulacoesRoute
   '/corretor/operacional/propostas': typeof CorretorOperacionalPropostasRoute
+  '/corretor/operacional/relatorios': typeof CorretorOperacionalRelatoriosRoute
   '/corretor/operacional/simulacoes': typeof CorretorOperacionalSimulacoesRoute
   '/corretor/operacional/tarefas': typeof CorretorOperacionalTarefasRoute
   '/correspondente/crm': typeof CorrespondenteCrmIndexRoute
@@ -310,15 +337,18 @@ export interface FileRoutesById {
   '/correspondente/operacional/demandas': typeof CorrespondenteOperacionalDemandasRoute
   '/correspondente/operacional/minhas-simulacoes': typeof CorrespondenteOperacionalMinhasSimulacoesRoute
   '/correspondente/operacional/propostas': typeof CorrespondenteOperacionalPropostasRoute
+  '/correspondente/operacional/relatorios': typeof CorrespondenteOperacionalRelatoriosRoute
   '/correspondente/operacional/simulacoes': typeof CorrespondenteOperacionalSimulacoesRoute
   '/correspondente/operacional/tarefas': typeof CorrespondenteOperacionalTarefasRoute
   '/corretor/crm/cadastro': typeof CorretorCrmCadastroRoute
   '/corretor/crm/consultas': typeof CorretorCrmConsultasRoute
   '/corretor/crm/relatorios': typeof CorretorCrmRelatoriosRoute
+  '/corretor/operacional/atualizacao': typeof CorretorOperacionalAtualizacaoRoute
   '/corretor/operacional/consultas': typeof CorretorOperacionalConsultasRoute
   '/corretor/operacional/demandas': typeof CorretorOperacionalDemandasRoute
   '/corretor/operacional/minhas-simulacoes': typeof CorretorOperacionalMinhasSimulacoesRoute
   '/corretor/operacional/propostas': typeof CorretorOperacionalPropostasRoute
+  '/corretor/operacional/relatorios': typeof CorretorOperacionalRelatoriosRoute
   '/corretor/operacional/simulacoes': typeof CorretorOperacionalSimulacoesRoute
   '/corretor/operacional/tarefas': typeof CorretorOperacionalTarefasRoute
   '/correspondente/crm/': typeof CorrespondenteCrmIndexRoute
@@ -347,15 +377,18 @@ export interface FileRouteTypes {
     | '/correspondente/operacional/demandas'
     | '/correspondente/operacional/minhas-simulacoes'
     | '/correspondente/operacional/propostas'
+    | '/correspondente/operacional/relatorios'
     | '/correspondente/operacional/simulacoes'
     | '/correspondente/operacional/tarefas'
     | '/corretor/crm/cadastro'
     | '/corretor/crm/consultas'
     | '/corretor/crm/relatorios'
+    | '/corretor/operacional/atualizacao'
     | '/corretor/operacional/consultas'
     | '/corretor/operacional/demandas'
     | '/corretor/operacional/minhas-simulacoes'
     | '/corretor/operacional/propostas'
+    | '/corretor/operacional/relatorios'
     | '/corretor/operacional/simulacoes'
     | '/corretor/operacional/tarefas'
     | '/correspondente/crm/'
@@ -375,15 +408,18 @@ export interface FileRouteTypes {
     | '/correspondente/operacional/demandas'
     | '/correspondente/operacional/minhas-simulacoes'
     | '/correspondente/operacional/propostas'
+    | '/correspondente/operacional/relatorios'
     | '/correspondente/operacional/simulacoes'
     | '/correspondente/operacional/tarefas'
     | '/corretor/crm/cadastro'
     | '/corretor/crm/consultas'
     | '/corretor/crm/relatorios'
+    | '/corretor/operacional/atualizacao'
     | '/corretor/operacional/consultas'
     | '/corretor/operacional/demandas'
     | '/corretor/operacional/minhas-simulacoes'
     | '/corretor/operacional/propostas'
+    | '/corretor/operacional/relatorios'
     | '/corretor/operacional/simulacoes'
     | '/corretor/operacional/tarefas'
     | '/correspondente/crm'
@@ -410,15 +446,18 @@ export interface FileRouteTypes {
     | '/correspondente/operacional/demandas'
     | '/correspondente/operacional/minhas-simulacoes'
     | '/correspondente/operacional/propostas'
+    | '/correspondente/operacional/relatorios'
     | '/correspondente/operacional/simulacoes'
     | '/correspondente/operacional/tarefas'
     | '/corretor/crm/cadastro'
     | '/corretor/crm/consultas'
     | '/corretor/crm/relatorios'
+    | '/corretor/operacional/atualizacao'
     | '/corretor/operacional/consultas'
     | '/corretor/operacional/demandas'
     | '/corretor/operacional/minhas-simulacoes'
     | '/corretor/operacional/propostas'
+    | '/corretor/operacional/relatorios'
     | '/corretor/operacional/simulacoes'
     | '/corretor/operacional/tarefas'
     | '/correspondente/crm/'
@@ -555,6 +594,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CorretorOperacionalSimulacoesRouteImport
       parentRoute: typeof CorretorOperacionalRoute
     }
+    '/corretor/operacional/relatorios': {
+      id: '/corretor/operacional/relatorios'
+      path: '/relatorios'
+      fullPath: '/corretor/operacional/relatorios'
+      preLoaderRoute: typeof CorretorOperacionalRelatoriosRouteImport
+      parentRoute: typeof CorretorOperacionalRoute
+    }
     '/corretor/operacional/propostas': {
       id: '/corretor/operacional/propostas'
       path: '/propostas'
@@ -581,6 +627,13 @@ declare module '@tanstack/react-router' {
       path: '/consultas'
       fullPath: '/corretor/operacional/consultas'
       preLoaderRoute: typeof CorretorOperacionalConsultasRouteImport
+      parentRoute: typeof CorretorOperacionalRoute
+    }
+    '/corretor/operacional/atualizacao': {
+      id: '/corretor/operacional/atualizacao'
+      path: '/atualizacao'
+      fullPath: '/corretor/operacional/atualizacao'
+      preLoaderRoute: typeof CorretorOperacionalAtualizacaoRouteImport
       parentRoute: typeof CorretorOperacionalRoute
     }
     '/corretor/crm/relatorios': {
@@ -616,6 +669,13 @@ declare module '@tanstack/react-router' {
       path: '/simulacoes'
       fullPath: '/correspondente/operacional/simulacoes'
       preLoaderRoute: typeof CorrespondenteOperacionalSimulacoesRouteImport
+      parentRoute: typeof CorrespondenteOperacionalRoute
+    }
+    '/correspondente/operacional/relatorios': {
+      id: '/correspondente/operacional/relatorios'
+      path: '/relatorios'
+      fullPath: '/correspondente/operacional/relatorios'
+      preLoaderRoute: typeof CorrespondenteOperacionalRelatoriosRouteImport
       parentRoute: typeof CorrespondenteOperacionalRoute
     }
     '/correspondente/operacional/propostas': {
@@ -703,6 +763,7 @@ interface CorrespondenteOperacionalRouteChildren {
   CorrespondenteOperacionalDemandasRoute: typeof CorrespondenteOperacionalDemandasRoute
   CorrespondenteOperacionalMinhasSimulacoesRoute: typeof CorrespondenteOperacionalMinhasSimulacoesRoute
   CorrespondenteOperacionalPropostasRoute: typeof CorrespondenteOperacionalPropostasRoute
+  CorrespondenteOperacionalRelatoriosRoute: typeof CorrespondenteOperacionalRelatoriosRoute
   CorrespondenteOperacionalSimulacoesRoute: typeof CorrespondenteOperacionalSimulacoesRoute
   CorrespondenteOperacionalTarefasRoute: typeof CorrespondenteOperacionalTarefasRoute
   CorrespondenteOperacionalIndexRoute: typeof CorrespondenteOperacionalIndexRoute
@@ -718,6 +779,8 @@ const CorrespondenteOperacionalRouteChildren: CorrespondenteOperacionalRouteChil
       CorrespondenteOperacionalMinhasSimulacoesRoute,
     CorrespondenteOperacionalPropostasRoute:
       CorrespondenteOperacionalPropostasRoute,
+    CorrespondenteOperacionalRelatoriosRoute:
+      CorrespondenteOperacionalRelatoriosRoute,
     CorrespondenteOperacionalSimulacoesRoute:
       CorrespondenteOperacionalSimulacoesRoute,
     CorrespondenteOperacionalTarefasRoute:
@@ -765,21 +828,25 @@ const CorretorCrmRouteWithChildren = CorretorCrmRoute._addFileChildren(
 )
 
 interface CorretorOperacionalRouteChildren {
+  CorretorOperacionalAtualizacaoRoute: typeof CorretorOperacionalAtualizacaoRoute
   CorretorOperacionalConsultasRoute: typeof CorretorOperacionalConsultasRoute
   CorretorOperacionalDemandasRoute: typeof CorretorOperacionalDemandasRoute
   CorretorOperacionalMinhasSimulacoesRoute: typeof CorretorOperacionalMinhasSimulacoesRoute
   CorretorOperacionalPropostasRoute: typeof CorretorOperacionalPropostasRoute
+  CorretorOperacionalRelatoriosRoute: typeof CorretorOperacionalRelatoriosRoute
   CorretorOperacionalSimulacoesRoute: typeof CorretorOperacionalSimulacoesRoute
   CorretorOperacionalTarefasRoute: typeof CorretorOperacionalTarefasRoute
   CorretorOperacionalIndexRoute: typeof CorretorOperacionalIndexRoute
 }
 
 const CorretorOperacionalRouteChildren: CorretorOperacionalRouteChildren = {
+  CorretorOperacionalAtualizacaoRoute: CorretorOperacionalAtualizacaoRoute,
   CorretorOperacionalConsultasRoute: CorretorOperacionalConsultasRoute,
   CorretorOperacionalDemandasRoute: CorretorOperacionalDemandasRoute,
   CorretorOperacionalMinhasSimulacoesRoute:
     CorretorOperacionalMinhasSimulacoesRoute,
   CorretorOperacionalPropostasRoute: CorretorOperacionalPropostasRoute,
+  CorretorOperacionalRelatoriosRoute: CorretorOperacionalRelatoriosRoute,
   CorretorOperacionalSimulacoesRoute: CorretorOperacionalSimulacoesRoute,
   CorretorOperacionalTarefasRoute: CorretorOperacionalTarefasRoute,
   CorretorOperacionalIndexRoute: CorretorOperacionalIndexRoute,
