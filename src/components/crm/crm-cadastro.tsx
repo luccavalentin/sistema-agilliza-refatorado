@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 import {
   User2,
   IdCard,
@@ -17,11 +17,26 @@ import {
   X,
   Clock,
   ShieldCheck,
+  Zap,
 } from "lucide-react";
 import { PanelHeader } from "@/components/dashboards/primitives";
 import { MaskedInput } from "@/components/ui/masked-input";
 import type { MaskKind } from "@/lib/formatters";
 import type { CrmScope } from "./crm-dashboard";
+
+/** Dados importados pelo Flash IA via sessionStorage */
+interface FlashIaLead {
+  nomeCompleto: string;
+  cpf: string;
+  cnpj: string;
+  dataNascimento: string;
+  email: string;
+  telefone: string;
+  uf: string;
+  municipio: string;
+  tipo: "PF" | "PJ";
+  origem: string;
+}
 
 type SectionKey =
   | "identificacao"
@@ -159,6 +174,24 @@ function SectionCard({
 export function CrmCadastro({ scope }: { scope: CrmScope }) {
   const [active, setActive] = useState<SectionKey>("identificacao");
   const creatorRole = scope === "correspondente" ? "Correspondente" : "Corretor";
+  const [lead, setLead] = useState<FlashIaLead | null>(null);
+  const [bannerDismissed, setBannerDismissed] = useState(false);
+
+  // Lê dados do Flash IA (se vieram via navegação)
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem("agilliza:flash-ia-lead");
+      if (raw) {
+        const parsed = JSON.parse(raw) as FlashIaLead;
+        setLead(parsed);
+        sessionStorage.removeItem("agilliza:flash-ia-lead");
+      }
+    } catch {
+      // sessionStorage indisponível ou JSON inválido
+    }
+  }, []);
+
+  const origemLabel = lead ? "Flash IA" : "Manual";
 
   return (
     <div className="space-y-5">
@@ -174,13 +207,42 @@ export function CrmCadastro({ scope }: { scope: CrmScope }) {
         }
       />
 
+      {/* Banner de importação Flash IA */}
+      {lead && !bannerDismissed && (
+        <section className="flex items-start gap-3 rounded-lg border border-amber-300 bg-amber-50 px-5 py-4">
+          <div className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-amber-100">
+            <Zap className="h-3.5 w-3.5 text-amber-600" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-bold text-amber-900">
+              Dados importados do Flash IA
+            </p>
+            <p className="mt-0.5 text-xs text-amber-800">
+              Os campos de identificação foram pré-preenchidos com os dados retornados pela Receita Federal.
+              <strong> Revise as informações antes de salvar.</strong>
+            </p>
+            {lead.nomeCompleto && (
+              <p className="mt-1 text-xs font-semibold text-amber-900">
+                Cliente: {lead.nomeCompleto}{lead.cpf ? ` · CPF: ${lead.cpf}` : ""}
+              </p>
+            )}
+          </div>
+          <button
+            onClick={() => setBannerDismissed(true)}
+            className="rounded p-1 text-amber-600 hover:bg-amber-100"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </section>
+      )}
+
       {/* Audit strip */}
       <section className="grid gap-2 rounded-lg border border-border bg-card p-4 text-[11px] sm:grid-cols-2 lg:grid-cols-4">
         {[
           { l: "Criado por", v: "—" },
           { l: "Perfil criador", v: creatorRole },
           { l: "Data / hora", v: "—" },
-          { l: "Origem", v: "Manual" },
+          { l: "Origem", v: origemLabel },
           { l: "Atualizado por", v: "—" },
           { l: "Última atualização", v: "—" },
           { l: "Imobiliária", v: "—" },
@@ -218,19 +280,67 @@ export function CrmCadastro({ scope }: { scope: CrmScope }) {
 
         <div className="space-y-5">
           {active === "identificacao" && (
-            <SectionCard title="Identificação do cliente" icon={User2}>
+            <SectionCard
+              title="Identificação do cliente"
+              icon={User2}
+              badge={lead ? "Pré-preenchido via Flash IA" : undefined}
+            >
               <Field label="Tipo de pessoa" required>
                 <Select options={["Pessoa Física", "Pessoa Jurídica"]} />
               </Field>
-              <Field label="Nome completo / Razão social" required span="md:col-span-2" />
-              <Field label="CPF / CNPJ" required />
-              <Field label="Data de nascimento / abertura" />
+              <Field label="Nome completo / Razão social" required span="md:col-span-2">
+                <input
+                  type="text"
+                  defaultValue={lead?.nomeCompleto ?? ""}
+                  className={`h-9 rounded-md border px-3 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/15 ${
+                    lead?.nomeCompleto ? "border-amber-300 bg-amber-50/40" : "border-input bg-background"
+                  }`}
+                  placeholder=" "
+                />
+              </Field>
+              <Field label="CPF / CNPJ" required>
+                <input
+                  type="text"
+                  defaultValue={lead?.cpf || lead?.cnpj || ""}
+                  className={`h-9 rounded-md border px-3 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/15 ${
+                    (lead?.cpf || lead?.cnpj) ? "border-amber-300 bg-amber-50/40" : "border-input bg-background"
+                  }`}
+                  placeholder=" "
+                />
+              </Field>
+              <Field label="Data de nascimento / abertura">
+                <input
+                  type="date"
+                  defaultValue={lead?.dataNascimento ?? ""}
+                  className={`h-9 rounded-md border px-3 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/15 ${
+                    lead?.dataNascimento ? "border-amber-300 bg-amber-50/40" : "border-input bg-background"
+                  }`}
+                />
+              </Field>
               <Field label="Sexo">
                 <Select options={["Feminino", "Masculino", "Não informar"]} />
               </Field>
               <Field label="Nome da mãe" span="md:col-span-2" />
-              <Field label="E-mail" required />
-              <Field label="Celular" required />
+              <Field label="E-mail" required>
+                <input
+                  type="email"
+                  defaultValue={lead?.email ?? ""}
+                  className={`h-9 rounded-md border px-3 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/15 ${
+                    lead?.email ? "border-amber-300 bg-amber-50/40" : "border-input bg-background"
+                  }`}
+                  placeholder=" "
+                />
+              </Field>
+              <Field label="Celular" required>
+                <input
+                  type="tel"
+                  defaultValue={lead?.telefone ?? ""}
+                  className={`h-9 rounded-md border px-3 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/15 ${
+                    lead?.telefone ? "border-amber-300 bg-amber-50/40" : "border-input bg-background"
+                  }`}
+                  placeholder=" "
+                />
+              </Field>
               <Field label="Telefone secundário" />
               <Field label="Estado civil">
                 <Select options={["Solteiro(a)", "Casado(a)", "União estável", "Divorciado(a)", "Viúvo(a)"]} />

@@ -569,6 +569,45 @@ const sections: ConfigSection[] = [
     ],
   },
   {
+    id: "integracao-homefin",
+    label: "Integração HomeFin",
+    icon: Sliders, // reaproveitando icon — será substituído por Plug2 se disponível
+    description: "Credenciais de acesso à API HomeFin para simulação e envio de propostas aos bancos. As credenciais são armazenadas com segurança e nunca expostas no frontend.",
+    groups: [
+      {
+        title: "Credenciais da API",
+        hint: "Obtidas no painel do HomeFin (homefin.com.br). Cada correspondente possui credenciais únicas.",
+        fields: [
+          { kind: "text", label: "Secret ID", placeholder: "hf_id_xxxxxxxxxxxxxxxxxxxx" },
+          { kind: "text", label: "Secret Key", type: "password", placeholder: "hf_sk_xxxxxxxxxxxxxxxxxxxx" },
+          {
+            kind: "list",
+            label: "Status da integração",
+            items: [
+              { primary: "Servidor HomeFin", secondary: "Edge Function: homefin-auth", right: "Não configurado" },
+              { primary: "Última verificação", secondary: "Nunca verificado", right: "—" },
+            ],
+          },
+        ],
+      },
+      {
+        title: "Comportamento da integração",
+        fields: [
+          { kind: "toggle", label: "Enviar simulação automaticamente ao HomeFin", description: "Ao finalizar uma simulação, envia os dados ao HomeFin para pré-aprovação.", defaultValue: false },
+          { kind: "toggle", label: "Registrar log de chamadas à API", defaultValue: true },
+          { kind: "toggle", label: "Notificar em caso de erro na integração", defaultValue: true },
+          { kind: "select", label: "Ambiente", options: ["Produção", "Homologação", "Sandbox"], defaultValue: "Sandbox" },
+        ],
+      },
+      {
+        title: "Bancos habilitados via HomeFin",
+        fields: [
+          { kind: "chips", label: "Bancos ativos na integração", options: ["Caixa Econômica Federal", "Itaú", "Bradesco", "Santander", "Banco do Brasil", "Banco Inter"], defaultValues: ["Caixa Econômica Federal", "Itaú", "Santander"] },
+        ],
+      },
+    ],
+  },
+  {
     id: "preferencias",
     label: "Preferências do Sistema",
     icon: Sliders,

@@ -21,7 +21,9 @@ const CLIENTE_ID = "c-1";
 
 export function ClienteAcompanhamento() {
   const minhasProps = useMemo(
-    () => propostas.filter((p) => p.clienteId === CLIENTE_ID),
+    () => [...propostas]
+      .filter((p) => p.clienteId === CLIENTE_ID)
+      .sort((a, b) => new Date(b.criadaEm).getTime() - new Date(a.criadaEm).getTime()),
     [],
   );
   const [ativaId, setAtivaId] = useState<string | undefined>(minhasProps[0]?.id);

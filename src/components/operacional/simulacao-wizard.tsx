@@ -5,8 +5,8 @@
 import { useMemo, useState } from "react";
 import {
   ArrowLeft, ArrowRight, BarChart3, Building2, Calculator,
-  CheckCircle2, Copy, Download, Loader2, Send, Share2, Sparkles,
-  Star, User, Users, X,
+  CheckCircle2, Copy, Download, Home, Loader2, Send, Share2, Sparkles,
+  Star, User, Users, Wallet, X,
 } from "lucide-react";
 import { PanelHeader } from "@/components/dashboards/primitives";
 import { bancos, clientes } from "@/lib/operacional/mock-data";
@@ -15,6 +15,12 @@ import { gerarCenarios } from "@/lib/operacional/simulador";
 import {
   formatBRL, formatPercent, formatPrazoMeses, formatCpf,
 } from "@/lib/operacional/formatters";
+import {
+  TIPOS_IMOVEL_OPTIONS, USOS_IMOVEL_OPTIONS, SITUACOES_IMOVEL_OPTIONS,
+  ESTADOS_CIVIS_OPTIONS, REGIMES_CASAMENTO_OPTIONS, TIPOS_RENDA_OPTIONS,
+  type TipoImovelHomeFin, type UsoImovelHomeFin, type SituacaoImovelHomeFin,
+  type EstadoCivilHomeFin, type RegimeCasamentoHomeFin, type TipoRendaHomeFin,
+} from "@/lib/operacional/homefin-mappers";
 
 type Modo = "rapida" | "vinculada";
 type Step = "modo" | "dados" | "cenarios" | "resumo" | "processando" | "resultados";
@@ -43,6 +49,20 @@ export function SimulacaoWizard({ escopo: _escopo }: { escopo: "correspondente" 
   const [valorSolicitado, setValorSolicitado] = useState(250_000);
   const [rendaBruta, setRendaBruta] = useState(15_000);
   const [comprometimento, setComprometimento] = useState(30);
+
+  // dados do proponente — campos obrigatórios API HomeFin
+  // TODO: integrar com dados do cliente selecionado quando vier do Supabase
+  const [tipoEstadoCivil, setTipoEstadoCivil] = useState<EstadoCivilHomeFin>("S");
+  const [regimeCasamento, setRegimeCasamento] = useState<RegimeCasamentoHomeFin>("CP");
+  const [tipoRenda, setTipoRenda] = useState<TipoRendaHomeFin>("F");
+  const [usarFGTS, setUsarFGTS] = useState(false);
+  const [saldoFGTS, setSaldoFGTS] = useState(0);
+  const [possuiCompositor, setPossuiCompositor] = useState(false);
+
+  // dados do imóvel — campos obrigatórios API HomeFin
+  const [tipoImovel, setTipoImovel] = useState<TipoImovelHomeFin>("AP");
+  const [usoImovel, setUsoImovel] = useState<UsoImovelHomeFin>("R");
+  const [situacaoImovel, setSituacaoImovel] = useState<SituacaoImovelHomeFin>("N");
 
   // cenários
   const [bancosSelecionados, setBancosSelecionados] = useState<string[]>(["b-itau", "b-cef", "b-santander"]);
@@ -129,6 +149,15 @@ export function SimulacaoWizard({ escopo: _escopo }: { escopo: "correspondente" 
           valorSolicitado={valorSolicitado} setValorSolicitado={setValorSolicitado}
           rendaBruta={rendaBruta} setRendaBruta={setRendaBruta}
           comprometimento={comprometimento} setComprometimento={setComprometimento}
+          tipoEstadoCivil={tipoEstadoCivil} setTipoEstadoCivil={setTipoEstadoCivil}
+          regimeCasamento={regimeCasamento} setRegimeCasamento={setRegimeCasamento}
+          tipoRenda={tipoRenda} setTipoRenda={setTipoRenda}
+          usarFGTS={usarFGTS} setUsarFGTS={setUsarFGTS}
+          saldoFGTS={saldoFGTS} setSaldoFGTS={setSaldoFGTS}
+          possuiCompositor={possuiCompositor} setPossuiCompositor={setPossuiCompositor}
+          tipoImovel={tipoImovel} setTipoImovel={setTipoImovel}
+          usoImovel={usoImovel} setUsoImovel={setUsoImovel}
+          situacaoImovel={situacaoImovel} setSituacaoImovel={setSituacaoImovel}
           onBack={() => setStep("modo")}
           onNext={() => setStep("cenarios")}
           podeAvancar={podeAvancarDados}
@@ -373,6 +402,45 @@ function CampoPercent({
   );
 }
 
+function CampoSelect<T extends string>({
+  label, value, onChange, options, required, hint,
+}: {
+  label: string;
+  value: T;
+  onChange: (v: T) => void;
+  options: readonly { value: T; label: string }[];
+  required?: boolean;
+  hint?: string;
+}) {
+  return (
+    <div>
+      <label className="mb-1 block text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+        {label} {required && <span className="text-direction">*</span>}
+      </label>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value as T)}
+        className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/15"
+      >
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>{o.label}</option>
+        ))}
+      </select>
+      {hint && <p className="mt-1 text-[10px] text-muted-foreground">{hint}</p>}
+    </div>
+  );
+}
+
+function SectionSubtitle({ icon: Icon, label }: { icon: typeof Home; label: string }) {
+  return (
+    <div className="col-span-full flex items-center gap-2 border-b border-border pb-2 pt-2">
+      <Icon className="h-4 w-4 text-brand" strokeWidth={2.5} />
+      <p className="text-xs font-bold uppercase tracking-wider text-brand">{label}</p>
+      <span className="ml-2 rounded-full bg-brand/10 px-2 py-0.5 text-[10px] font-semibold text-brand">Obrigatório HomeFin</span>
+    </div>
+  );
+}
+
 function DadosStep(p: {
   produto: Produto;
   valorImovel: number; setValorImovel: (n: number) => void;
@@ -380,15 +448,29 @@ function DadosStep(p: {
   valorSolicitado: number; setValorSolicitado: (n: number) => void;
   rendaBruta: number; setRendaBruta: (n: number) => void;
   comprometimento: number; setComprometimento: (n: number) => void;
+  // campos HomeFin proponente
+  tipoEstadoCivil: EstadoCivilHomeFin; setTipoEstadoCivil: (v: EstadoCivilHomeFin) => void;
+  regimeCasamento: RegimeCasamentoHomeFin; setRegimeCasamento: (v: RegimeCasamentoHomeFin) => void;
+  tipoRenda: TipoRendaHomeFin; setTipoRenda: (v: TipoRendaHomeFin) => void;
+  usarFGTS: boolean; setUsarFGTS: (v: boolean) => void;
+  saldoFGTS: number; setSaldoFGTS: (n: number) => void;
+  possuiCompositor: boolean; setPossuiCompositor: (v: boolean) => void;
+  // campos HomeFin imóvel
+  tipoImovel: TipoImovelHomeFin; setTipoImovel: (v: TipoImovelHomeFin) => void;
+  usoImovel: UsoImovelHomeFin; setUsoImovel: (v: UsoImovelHomeFin) => void;
+  situacaoImovel: SituacaoImovelHomeFin; setSituacaoImovel: (v: SituacaoImovelHomeFin) => void;
   onBack: () => void; onNext: () => void; podeAvancar: boolean;
 }) {
   const isFin = p.produto === "Financiamento Imobiliário";
+  const precisaRegime = p.tipoEstadoCivil === "CA" || p.tipoEstadoCivil === "UE";
   const ltv = isFin
     ? ((p.valorImovel - p.valorEntrada) / p.valorImovel) * 100
     : (p.valorSolicitado / Math.max(1, p.valorImovel)) * 100;
   return (
     <Box>
-      <h2 className="mb-3 text-sm font-bold text-graphite">Dados financeiros — {p.produto}</h2>
+      <h2 className="mb-4 text-sm font-bold text-graphite">Dados da simulação — {p.produto}</h2>
+
+      {/* ── Valores financeiros ── */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {isFin ? (
           <>
@@ -411,10 +493,91 @@ function DadosStep(p: {
           </>
         )}
         <CampoMoeda label="Renda bruta mensal" value={p.rendaBruta} onChange={p.setRendaBruta}
-          hint="Usada para sugerir renda mínima e comprometimento." />
+          hint="Usada para sugerir comprometimento e calcular parcela máxima." />
         <CampoPercent label="Comprometimento de renda máx." value={p.comprometimento} onChange={p.setComprometimento}
           hint="Padrão: 30%." />
       </div>
+
+      {/* ── Dados do imóvel — HomeFin obrigatórios ── */}
+      <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <SectionSubtitle icon={Home} label="Imóvel" />
+        <CampoSelect
+          label="Tipo de imóvel" value={p.tipoImovel} onChange={p.setTipoImovel}
+          options={TIPOS_IMOVEL_OPTIONS} required
+          hint="Código enviado à API HomeFin (AP, CS, GA, TE, TC)"
+        />
+        <CampoSelect
+          label="Uso do imóvel" value={p.usoImovel} onChange={p.setUsoImovel}
+          options={USOS_IMOVEL_OPTIONS} required
+          hint="Residencial (R) ou Comercial (C)"
+        />
+        <CampoSelect
+          label="Situação do imóvel" value={p.situacaoImovel} onChange={p.setSituacaoImovel}
+          options={SITUACOES_IMOVEL_OPTIONS} required
+          hint="Novo (N) ou Usado (U)"
+        />
+      </div>
+
+      {/* ── Dados do proponente — HomeFin obrigatórios ── */}
+      <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <SectionSubtitle icon={User} label="Proponente" />
+        <CampoSelect
+          label="Estado civil" value={p.tipoEstadoCivil} onChange={p.setTipoEstadoCivil}
+          options={ESTADOS_CIVIS_OPTIONS} required
+        />
+        {precisaRegime && (
+          <CampoSelect
+            label="Regime de casamento" value={p.regimeCasamento} onChange={p.setRegimeCasamento}
+            options={REGIMES_CASAMENTO_OPTIONS} required
+          />
+        )}
+        <CampoSelect
+          label="Tipo de renda" value={p.tipoRenda} onChange={p.setTipoRenda}
+          options={TIPOS_RENDA_OPTIONS} required
+        />
+      </div>
+
+      {/* ── FGTS ── */}
+      <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <SectionSubtitle icon={Wallet} label="FGTS" />
+        <div className="col-span-full">
+          <label className="inline-flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-background px-4 py-3 text-sm font-medium text-graphite hover:border-brand/40">
+            <input
+              type="checkbox"
+              checked={p.usarFGTS}
+              onChange={(e) => p.setUsarFGTS(e.target.checked)}
+              className="h-4 w-4 accent-[color:var(--brand)]"
+            />
+            Utilizar FGTS nesta simulação
+          </label>
+        </div>
+        {p.usarFGTS && (
+          <CampoMoeda label="Saldo aproximado de FGTS" value={p.saldoFGTS} onChange={p.setSaldoFGTS}
+            hint="Valor aproximado para abatimento ou entrada." />
+        )}
+      </div>
+
+      {/* ── Composição de renda ── */}
+      <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <SectionSubtitle icon={Users} label="Composição de renda" />
+        <div className="col-span-full">
+          <label className="inline-flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-background px-4 py-3 text-sm font-medium text-graphite hover:border-brand/40">
+            <input
+              type="checkbox"
+              checked={p.possuiCompositor}
+              onChange={(e) => p.setPossuiCompositor(e.target.checked)}
+              className="h-4 w-4 accent-[color:var(--brand)]"
+            />
+            Incluir cônjuge / compositor de renda na simulação
+          </label>
+          {p.possuiCompositor && (
+            <p className="mt-2 rounded-md border border-brand/20 bg-brand/5 px-3 py-2 text-xs font-medium text-brand">
+              Os dados do compositor serão informados no cadastro completo do cliente antes de enviar ao banco.
+            </p>
+          )}
+        </div>
+      </div>
+
       <NavBtns onBack={p.onBack} onNext={p.onNext} podeAvancar={p.podeAvancar} />
     </Box>
   );

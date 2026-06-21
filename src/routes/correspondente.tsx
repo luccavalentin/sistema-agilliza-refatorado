@@ -22,6 +22,8 @@ import {
   Layers,
   CheckSquare,
   Settings,
+  BrainCircuit,
+  ScanLine,
 } from "lucide-react";
 import { PortalShell, type PortalNavGroup } from "@/components/portal-shell";
 
@@ -35,8 +37,8 @@ const groups: PortalNavGroup[] = [
   {
     label: "CRM e Gestão de Cliente",
     items: [
-      { label: "Scan IA", icon: Sparkles },
-      { label: "Flash IA", icon: Zap },
+      { label: "Scan IA", to: "/correspondente/crm/scan-ia", icon: ScanLine },
+      { label: "Flash IA", to: "/correspondente/crm/flash-ia", icon: BrainCircuit },
       {
         label: "CRM de Clientes",
         icon: Users,
@@ -78,12 +80,18 @@ const groups: PortalNavGroup[] = [
   },
   {
     label: "Gestão Administrativa",
-    items: [{ label: "Cadastros Gerais", icon: Database }],
+    items: [{ label: "Cadastros Gerais", to: "/correspondente/gestao", icon: Database }],
   },
   {
     label: "Configurações",
     items: [
       { label: "Configurações", to: "/correspondente/configuracoes", icon: Settings },
+    ],
+  },
+  {
+    label: "Backup",
+    items: [
+      { label: "Backup do Sistema", to: "/correspondente/backup", icon: Database },
     ],
   },
 ];
