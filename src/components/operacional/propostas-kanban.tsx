@@ -452,25 +452,38 @@ function PropostaDetalhe({
           )}
         </div>
 
-        <footer className="border-t border-border bg-muted/30 p-4">
-          <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-            Mover para etapa
-          </p>
-          <div className="flex flex-wrap gap-1.5">
-            {ETAPAS_PROPOSTA.map((e) => (
-              <button
-                key={e}
-                onClick={() => onMover(e)}
-                disabled={e === proposta.etapa}
-                className={`rounded-full border px-2.5 py-1 text-[10px] font-medium transition ${
-                  e === proposta.etapa
-                    ? "border-brand bg-brand text-brand-foreground"
-                    : "border-border bg-card hover:border-brand/40"
-                }`}
-              >
-                {e}
-              </button>
-            ))}
+        <footer className="space-y-3 border-t border-border bg-muted/30 p-4">
+          <div className="flex flex-wrap gap-2">
+            <Button size="sm" onClick={onAprovar} className="gap-1.5 bg-emerald-600 hover:bg-emerald-700">
+              <ThumbsUp className="h-3.5 w-3.5" /> Aprovar proposta
+            </Button>
+            <Button size="sm" variant="outline" onClick={onReprovar} className="gap-1.5 text-red-600 hover:text-red-700">
+              <ThumbsDown className="h-3.5 w-3.5" /> Reprovar
+            </Button>
+            <p className="ml-auto text-[10px] text-muted-foreground">
+              Aprovar gera comissão prevista e lançamento a receber automaticamente.
+            </p>
+          </div>
+          <div>
+            <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              Mover para etapa
+            </p>
+            <div className="flex flex-wrap gap-1.5">
+              {ETAPAS_PROPOSTA.map((e) => (
+                <button
+                  key={e}
+                  onClick={() => onMover(e)}
+                  disabled={e === proposta.etapa}
+                  className={`rounded-full border px-2.5 py-1 text-[10px] font-medium transition ${
+                    e === proposta.etapa
+                      ? "border-brand bg-brand text-brand-foreground"
+                      : "border-border bg-card hover:border-brand/40"
+                  }`}
+                >
+                  {e}
+                </button>
+              ))}
+            </div>
           </div>
         </footer>
       </aside>
