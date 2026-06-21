@@ -66,31 +66,46 @@ function PainelOperacionalInner({
     escopo === "corretor" ? "individual" : "geral",
   );
 
-  // Recorte do escopo
+  // Recorte do escopo + filtros
   const props = useMemo(() => {
-    if (escopo === "corretor" || visao === "individual") {
-      return propostas.filter((p) => p.corretorId === usuarioAtualId || p.responsavelId === usuarioAtualId);
-    }
-    return propostas;
-  }, [escopo, visao, usuarioAtualId]);
+    const base = (escopo === "corretor" || visao === "individual")
+      ? propostas.filter((p) => p.corretorId === usuarioAtualId || p.responsavelId === usuarioAtualId)
+      : propostas;
+    return apply(base, {
+      data: (p) => p.atualizadaEm,
+      produto: (p) => p.produto,
+      bancoSigla: (p) => bancoById(p.bancoId)?.sigla,
+      status: (p) => p.status,
+      fase: (p) => p.etapa,
+      corretor: (p) => usuarioById(p.responsavelId)?.nome,
+    });
+  }, [escopo, visao, usuarioAtualId, apply]);
 
   const sims = useMemo(() => {
-    if (escopo === "corretor" || visao === "individual") {
-      return simulacoes.filter((s) => s.corretorId === usuarioAtualId || s.usuarioId === usuarioAtualId);
-    }
-    return simulacoes;
-  }, [escopo, visao, usuarioAtualId]);
+    const base = (escopo === "corretor" || visao === "individual")
+      ? simulacoes.filter((s) => s.corretorId === usuarioAtualId || s.usuarioId === usuarioAtualId)
+      : simulacoes;
+    return apply(base, {
+      data: (s) => s.criadaEm,
+      produto: (s) => s.produto,
+      status: (s) => s.status,
+    });
+  }, [escopo, visao, usuarioAtualId, apply]);
 
   const dems = useMemo(() => {
-    if (escopo === "corretor" || visao === "individual") {
-      return demandas.filter((d) =>
-        d.responsavelId === usuarioAtualId ||
-        d.criadoPorId === usuarioAtualId ||
-        d.participantesIds.includes(usuarioAtualId),
-      );
-    }
-    return demandas;
-  }, [escopo, visao, usuarioAtualId]);
+    const base = (escopo === "corretor" || visao === "individual")
+      ? demandas.filter((d) =>
+          d.responsavelId === usuarioAtualId ||
+          d.criadoPorId === usuarioAtualId ||
+          d.participantesIds.includes(usuarioAtualId),
+        )
+      : demandas;
+    return apply(base, {
+      data: (d) => d.criadaEm,
+      status: (d) => d.status,
+      corretor: (d) => usuarioById(d.responsavelId)?.nome,
+    });
+  }, [escopo, visao, usuarioAtualId, apply]);
 
   const tars = useMemo(
     () => tarefas.filter((t) => t.usuarioId === usuarioAtualId),
