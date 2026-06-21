@@ -177,7 +177,8 @@ function savePrefs(p: Prefs) {
 }
 
 function timeAgo(iso: string) {
-  const diff = Date.now() - new Date(iso).getTime();
+  const ANCHOR = new Date("2026-06-21T12:00:00.000Z").getTime();
+  const diff = ANCHOR - new Date(iso).getTime();
   const min = Math.floor(diff / 60_000);
   if (min < 1) return "agora";
   if (min < 60) return `${min}min`;
@@ -205,16 +206,24 @@ const levelMeta: Record<NotifLevel, { icon: typeof Info; cls: string }> = {
 
 export function NotificationsCenter({ kind }: { kind: PortalKind }) {
   const [open, setOpen] = useState(false);
-  const [items, setItems] = useState<Notification[]>(() => loadList(kind));
+  // ---- conecta na store central reativa ----
+  const storeItems = useDBNotifs();
+  const items: Notification[] = useMemo(
+    () =>
+      storeItems.map((n) => ({
+        id: n.id,
+        title: n.titulo,
+        description: n.descricao,
+        time: n.criadoEm,
+        category: n.categoria as NotifCategory,
+        level: n.nivel as NotifLevel,
+        read: n.lida,
+      })),
+    [storeItems],
+  );
   const [prefs, setPrefs] = useState<Prefs>(() => loadPrefs());
   const [tab, setTab] = useState<"todas" | "nao-lidas" | "config">("todas");
   const [filter, setFilter] = useState<NotifCategory | "all">("all");
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(`${STORAGE_KEY}.${kind}`, JSON.stringify(items));
-    } catch {}
-  }, [items, kind]);
 
   useEffect(() => savePrefs(prefs), [prefs]);
 
