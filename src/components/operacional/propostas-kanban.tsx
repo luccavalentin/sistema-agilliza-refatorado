@@ -85,7 +85,7 @@ export function PropostasKanban({
 
   function moverPara(etapa: EtapaProposta) {
     if (!dragId) return;
-    setData((prev) => prev.map((p) => (p.id === dragId ? { ...p, etapa, atualizadaEm: new Date().toISOString() } : p)));
+    moverProposta(dragId, etapa, usuarioAtualId);
     setDragId(null);
   }
 
