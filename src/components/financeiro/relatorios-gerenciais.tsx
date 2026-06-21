@@ -441,6 +441,45 @@ export function RelatoriosGerenciais({ escopo }: { escopo: "correspondente" | "c
         </div>
       </Panel>
 
+      {/* Matrizes de cruzamento (separado por banco) */}
+      <Panel title="Cruzamentos por Banco (matriz)" icon={Building2}>
+        <div className="space-y-6">
+          {[
+            { label: "Analista Administrativo × Banco", rows: matrizAdmBanco },
+            { label: "Analista Comercial × Banco", rows: matrizComBanco },
+            { label: "Imobiliária × Banco", rows: matrizImobBanco },
+            { label: "Corretor × Banco", rows: matrizCorretorBanco },
+            { label: "Tipo (Financiamento × Home Equity) × Banco", rows: matrizTipoBanco },
+          ].map(m => (
+            <div key={m.label}>
+              <div className="text-xs font-semibold text-graphite mb-2">{m.label}</div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs">
+                  <thead className="text-left text-muted-foreground border-b">
+                    <tr>
+                      <th className="py-2 px-2 font-medium">—</th>
+                      {bancosUnicos.map(b => <th key={b} className="py-2 px-2 font-medium text-right">{b}</th>)}
+                      <th className="py-2 px-2 font-medium text-right">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {m.rows.slice(0, 10).map(r => (
+                      <tr key={r.name} className="border-b hover:bg-muted/40">
+                        <td className="py-1.5 px-2 font-medium text-graphite">{r.name}</td>
+                        {bancosUnicos.map(b => (
+                          <td key={b} className="py-1.5 px-2 text-right tabular-nums">{r[b] ? formatBRL(r[b]) : "—"}</td>
+                        ))}
+                        <td className="py-1.5 px-2 text-right font-semibold tabular-nums">{formatBRL(r.total)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Panel>
+
       {/* Métricas operacionais integradas */}
       <Panel title="Métricas Operacionais Integradas ao Financeiro" icon={TrendingUp}>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
