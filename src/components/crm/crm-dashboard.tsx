@@ -121,7 +121,17 @@ function CrmDashboardInner({ scope }: { scope: CrmScope }) {
         }
       />
 
-      <FilterBar filters={filterItems} onReset={reset} />
+      <FilterBar
+        filters={filterItems}
+        onReset={reset}
+        dateRange={{
+          from: filters.customFrom,
+          to: filters.customTo,
+          onFrom: set("customFrom"),
+          onTo: set("customTo"),
+          show: filters.periodo === "Personalizado",
+        }}
+      />
 
 
       {/* KPI cards */}

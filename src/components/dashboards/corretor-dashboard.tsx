@@ -95,9 +95,17 @@ function Inner() {
           { label: "Período", value: filters.periodo, options: PERIODOS, onChange: set("periodo") },
           { label: "Produto", value: filters.produto, options: ["Todos", "Financiamento Imobiliário", "Home Equity"], onChange: set("produto") },
           { label: "Banco", value: filters.banco, options: ["Todos", ...bancos.map(b => b.sigla)], onChange: set("banco") },
+          { label: "Analista", value: filters.analista, options: ["Todos", "Camila Reis", "Pedro Nogueira"], onChange: set("analista") },
           { label: "Status", value: filters.status, options: ["Todos", "Aprovada", "Reprovada", "Em análise", "Tratativa", "Pendência docs"], onChange: set("status") },
           { label: "Cliente", value: filters.cliente, options: ["Todos", ...clientes.map(c => c.nome)], onChange: set("cliente") },
         ]}
+        dateRange={{
+          from: filters.customFrom,
+          to: filters.customTo,
+          onFrom: set("customFrom"),
+          onTo: set("customTo"),
+          show: filters.periodo === "Personalizado",
+        }}
       />
 
 

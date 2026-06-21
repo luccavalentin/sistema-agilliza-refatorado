@@ -96,8 +96,16 @@ function Inner() {
           { label: "Produto", value: filters.produto, options: ["Todos", "Financiamento Imobiliário", "Home Equity"], onChange: set("produto") },
           { label: "Banco", value: filters.banco, options: ["Todos", ...bancos.map(b => b.sigla)], onChange: set("banco") },
           { label: "Corretor", value: filters.corretor, options: ["Todos", ...usuarios.filter(u => u.papel === "corretor").map(u => u.nome)], onChange: set("corretor") },
+          { label: "Analista", value: filters.analista, options: ["Todos", ...usuarios.filter(u => u.papel === "analista").map(u => u.nome)], onChange: set("analista") },
           { label: "Status", value: filters.status, options: ["Todos", "Aprovada", "Reprovada", "Em aprovação", "Em tratativa", "Documentação pendente", "Aguardando banco", "Contrato emitido", "Finalizada"], onChange: set("status") },
         ]}
+        dateRange={{
+          from: filters.customFrom,
+          to: filters.customTo,
+          onFrom: set("customFrom"),
+          onTo: set("customTo"),
+          show: filters.periodo === "Personalizado",
+        }}
       />
 
 

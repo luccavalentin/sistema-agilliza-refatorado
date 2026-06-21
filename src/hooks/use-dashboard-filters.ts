@@ -9,9 +9,17 @@ export type PeriodoOpt =
   | "Últimos 30 dias"
   | "90 dias"
   | "Ano"
-  | "Tudo";
+  | "Tudo"
+  | "Personalizado";
 
-export const PERIODOS: PeriodoOpt[] = ["7 dias", "Últimos 30 dias", "90 dias", "Ano", "Tudo"];
+export const PERIODOS: PeriodoOpt[] = [
+  "7 dias",
+  "Últimos 30 dias",
+  "90 dias",
+  "Ano",
+  "Tudo",
+  "Personalizado",
+];
 
 export const periodoToDays = (p: string): number | null => {
   if (p === "7 dias") return 7;
@@ -23,6 +31,8 @@ export const periodoToDays = (p: string): number | null => {
 
 export type DashFilters = {
   periodo: string;
+  customFrom: string; // ISO yyyy-mm-dd (vazio quando não usado)
+  customTo: string;
   produto: string;
   banco: string;
   corretor: string;
@@ -42,6 +52,8 @@ export type DashFilters = {
 
 export const DEFAULTS: DashFilters = {
   periodo: "Últimos 30 dias",
+  customFrom: "",
+  customTo: "",
   produto: "Todos",
   banco: "Todos",
   corretor: "Todos",
@@ -69,13 +81,26 @@ export function useDashboardFilters(initial?: Partial<DashFilters>) {
     [],
   );
 
+  const setCustomRange = useCallback((from: string, to: string) => {
+    setFilters((f) => ({ ...f, customFrom: from, customTo: to }));
+  }, []);
+
   const reset = useCallback(() => setFilters({ ...DEFAULTS, ...(initial ?? {}) }), [initial]);
 
-  const cutoffMs = useMemo(() => {
+  // Janela de tempo efetiva: [fromMs, toMs] (qualquer um pode ser null)
+  const range = useMemo<{ fromMs: number | null; toMs: number | null }>(() => {
+    if (filters.periodo === "Personalizado") {
+      const fromMs = filters.customFrom ? new Date(filters.customFrom + "T00:00:00").getTime() : null;
+      const toMs = filters.customTo ? new Date(filters.customTo + "T23:59:59").getTime() : null;
+      return { fromMs, toMs };
+    }
     const days = periodoToDays(filters.periodo);
-    if (days == null) return null;
-    return ANCHOR_NOW - days * 24 * 3600 * 1000;
-  }, [filters.periodo]);
+    if (days == null) return { fromMs: null, toMs: null };
+    return { fromMs: ANCHOR_NOW - days * 24 * 3600 * 1000, toMs: null };
+  }, [filters.periodo, filters.customFrom, filters.customTo]);
+
+  // Compat: cutoffMs (limite inferior) — código antigo usa este valor.
+  const cutoffMs = range.fromMs;
 
   // Helper genérico: aplica filtro a um array tipado.
   function apply<T>(
@@ -89,14 +114,21 @@ export function useDashboardFilters(initial?: Partial<DashFilters>) {
       cliente?: (x: T) => string | undefined;
       categoria?: (x: T) => string | undefined;
       fase?: (x: T) => string | undefined;
+      analista?: (x: T) => string | undefined;
+      backoffice?: (x: T) => string | undefined;
+      comercial?: (x: T) => string | undefined;
+      imobiliaria?: (x: T) => string | undefined;
     },
   ): T[] {
     return items.filter((x) => {
-      if (cutoffMs != null && map.data) {
+      if (map.data && (range.fromMs != null || range.toMs != null)) {
         const d = map.data(x);
         if (d != null) {
           const t = d instanceof Date ? d.getTime() : typeof d === "number" ? d : new Date(d).getTime();
-          if (!Number.isNaN(t) && t < cutoffMs) return false;
+          if (!Number.isNaN(t)) {
+            if (range.fromMs != null && t < range.fromMs) return false;
+            if (range.toMs != null && t > range.toMs) return false;
+          }
         }
       }
       if (filters.produto !== "Todos" && map.produto && map.produto(x) !== filters.produto) return false;
@@ -106,9 +138,13 @@ export function useDashboardFilters(initial?: Partial<DashFilters>) {
       if (filters.cliente !== "Todos" && map.cliente && map.cliente(x) !== filters.cliente) return false;
       if (filters.categoria !== "Todas" && map.categoria && map.categoria(x) !== filters.categoria) return false;
       if (filters.fase !== "Todas" && map.fase && map.fase(x) !== filters.fase) return false;
+      if (filters.analista !== "Todos" && map.analista && map.analista(x) !== filters.analista) return false;
+      if (filters.backoffice !== "Todos" && map.backoffice && map.backoffice(x) !== filters.backoffice) return false;
+      if (filters.comercial !== "Todos" && map.comercial && map.comercial(x) !== filters.comercial) return false;
+      if (filters.imobiliaria !== "Todas" && map.imobiliaria && map.imobiliaria(x) !== filters.imobiliaria) return false;
       return true;
     });
   }
 
-  return { filters, set, reset, apply, cutoffMs };
+  return { filters, set, setCustomRange, reset, apply, cutoffMs, range };
 }

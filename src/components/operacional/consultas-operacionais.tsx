@@ -143,8 +143,16 @@ export function ConsultasOperacionais({
           { label: "Status", value: filters.status, options: statusOpts, onChange: set("status") },
           { label: "Etapa", value: filters.fase, options: ["Todas", ...ETAPAS_PROPOSTA], onChange: set("fase") },
           { label: "Responsável", value: filters.corretor, options: ["Todos", ...usuarios.map(u => u.nome)], onChange: set("corretor") },
+          { label: "Analista", value: filters.analista, options: ["Todos", ...usuarios.filter(u => u.papel === "analista").map(u => u.nome)], onChange: set("analista") },
           { label: "Período", value: filters.periodo, options: PERIODOS, onChange: set("periodo") },
         ]}
+        dateRange={{
+          from: filters.customFrom,
+          to: filters.customTo,
+          onFrom: set("customFrom"),
+          onTo: set("customTo"),
+          show: filters.periodo === "Personalizado",
+        }}
       />
 
 

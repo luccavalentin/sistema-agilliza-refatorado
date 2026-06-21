@@ -70,8 +70,16 @@ export function CrmRelatorios({ scope }: { scope: CrmScope }) {
             { label: "Corretor", value: filters.corretor, options: ["Todos", "Rafael Lima", "Bianca Torres", "Henrique Sá"], onChange: set("corretor") },
             { label: "Imobiliária", value: filters.imobiliaria, options: ["Todas", "Lopes", "Coelho da Fonseca", "RE/MAX", "Brasil Brokers"], onChange: set("imobiliaria") },
           ] : []),
+          { label: "Analista", value: filters.analista, options: ["Todos", "Camila Reis", "Pedro Nogueira"], onChange: set("analista") },
           { label: "Status", value: filters.status, options: ["Todos", "Ativo", "Em simulação", "Em aprovação", "Aprovada", "Reprovada", "Pendência docs"], onChange: set("status") },
         ]}
+        dateRange={{
+          from: filters.customFrom,
+          to: filters.customTo,
+          onFrom: set("customFrom"),
+          onTo: set("customTo"),
+          show: filters.periodo === "Personalizado",
+        }}
       />
 
 
