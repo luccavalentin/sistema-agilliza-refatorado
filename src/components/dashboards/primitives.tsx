@@ -29,7 +29,30 @@ export function PanelHeader({
   );
 }
 
-export function FilterBar({ filters }: { filters: { label: string; value: string }[] }) {
+export type FilterBarItem = {
+  label: string;
+  value: string;
+  options?: string[];
+  onChange?: (v: string) => void;
+};
+
+export function FilterBar({
+  filters,
+  onReset,
+  resetValues,
+}: {
+  filters: FilterBarItem[];
+  onReset?: () => void;
+  resetValues?: Record<string, string>;
+}) {
+  const dirty =
+    !!onReset &&
+    filters.some((f) => {
+      if (!f.onChange) return false;
+      const def = resetValues?.[f.label];
+      if (def != null) return f.value !== def;
+      return !/^(Todos|Todas|Últimos 30 dias|30 dias|—)$/i.test(f.value);
+    });
   return (
     <section className="rounded-lg border border-border bg-card p-3 sm:p-4">
       <div className="flex flex-wrap items-center gap-2">
@@ -37,25 +60,49 @@ export function FilterBar({ filters }: { filters: { label: string; value: string
           Filtros
         </span>
         <div className="grid flex-1 grid-cols-2 gap-2 sm:flex sm:flex-wrap">
-          {filters.map((f) => (
-            <label key={f.label} className="flex flex-col gap-1">
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                {f.label}
-              </span>
-              <button
-                type="button"
-                className="inline-flex h-9 min-w-[140px] items-center justify-between gap-2 rounded-md border border-input bg-background px-3 text-xs font-medium text-graphite hover:border-brand/40"
-              >
-                {f.value}
-                <span className="text-muted-foreground">▾</span>
-              </button>
-            </label>
-          ))}
+          {filters.map((f) => {
+            const controlled = !!f.onChange && !!f.options;
+            return (
+              <label key={f.label} className="flex flex-col gap-1">
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  {f.label}
+                </span>
+                {controlled ? (
+                  <select
+                    value={f.value}
+                    onChange={(e) => f.onChange?.(e.target.value)}
+                    className="inline-flex h-9 min-w-[140px] items-center justify-between gap-2 rounded-md border border-input bg-background px-2 text-xs font-medium text-graphite hover:border-brand/40 focus:outline-none focus:ring-2 focus:ring-brand/30"
+                  >
+                    {f.options!.map((opt) => (
+                      <option key={opt} value={opt}>
+                        {opt}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <span className="inline-flex h-9 min-w-[140px] items-center justify-between gap-2 rounded-md border border-input bg-background px-3 text-xs font-medium text-graphite">
+                    {f.value}
+                    <span className="text-muted-foreground">▾</span>
+                  </span>
+                )}
+              </label>
+            );
+          })}
         </div>
+        {dirty && (
+          <button
+            type="button"
+            onClick={onReset}
+            className="ml-auto rounded-md border border-border bg-background px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-graphite hover:border-brand/40 hover:text-brand"
+          >
+            Limpar
+          </button>
+        )}
       </div>
     </section>
   );
 }
+
 
 export type KpiCardProps = {
   label: string;
