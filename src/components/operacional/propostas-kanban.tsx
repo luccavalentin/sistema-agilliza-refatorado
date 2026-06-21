@@ -269,9 +269,9 @@ export function PropostasKanban({
         <PropostaDetalhe
           proposta={detalhe}
           onClose={() => setDetalheId(null)}
-          onMover={(etapa) => {
-            setData((prev) => prev.map((p) => (p.id === detalhe.id ? { ...p, etapa } : p)));
-          }}
+          onMover={(etapa) => moverProposta(detalhe.id, etapa, usuarioAtualId)}
+          onAprovar={() => { aprovarProposta(detalhe.id, usuarioAtualId); toast.success("Proposta aprovada", { description: "Comissão e recebível foram gerados." }); setDetalheId(null); }}
+          onReprovar={() => { reprovarProposta(detalhe.id, "Reprovada pelo banco", usuarioAtualId); toast.warning("Proposta reprovada"); setDetalheId(null); }}
         />
       )}
     </div>
