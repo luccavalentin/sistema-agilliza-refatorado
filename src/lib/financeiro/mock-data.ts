@@ -5,9 +5,10 @@ import type {
   FormaPagamento, Frequencia,
 } from "./types";
 import { propostas, clientes, bancos, usuarios } from "@/lib/operacional/mock-data";
+import { ANCHOR_NOW, DAY_MS } from "@/data/anchor";
 
-const now = Date.now();
-const day = 86400000;
+const now = ANCHOR_NOW;
+const day = DAY_MS;
 const dAhead = (n: number) => new Date(now + n * day).toISOString();
 const dAgo = (n: number) => new Date(now - n * day).toISOString();
 const pick = <T,>(arr: T[], i: number) => arr[i % arr.length];
