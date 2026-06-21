@@ -29,7 +29,7 @@ const prioridadeStyle: Record<Prioridade, string> = {
 };
 
 function diasParaSLA(iso: string): number {
-  return Math.ceil((new Date(iso).getTime() - Date.now()) / 86400000);
+  return Math.ceil((new Date(iso).getTime() - ANCHOR_NOW) / 86400000);
 }
 
 function slaBadge(iso: string) {
