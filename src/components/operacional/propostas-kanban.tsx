@@ -48,7 +48,7 @@ export function PropostasKanban({
   escopo: Escopo;
   usuarioAtualId?: string;
 }) {
-  const [data, setData] = useState<Proposta[]>(propostasMock);
+  const data = usePropostas();
   const [busca, setBusca] = useState("");
   const [filtroBanco, setFiltroBanco] = useState<string>("");
   const [filtroPrioridade, setFiltroPrioridade] = useState<string>("");
