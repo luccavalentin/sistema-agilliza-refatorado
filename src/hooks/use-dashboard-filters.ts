@@ -81,7 +81,7 @@ export function useDashboardFilters(initial?: Partial<DashFilters>) {
   function apply<T>(
     items: T[],
     map: {
-      data?: (x: T) => string | Date | undefined;
+      data?: (x: T) => string | Date | number | undefined;
       produto?: (x: T) => string | undefined;
       bancoSigla?: (x: T) => string | undefined;
       corretor?: (x: T) => string | undefined;
@@ -94,8 +94,8 @@ export function useDashboardFilters(initial?: Partial<DashFilters>) {
     return items.filter((x) => {
       if (cutoffMs != null && map.data) {
         const d = map.data(x);
-        if (d) {
-          const t = typeof d === "string" ? new Date(d).getTime() : d.getTime();
+        if (d != null) {
+          const t = d instanceof Date ? d.getTime() : typeof d === "number" ? d : new Date(d).getTime();
           if (!Number.isNaN(t) && t < cutoffMs) return false;
         }
       }
