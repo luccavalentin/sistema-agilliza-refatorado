@@ -11,6 +11,7 @@ import { PanelHeader } from "@/components/dashboards/primitives";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useGlobalSearch } from "@/components/portal/global-search";
 import { bancoById, clienteById, usuarioById, usuarios } from "@/lib/operacional/mock-data";
 import { formatBRL, formatData } from "@/lib/operacional/formatters";
 import { ETAPAS_PROPOSTA, type EtapaProposta, type Prioridade, type Proposta } from "@/lib/operacional/types";
@@ -50,6 +51,7 @@ export function PropostasKanban({
 }) {
   const data = usePropostas();
   const [busca, setBusca] = useState("");
+  const globalQ = useGlobalSearch();
   const [filtroBanco, setFiltroBanco] = useState<string>("");
   const [filtroPrioridade, setFiltroPrioridade] = useState<string>("");
   const [dragId, setDragId] = useState<string | null>(null);
@@ -58,13 +60,13 @@ export function PropostasKanban({
   const restritoCorretor = escopo === "corretor";
 
   const filtradas = useMemo(() => {
+    const q = (busca || globalQ).toLowerCase();
     return data.filter((p) => {
       if (restritoCorretor && p.corretorId !== usuarioAtualId && p.responsavelId !== usuarioAtualId)
         return false;
       if (filtroBanco && p.bancoId !== filtroBanco) return false;
       if (filtroPrioridade && p.prioridade !== filtroPrioridade) return false;
-      if (busca) {
-        const q = busca.toLowerCase();
+      if (q) {
         const cli = clienteById(p.clienteId);
         if (!(
           p.numero.toLowerCase().includes(q) ||
@@ -74,7 +76,7 @@ export function PropostasKanban({
       }
       return true;
     });
-  }, [data, busca, filtroBanco, filtroPrioridade, restritoCorretor, usuarioAtualId]);
+  }, [data, busca, globalQ, filtroBanco, filtroPrioridade, restritoCorretor, usuarioAtualId]);
 
   const colunas = useMemo(() => {
     const map = new Map<EtapaProposta, Proposta[]>();

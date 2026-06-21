@@ -9,10 +9,10 @@ import {
   LogOut,
   ShieldCheck,
   Building2,
-  Search,
 } from "lucide-react";
 import { NotificationsCenter } from "@/components/portal/notifications-center";
 import { AccountMenu } from "@/components/portal/account-menu";
+import { GlobalSearchProvider, GlobalSearchInput } from "@/components/portal/global-search";
 
 export type PortalNavItem = {
   label: string;
@@ -176,6 +176,7 @@ export function PortalShell({
   }, [groups, pathname]);
 
   return (
+    <GlobalSearchProvider>
     <div className="flex min-h-screen bg-secondary text-foreground">
       {mobileOpen && (
         <button
@@ -305,14 +306,7 @@ export function PortalShell({
           </div>
 
           <div className="ml-auto flex items-center gap-2 sm:gap-3">
-            <div className="relative hidden md:block">
-              <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-              <input
-                type="search"
-                placeholder="Buscar"
-                className="h-9 w-56 rounded-md border border-input bg-background pl-8 pr-3 text-xs outline-none transition-colors placeholder:text-muted-foreground focus:border-brand focus:ring-2 focus:ring-brand/15"
-              />
-            </div>
+            <GlobalSearchInput />
 
             <span className="hidden items-center gap-1.5 rounded-md border border-border bg-secondary px-2 py-1 text-[10px] font-medium uppercase tracking-wider text-brand sm:inline-flex">
               <ShieldCheck className="h-3 w-3" />
@@ -328,5 +322,6 @@ export function PortalShell({
         <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8">{children}</main>
       </div>
     </div>
+    </GlobalSearchProvider>
   );
 }

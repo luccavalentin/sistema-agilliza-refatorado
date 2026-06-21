@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { itensConciliacao, contaById, categoriaById, contas } from "@/lib/financeiro/mock-data";
 import { formatBRL, formatData } from "@/lib/operacional/formatters";
+import { useGlobalSearch } from "@/components/portal/global-search";
 
 const TOKENS = {
   success: "#15803d", warning: "#d97706", direction: "#f5333f",
@@ -49,12 +50,14 @@ function ConciliacaoViewInner() {
     });
   const [conta, setConta] = useState("todas");
   const [status, setStatus] = useState("todos");
+  const globalQ = useGlobalSearch();
 
   const itens = useMemo(() => itensConciliacao.filter(i => {
     if (conta !== "todas" && i.contaId !== conta) return false;
     if (status !== "todos" && i.status !== status) return false;
+    if (globalQ && !i.descricao.toLowerCase().includes(globalQ)) return false;
     return true;
-  }), [conta, status]);
+  }), [conta, status, globalQ]);
 
   const tot = (s: string) => itensConciliacao.filter(i => i.status === s).length;
 

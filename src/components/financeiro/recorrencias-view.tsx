@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { recorrencias, categoriaById, contaById } from "@/lib/financeiro/mock-data";
 import { formatBRL, formatData } from "@/lib/operacional/formatters";
+import { useGlobalSearch } from "@/components/portal/global-search";
 
 const TOKENS = {
   brand: "#000f9f", success: "#15803d", warning: "#d97706",
@@ -20,8 +21,13 @@ const statusCor: Record<string, string> = {
 export function RecorrenciasView({ escopo }: { escopo: "correspondente" | "corretor" }) {
   const dados = escopo === "corretor" ? recorrencias.filter(r => r.tipo === "pagar").slice(0, 3) : recorrencias;
   const [tipo, setTipo] = useState<"todos" | "receber" | "pagar">("todos");
+  const globalQ = useGlobalSearch();
 
-  const filtradas = dados.filter(r => tipo === "todos" || r.tipo === tipo);
+  const filtradas = dados.filter(r => {
+    if (!(tipo === "todos" || r.tipo === tipo)) return false;
+    if (globalQ && !r.descricao.toLowerCase().includes(globalQ)) return false;
+    return true;
+  });
 
   return (
     <div className="space-y-6 p-6">

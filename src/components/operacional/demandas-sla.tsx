@@ -15,6 +15,7 @@ import {
 import { formatData, formatDataHora } from "@/lib/operacional/formatters";
 import type { Demanda, Prioridade, StatusDemanda } from "@/lib/operacional/types";
 import { PopoutChat } from "@/components/operacional/popout-chat";
+import { useGlobalSearch } from "@/components/portal/global-search";
 
 const COLUNAS: StatusDemanda[] = [
   "Nova", "Aguardando aceite", "Em andamento",
@@ -48,6 +49,7 @@ export function DemandasSLA({
 }) {
   const [data, setData] = useState<Demanda[]>(demandasMock);
   const [busca, setBusca] = useState("");
+  const globalQ = useGlobalSearch();
   const [filtroPrior, setFiltroPrior] = useState<string>("");
   const [filtroResp, setFiltroResp] = useState<string>("");
   const [dragId, setDragId] = useState<string | null>(null);
@@ -56,21 +58,21 @@ export function DemandasSLA({
   const restritoCorretor = escopo === "corretor";
 
   const filtradas = useMemo(() => {
+    const q = (busca || globalQ).toLowerCase();
     return data.filter((d) => {
       if (restritoCorretor && d.responsavelId !== usuarioAtualId
         && d.criadoPorId !== usuarioAtualId
         && !d.participantesIds.includes(usuarioAtualId)) return false;
       if (filtroPrior && d.prioridade !== filtroPrior) return false;
       if (filtroResp && d.responsavelId !== filtroResp) return false;
-      if (busca) {
-        const q = busca.toLowerCase();
+      if (q) {
         if (!(d.titulo.toLowerCase().includes(q) ||
               d.tipo.toLowerCase().includes(q) ||
               clienteById(d.clienteId)?.nome.toLowerCase().includes(q))) return false;
       }
       return true;
     });
-  }, [data, busca, filtroPrior, filtroResp, restritoCorretor, usuarioAtualId]);
+  }, [data, busca, globalQ, filtroPrior, filtroResp, restritoCorretor, usuarioAtualId]);
 
   const colunas = useMemo(() => {
     const map = new Map<StatusDemanda, Demanda[]>();

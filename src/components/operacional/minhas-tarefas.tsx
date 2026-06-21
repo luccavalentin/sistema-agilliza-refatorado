@@ -12,6 +12,7 @@ import {
 } from "@/lib/operacional/mock-data";
 import { formatData } from "@/lib/operacional/formatters";
 import type { Prioridade, StatusTarefa, Tarefa } from "@/lib/operacional/types";
+import { useGlobalSearch } from "@/components/portal/global-search";
 
 const prioridadeStyle: Record<Prioridade, string> = {
   "Baixa": "bg-slate-100 text-slate-700",
@@ -40,11 +41,13 @@ export function MinhasTarefas({
 }) {
   const [data, setData] = useState<Tarefa[]>(tarefasMock);
   const [busca, setBusca] = useState("");
+  const globalQ = useGlobalSearch();
   const [filtroStatus, setFiltroStatus] = useState<string>("ativas");
   const [filtroPrior, setFiltroPrior] = useState<string>("");
 
   // Quando for correspondente, mostra todas. Corretor vê só as suas.
   const minhas = useMemo(() => {
+    const q = (busca || globalQ).toLowerCase();
     const base = escopo === "corretor"
       ? data.filter((t) => t.usuarioId === usuarioAtualId)
       : data;
@@ -52,10 +55,10 @@ export function MinhasTarefas({
       if (filtroStatus === "ativas" && t.status === "Concluída") return false;
       if (filtroStatus === "concluidas" && t.status !== "Concluída") return false;
       if (filtroPrior && t.prioridade !== filtroPrior) return false;
-      if (busca && !t.titulo.toLowerCase().includes(busca.toLowerCase())) return false;
+      if (q && !t.titulo.toLowerCase().includes(q)) return false;
       return true;
     });
-  }, [data, busca, filtroStatus, filtroPrior, escopo, usuarioAtualId]);
+  }, [data, busca, globalQ, filtroStatus, filtroPrior, escopo, usuarioAtualId]);
 
   const agrupadas = useMemo(() => {
     const map = new Map<string, Tarefa[]>();

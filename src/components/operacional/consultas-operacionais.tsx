@@ -12,6 +12,7 @@ import {
   propostas, simulacoes, usuarioById, usuarios,
 } from "@/lib/operacional/mock-data";
 import { formatBRL, formatDataHora } from "@/lib/operacional/formatters";
+import { useGlobalSearch } from "@/components/portal/global-search";
 
 type Aba = "propostas" | "simulacoes" | "demandas";
 
@@ -24,45 +25,45 @@ export function ConsultasOperacionais({
 }) {
   const [aba, setAba] = useState<Aba>("propostas");
   const [busca, setBusca] = useState("");
+  const globalQ = useGlobalSearch();
   const [sel, setSel] = useState<Set<string>>(new Set());
 
   const restritoCorretor = escopo === "corretor";
+  const term = (busca || globalQ).toLowerCase();
 
   const linhasProp = useMemo(() => {
     const src = restritoCorretor
       ? propostas.filter((p) => p.corretorId === usuarioAtualId || p.responsavelId === usuarioAtualId)
       : propostas;
-    const q = busca.toLowerCase();
     return src.filter((p) => {
-      if (!q) return true;
+      if (!term) return true;
       const cli = clienteById(p.clienteId);
       return (
-        p.numero.toLowerCase().includes(q) ||
-        cli?.nome.toLowerCase().includes(q) ||
-        cli?.cpf?.includes(q) ||
-        cli?.cnpj?.includes(q) ||
-        p.etapa.toLowerCase().includes(q) ||
-        p.status.toLowerCase().includes(q)
+        p.numero.toLowerCase().includes(term) ||
+        cli?.nome.toLowerCase().includes(term) ||
+        cli?.cpf?.includes(term) ||
+        cli?.cnpj?.includes(term) ||
+        p.etapa.toLowerCase().includes(term) ||
+        p.status.toLowerCase().includes(term)
       );
     });
-  }, [busca, restritoCorretor, usuarioAtualId]);
+  }, [term, restritoCorretor, usuarioAtualId]);
 
   const linhasSim = useMemo(() => {
     const src = restritoCorretor
       ? simulacoes.filter((s) => s.corretorId === usuarioAtualId || s.usuarioId === usuarioAtualId)
       : simulacoes;
-    const q = busca.toLowerCase();
     return src.filter((s) => {
-      if (!q) return true;
+      if (!term) return true;
       const cli = clienteById(s.clienteId);
       return (
-        s.id.toLowerCase().includes(q) ||
-        cli?.nome.toLowerCase().includes(q) ||
-        s.produto.toLowerCase().includes(q) ||
-        s.status.toLowerCase().includes(q)
+        s.id.toLowerCase().includes(term) ||
+        cli?.nome.toLowerCase().includes(term) ||
+        s.produto.toLowerCase().includes(term) ||
+        s.status.toLowerCase().includes(term)
       );
     });
-  }, [busca, restritoCorretor, usuarioAtualId]);
+  }, [term, restritoCorretor, usuarioAtualId]);
 
   const linhasDem = useMemo(() => {
     const src = restritoCorretor
@@ -72,16 +73,15 @@ export function ConsultasOperacionais({
           d.participantesIds.includes(usuarioAtualId),
         )
       : demandas;
-    const q = busca.toLowerCase();
     return src.filter((d) => {
-      if (!q) return true;
+      if (!term) return true;
       return (
-        d.titulo.toLowerCase().includes(q) ||
-        d.tipo.toLowerCase().includes(q) ||
-        d.status.toLowerCase().includes(q)
+        d.titulo.toLowerCase().includes(term) ||
+        d.tipo.toLowerCase().includes(term) ||
+        d.status.toLowerCase().includes(term)
       );
     });
-  }, [busca, restritoCorretor, usuarioAtualId]);
+  }, [term, restritoCorretor, usuarioAtualId]);
 
   const total =
     aba === "propostas" ? linhasProp.length :

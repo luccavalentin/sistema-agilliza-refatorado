@@ -11,6 +11,7 @@ import { PanelHeader } from "@/components/dashboards/primitives";
 import { contasPagar } from "@/lib/financeiro/mock-data";
 import { formatBRL } from "@/lib/operacional/formatters";
 import type { Lancamento } from "@/lib/financeiro/types";
+import { useGlobalSearch } from "@/components/portal/global-search";
 
 type StatusFiltro = "todos" | "aberto" | "pago" | "vencido" | "parcial" | "agendado";
 
@@ -27,6 +28,7 @@ function statusTone(s: string) {
 
 export function ContasPagar() {
   const [busca, setBusca] = useState("");
+  const globalQ = useGlobalSearch();
   const [statusFiltro, setStatusFiltro] = useState<StatusFiltro>("todos");
   const [pagina, setPagina] = useState(1);
   const [selecionados, setSelecionados] = useState<Set<string>>(new Set());
@@ -37,9 +39,9 @@ export function ContasPagar() {
   );
 
   const filtrados = useMemo(() => lancamentos.filter((l) => {
-    const q = busca.toLowerCase();
-    const matchBusca = !busca || l.descricao.toLowerCase().includes(q) ||
-      l.fornecedor?.toLowerCase().includes(q) || l.categoriaId?.toLowerCase().includes(q);
+    const term = (busca || globalQ).toLowerCase();
+    const matchBusca = !term || l.descricao.toLowerCase().includes(term) ||
+      l.fornecedor?.toLowerCase().includes(term) || l.categoriaId?.toLowerCase().includes(term);
     const matchStatus = statusFiltro === "todos" ||
       (statusFiltro === "aberto" && l.status === "Em aberto") ||
       (statusFiltro === "pago" && l.status === "Pago") ||
@@ -47,7 +49,7 @@ export function ContasPagar() {
       (statusFiltro === "parcial" && l.status === "Pago parcialmente") ||
       (statusFiltro === "agendado" && l.status === "Agendado");
     return matchBusca && matchStatus;
-  }), [lancamentos, busca, statusFiltro]);
+  }), [lancamentos, busca, globalQ, statusFiltro]);
 
   const totalPags = Math.max(1, Math.ceil(filtrados.length / PAGE_SIZE));
   const pag = Math.min(pagina, totalPags);

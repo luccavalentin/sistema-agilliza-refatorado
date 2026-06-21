@@ -15,6 +15,7 @@ import { adicionarLancamento, marcarLancamentoPago } from "@/data/repositories";
 import { formatBRL, formatData } from "@/lib/operacional/formatters";
 import { LancamentoFormDialog } from "./lancamento-form-dialog";
 import type { Lancamento, NaturezaLancamento } from "@/lib/financeiro/types";
+import { useGlobalSearch } from "@/components/portal/global-search";
 
 const TOKENS = {
   success: "#15803d", warning: "#d97706", direction: "#f5333f",
@@ -46,16 +47,20 @@ export function LancamentosLista({ tipo, escopo }: { tipo: "receber" | "pagar"; 
   ), [dadosBase, escopo, tipo]);
 
   const [q, setQ] = useState("");
+  const globalQ = useGlobalSearch();
   const [status, setStatus] = useState<string>("todos");
   const [natureza, setNatureza] = useState<"todos" | NaturezaLancamento>("todos");
   const [openForm, setOpenForm] = useState(false);
 
-  const filtrados = useMemo(() => dados.filter(d => {
-    if (q && !d.descricao.toLowerCase().includes(q.toLowerCase())) return false;
-    if (status !== "todos" && d.status !== status) return false;
-    if (natureza !== "todos" && d.natureza !== natureza) return false;
-    return true;
-  }), [dados, q, status, natureza]);
+  const filtrados = useMemo(() => {
+    const term = (q || globalQ).toLowerCase();
+    return dados.filter(d => {
+      if (term && !d.descricao.toLowerCase().includes(term)) return false;
+      if (status !== "todos" && d.status !== status) return false;
+      if (natureza !== "todos" && d.natureza !== natureza) return false;
+      return true;
+    });
+  }, [dados, q, globalQ, status, natureza]);
 
   const sumBy = (pred: (d: Lancamento) => boolean) => dados.filter(pred).reduce((s, d) => s + d.valor, 0);
   const totalEsp = sumBy(d => d.natureza === "Esporádico");

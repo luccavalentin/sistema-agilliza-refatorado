@@ -15,6 +15,7 @@ import {
   Power,
 } from "lucide-react";
 import { PanelHeader } from "@/components/dashboards/primitives";
+import { useGlobalSearch } from "@/components/portal/global-search";
 import type { CrmScope } from "./crm-dashboard";
 
 type Tab = "clientes" | "vendedores" | "imoveis" | "composicao" | "documentos" | "vinculos" | "propostas" | "simulacoes";
@@ -50,8 +51,20 @@ const statusTone: Record<string, string> = {
 
 export function CrmConsultas({ scope }: { scope: CrmScope }) {
   const [tab, setTab] = useState<Tab>("clientes");
+  const [busca, setBusca] = useState("");
+  const globalQ = useGlobalSearch();
+  const term = (busca || globalQ).toLowerCase();
   const isCorr = scope === "correspondente";
-  const rows = isCorr ? baseClientes : baseClientes.filter((r) => r.corretor === "Mariana Lopes");
+  const baseRows = isCorr ? baseClientes : baseClientes.filter((r) => r.corretor === "Mariana Lopes");
+  const rows = term
+    ? baseRows.filter((r) =>
+        r.nome.toLowerCase().includes(term) ||
+        r.doc.toLowerCase().includes(term) ||
+        r.tel.toLowerCase().includes(term) ||
+        r.email.toLowerCase().includes(term) ||
+        r.status.toLowerCase().includes(term),
+      )
+    : baseRows;
 
   const filters = isCorr
     ? ["Nome", "CPF/CNPJ", "Telefone", "E-mail", "Status", "Produto", "Corretor", "Imobiliária", "Analista", "Backoffice", "Comercial", "Cidade", "UF", "Período", "Origem", "Possui simulação", "Possui proposta", "Possui pendência"]
@@ -71,6 +84,8 @@ export function CrmConsultas({ scope }: { scope: CrmScope }) {
           <div className="relative min-w-[260px] flex-1">
             <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
             <input
+              value={busca}
+              onChange={(e) => setBusca(e.target.value)}
               placeholder="Buscar por nome, CPF/CNPJ, telefone ou e-mail"
               className="h-10 w-full rounded-md border border-input bg-background pl-8 pr-3 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/15"
             />

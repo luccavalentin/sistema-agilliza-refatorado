@@ -7,10 +7,13 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { categorias, centrosCusto } from "@/lib/financeiro/mock-data";
+import { useGlobalSearch } from "@/components/portal/global-search";
 
 export function CategoriasView() {
   const [tab, setTab] = useState<"categorias" | "centros">("categorias");
   const [q, setQ] = useState("");
+  const globalQ = useGlobalSearch();
+  const term = (q || globalQ).toLowerCase();
 
   return (
     <div className="space-y-6 p-6">
@@ -61,7 +64,7 @@ export function CategoriasView() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {categorias.filter(c => !q || c.nome.toLowerCase().includes(q.toLowerCase())).map(c => {
+              {categorias.filter(c => !term || c.nome.toLowerCase().includes(term)).map(c => {
                 const cc = centrosCusto.find(x => x.id === c.centroCustoId);
                 return (
                   <TableRow key={c.id}>
@@ -90,7 +93,7 @@ export function CategoriasView() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {centrosCusto.filter(c => !q || c.nome.toLowerCase().includes(q.toLowerCase())).map(c => (
+              {centrosCusto.filter(c => !term || c.nome.toLowerCase().includes(term)).map(c => (
                 <TableRow key={c.id}>
                   <TableCell className="font-medium text-graphite">{c.nome}</TableCell>
                   <TableCell className="text-sm text-muted-foreground">{c.descricao ?? "—"}</TableCell>

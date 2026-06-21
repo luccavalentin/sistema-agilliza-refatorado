@@ -14,6 +14,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { clientes, propostas, bancos, usuarios } from "@/lib/financeiro/mock-data";
 import { useComissoes } from "@/data/hooks";
 import { formatBRL, formatData } from "@/lib/operacional/formatters";
+import { useGlobalSearch } from "@/components/portal/global-search";
 
 const TOKENS = {
   brand: "#000f9f", success: "#15803d", direction: "#f5333f",
@@ -59,12 +60,14 @@ function ComissoesViewInner({ escopo }: { escopo: "correspondente" | "corretor" 
     escopo === "corretor" ? comissoes.filter((c) => c.corretorId === "u-cor-1") : comissoes
   ), [escopo, comissoes]);
   const [q, setQ] = useState("");
+  const globalQ = useGlobalSearch();
   const [status, setStatus] = useState("todos");
 
+  const term = (q || globalQ).toLowerCase();
   const filtradas = dados.filter(c => {
     if (status !== "todos" && c.status !== status) return false;
     const cli = clientes.find(x => x.id === c.clienteId);
-    if (q && !(cli?.nome.toLowerCase().includes(q.toLowerCase()))) return false;
+    if (term && !(cli?.nome.toLowerCase().includes(term))) return false;
     return true;
   });
 
