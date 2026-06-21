@@ -249,6 +249,9 @@ export function AccountMenu({ kind }: { kind: PortalKind }) {
                     <CreditCard className="h-3.5 w-3.5" /> Plano
                   </TabsTrigger>
                 )}
+                <TabsTrigger value="dados-demo" className="w-full justify-start gap-2 data-[state=active]:bg-background">
+                  <Database className="h-3.5 w-3.5" /> Dados demo
+                </TabsTrigger>
               </TabsList>
             </div>
             <div className="max-h-[70vh] flex-1 overflow-y-auto p-5">
