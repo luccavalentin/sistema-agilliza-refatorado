@@ -54,9 +54,10 @@ function ComissoesViewInner({ escopo }: { escopo: "correspondente" | "corretor" 
       ],
       rows: buildMockRows(20),
     });
+  const comissoes = useComissoes();
   const dados = useMemo(() => (
-    escopo === "corretor" ? comissoes.filter(c => c.corretorId === "u-cor-1") : comissoes
-  ), [escopo]);
+    escopo === "corretor" ? comissoes.filter((c) => c.corretorId === "u-cor-1") : comissoes
+  ), [escopo, comissoes]);
   const [q, setQ] = useState("");
   const [status, setStatus] = useState("todos");
 
