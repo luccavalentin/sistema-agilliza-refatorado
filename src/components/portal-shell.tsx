@@ -1,7 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useMemo, useState, type ComponentType, type ReactNode } from "react";
 import {
-  Bell,
   Menu,
   X,
   ChevronsLeft,
@@ -12,6 +11,8 @@ import {
   Building2,
   Search,
 } from "lucide-react";
+import { NotificationsCenter } from "@/components/portal/notifications-center";
+import { AccountMenu } from "@/components/portal/account-menu";
 
 export type PortalNavItem = {
   label: string;
@@ -318,24 +319,9 @@ export function PortalShell({
               Sessão segura
             </span>
 
-            <button
-              type="button"
-              className="relative grid h-9 w-9 place-items-center rounded-md border border-border text-muted-foreground hover:border-brand/40 hover:text-brand"
-              aria-label="Notificações"
-            >
-              <Bell className="h-4 w-4" />
-              <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-direction" />
-            </button>
+            <NotificationsCenter kind={kind} />
 
-            <div className="flex items-center gap-2 rounded-md border border-border bg-background px-2 py-1.5">
-              <div className="grid h-7 w-7 place-items-center rounded bg-brand text-[11px] font-bold text-brand-foreground">
-                {meta.user.charAt(0)}
-              </div>
-              <div className="hidden min-w-0 sm:block">
-                <p className="truncate text-xs font-semibold text-graphite">{meta.user}</p>
-                <p className="truncate text-[10px] text-muted-foreground">Perfil ativo</p>
-              </div>
-            </div>
+            <AccountMenu kind={kind} />
           </div>
         </header>
 
