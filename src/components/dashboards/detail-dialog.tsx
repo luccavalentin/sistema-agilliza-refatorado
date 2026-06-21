@@ -706,40 +706,52 @@ function RecordDetail({ row, onSeeMore }: { row: DetailRow; onSeeMore: () => voi
   );
 }
 
-// ============================== Mock builder ==============================
+// ============================== Row builder (lê da store central) ==============================
+// Mantém a assinatura usada por todos os dashboards. Em vez de gerar
+// dados sintéticos, agora amostra da store reativa central, opcionalmente
+// filtrando por banco/status quando o card clicado indica.
 
-const NAMES = [
-  "Gustavo Lima", "Juliana Rocha", "Tiago Ferreira", "Beatriz Almeida", "Rafael Souza",
-  "Camila Duarte", "Bruno Tavares", "Ana Beatriz", "Mariana Lopes", "João Pereira",
-  "Marta Lima", "Carlos Antunes", "Aline Costa", "Pedro Henrique", "Fernanda Reis",
-];
-const BANCOS = ["Bradesco", "Itaú", "Caixa", "Santander", "Inter"];
-const STATUSES: { l: string; t: DetailRow["statusTone"] }[] = [
-  { l: "Aprovada", t: "success" },
-  { l: "Pendência docs", t: "warning" },
-  { l: "Em análise", t: "info" },
-  { l: "Reprovada", t: "direction" },
-  { l: "Tratativa", t: "warning" },
-];
+import { dbSnapshot, findBanco, findCliente, findUsuario } from "@/data/store";
+
+const fmtBRL = (n: number) =>
+  n.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
+const fmtDate = (iso?: string) => {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  return `${String(d.getUTCDate()).padStart(2, "0")}/${String(d.getUTCMonth() + 1).padStart(2, "0")}/${d.getUTCFullYear()}`;
+};
+function toneFor(status: string): DetailRow["statusTone"] {
+  const s = status.toLowerCase();
+  if (s.includes("aprov") || s.includes("recebido") || s.includes("pago") || s.includes("conclu") || s.includes("liber"))
+    return "success";
+  if (s.includes("vencid") || s.includes("reprov") || s.includes("cancel") || s.includes("bloque")) return "direction";
+  if (s.includes("pend") || s.includes("aguard") || s.includes("trata") || s.includes("revisão")) return "warning";
+  return "info";
+}
 
 export function buildMockRows(count: number, hint?: { banco?: string; status?: string }): DetailRow[] {
-  const out: DetailRow[] = [];
-  for (let i = 0; i < count; i++) {
-    const banco = hint?.banco ?? BANCOS[i % BANCOS.length];
-    const status = hint?.status
-      ? { l: hint.status, t: "info" as const }
-      : STATUSES[i % STATUSES.length];
-    const name = NAMES[i % NAMES.length];
-    const d = new Date();
-    d.setDate(d.getDate() - i);
-    const data = d.toLocaleDateString("pt-BR");
-    const valor = 320000 + ((i * 53) % 12) * 35000;
-    out.push({
-      data, cliente: name, banco,
-      status: status.l, statusTone: status.t,
-      usuario: i % 3 === 0 ? "Administrador Demo" : i % 3 === 1 ? "Mariana Lopes" : "Rafael Souza",
-      valor: `R$ ${valor.toLocaleString("pt-BR")}`,
+  const { propostas } = dbSnapshot();
+  let filtered = propostas;
+  if (hint?.banco) {
+    filtered = filtered.filter((p) => {
+      const b = findBanco(p.bancoId);
+      return b?.nome === hint.banco || b?.sigla === hint.banco;
     });
   }
-  return out;
+  if (hint?.status) {
+    filtered = filtered.filter((p) => p.status === hint.status);
+  }
+  // Se o filtro deixou vazio, cai pra todas — drill-down sempre traz algo
+  if (filtered.length === 0) filtered = propostas;
+
+  return filtered.slice(0, Math.min(count, filtered.length)).map((p) => ({
+    data: fmtDate(p.atualizadaEm),
+    cliente: findCliente(p.clienteId)?.nome ?? "—",
+    banco: findBanco(p.bancoId)?.nome ?? "—",
+    status: p.status,
+    statusTone: toneFor(p.status),
+    usuario: findUsuario(p.responsavelId ?? p.corretorId)?.nome ?? "—",
+    valor: fmtBRL(p.valor),
+  }));
 }
+
