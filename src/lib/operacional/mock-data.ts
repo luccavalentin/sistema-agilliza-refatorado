@@ -51,10 +51,8 @@ export const clientes: Cliente[] = [
   { id: "c-8", nome: "Patrícia Ramalho", cpf: "55566677788", email: "patricia@email.com", telefone: "31988887777", corretorId: "u-cor-2" },
 ];
 
-// --- helpers para gerar datas relativas
-const now = Date.now();
-const daysAgo = (n: number) => new Date(now - n * 86400000).toISOString();
-const daysAhead = (n: number) => new Date(now + n * 86400000).toISOString();
+// --- helpers para gerar datas relativas (ancoradas para SSR-safety)
+const now = ANCHOR_NOW;
 
 const produtos: Produto[] = ["Financiamento Imobiliário", "Home Equity"];
 const prioridades: Prioridade[] = ["Baixa", "Média", "Alta", "Urgente", "Crítica"];
