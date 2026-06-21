@@ -278,6 +278,9 @@ export function AccountMenu({ kind }: { kind: PortalKind }) {
                   <PlanoPanel kind={kind} />
                 </TabsContent>
               )}
+              <TabsContent value="dados-demo" className="mt-0">
+                <DadosDemoPanel />
+              </TabsContent>
             </div>
           </Tabs>
         </DialogContent>
