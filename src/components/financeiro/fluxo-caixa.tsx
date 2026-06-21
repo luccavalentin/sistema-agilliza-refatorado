@@ -12,7 +12,8 @@ import {
   buildMockRows,
 } from "@/components/dashboards/detail-dialog";
 import { Button } from "@/components/ui/button";
-import { contasReceber, contasPagar, categoriaById } from "@/lib/financeiro/mock-data";
+import { categoriaById } from "@/lib/financeiro/mock-data";
+import { useReceber, usePagar } from "@/data/hooks";
 import { formatBRL } from "@/lib/operacional/formatters";
 
 const TOKENS = {
