@@ -36,23 +36,35 @@ export type FilterBarItem = {
   onChange?: (v: string) => void;
 };
 
+export type DateRangeControl = {
+  from: string;
+  to: string;
+  onFrom: (v: string) => void;
+  onTo: (v: string) => void;
+  /** Quando definido, controles aparecem apenas se true (ex.: período = "Personalizado"). */
+  show?: boolean;
+};
+
 export function FilterBar({
   filters,
   onReset,
   resetValues,
+  dateRange,
 }: {
   filters: FilterBarItem[];
   onReset?: () => void;
   resetValues?: Record<string, string>;
+  dateRange?: DateRangeControl;
 }) {
+  const showRange = !!dateRange && dateRange.show !== false;
   const dirty =
     !!onReset &&
-    filters.some((f) => {
+    (filters.some((f) => {
       if (!f.onChange) return false;
       const def = resetValues?.[f.label];
       if (def != null) return f.value !== def;
       return !/^(Todos|Todas|Últimos 30 dias|30 dias|—)$/i.test(f.value);
-    });
+    }) || (showRange && (!!dateRange!.from || !!dateRange!.to)));
   return (
     <section className="rounded-lg border border-border bg-card p-3 sm:p-4">
       <div className="flex flex-wrap items-center gap-2">
@@ -88,6 +100,34 @@ export function FilterBar({
               </label>
             );
           })}
+          {showRange && (
+            <>
+              <label className="flex flex-col gap-1">
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  De
+                </span>
+                <input
+                  type="date"
+                  value={dateRange!.from}
+                  max={dateRange!.to || undefined}
+                  onChange={(e) => dateRange!.onFrom(e.target.value)}
+                  className="inline-flex h-9 min-w-[140px] items-center rounded-md border border-input bg-background px-2 text-xs font-medium text-graphite hover:border-brand/40 focus:outline-none focus:ring-2 focus:ring-brand/30"
+                />
+              </label>
+              <label className="flex flex-col gap-1">
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  Até
+                </span>
+                <input
+                  type="date"
+                  value={dateRange!.to}
+                  min={dateRange!.from || undefined}
+                  onChange={(e) => dateRange!.onTo(e.target.value)}
+                  className="inline-flex h-9 min-w-[140px] items-center rounded-md border border-input bg-background px-2 text-xs font-medium text-graphite hover:border-brand/40 focus:outline-none focus:ring-2 focus:ring-brand/30"
+                />
+              </label>
+            </>
+          )}
         </div>
         {dirty && (
           <button
@@ -102,6 +142,7 @@ export function FilterBar({
     </section>
   );
 }
+
 
 
 export type KpiCardProps = {
