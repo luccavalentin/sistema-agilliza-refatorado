@@ -11,7 +11,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { comissoes, clientes, propostas, bancos, usuarios } from "@/lib/financeiro/mock-data";
+import { clientes, propostas, bancos, usuarios } from "@/lib/financeiro/mock-data";
+import { useComissoes } from "@/data/hooks";
 import { formatBRL, formatData } from "@/lib/operacional/formatters";
 
 const TOKENS = {
