@@ -3,14 +3,16 @@
 import { useMemo, useState } from "react";
 import { ArrowRightLeft, Copy, Download, Eye, History, Pencil, Search, Send, Share2, Star } from "lucide-react";
 import { PanelHeader, FilterBar } from "@/components/dashboards/primitives";
-import { simulacoes, clienteById, usuarioById } from "@/lib/operacional/mock-data";
+import { simulacoes, clienteById, usuarioById, bancos, clientes } from "@/lib/operacional/mock-data";
 import { formatBRL, formatDataHora } from "@/lib/operacional/formatters";
+import { useDashboardFilters, PERIODOS } from "@/hooks/use-dashboard-filters";
 
 export function MinhasSimulacoes({
   escopo, usuarioAtualId = "u-cor-1",
 }: { escopo: "correspondente" | "corretor"; usuarioAtualId?: string }) {
   const [busca, setBusca] = useState("");
   const [filtro, setFiltro] = useState<"todas" | "favoritas" | "enviadas" | "rascunhos">("todas");
+  const { filters, set, reset, apply } = useDashboardFilters();
 
   const linhas = useMemo(() => {
     let src = escopo === "corretor"
@@ -18,6 +20,12 @@ export function MinhasSimulacoes({
       : simulacoes.filter((s) => s.usuarioId === usuarioAtualId);
     if (filtro === "enviadas") src = src.filter((s) => s.status === "Enviada para proposta");
     if (filtro === "rascunhos") src = src.filter((s) => s.status === "Rascunho");
+    src = apply(src, {
+      data: (s) => s.criadaEm,
+      produto: (s) => s.produto,
+      status: (s) => s.status,
+      cliente: (s) => clienteById(s.clienteId)?.nome,
+    });
     const q = busca.toLowerCase();
     if (q) {
       src = src.filter((s) => {
@@ -26,7 +34,7 @@ export function MinhasSimulacoes({
       });
     }
     return src;
-  }, [busca, filtro, escopo, usuarioAtualId]);
+  }, [busca, filtro, escopo, usuarioAtualId, apply]);
 
   return (
     <div className="space-y-5">
@@ -37,16 +45,16 @@ export function MinhasSimulacoes({
       />
 
       <FilterBar
+        onReset={reset}
         filters={[
-          { label: "Cliente", value: "Todos" },
-          { label: "Banco", value: "Todos" },
-          { label: "Produto", value: "Todos" },
-          { label: "Prazo", value: "Todos" },
-          { label: "Tabela", value: "Todas" },
-          { label: "Status", value: "Todos" },
-          { label: "Período", value: "Últimos 30 dias" },
+          { label: "Cliente", value: filters.cliente, options: ["Todos", ...clientes.map(c => c.nome)], onChange: set("cliente") },
+          { label: "Banco", value: filters.banco, options: ["Todos", ...bancos.map(b => b.sigla)], onChange: set("banco") },
+          { label: "Produto", value: filters.produto, options: ["Todos", "Financiamento Imobiliário", "Home Equity"], onChange: set("produto") },
+          { label: "Status", value: filters.status, options: ["Todos", "Rascunho", "Em andamento", "Concluída", "Enviada para proposta", "Arquivada"], onChange: set("status") },
+          { label: "Período", value: filters.periodo, options: PERIODOS, onChange: set("periodo") },
         ]}
       />
+
 
       <section className="rounded-lg border border-border bg-card">
         <div className="flex flex-wrap items-center gap-2 border-b border-border p-3">

@@ -9,6 +9,7 @@ import {
   Donut,
 } from "@/components/dashboards/primitives";
 import type { CrmScope } from "./crm-dashboard";
+import { useDashboardFilters, PERIODOS } from "@/hooks/use-dashboard-filters";
 
 const COLOR = {
   brand: "var(--brand)",
@@ -45,12 +46,13 @@ const reports = [
 
 export function CrmRelatorios({ scope }: { scope: CrmScope }) {
   const isCorr = scope === "correspondente";
+  const { filters, set, reset } = useDashboardFilters({ periodo: "90 dias" });
   return (
     <div className="space-y-5">
       <PanelHeader
         eyebrow={`CRM · ${isCorr ? "Correspondente" : "Corretor"}`}
         title="Relatórios"
-        subtitle={isCorr ? "Relatórios completos do CRM com filtros, gráficos e comparativos." : "Relatórios completos da sua carteira."}
+        subtitle={`${isCorr ? "Relatórios completos do CRM" : "Relatórios da sua carteira"} — ${filters.periodo} · Produto ${filters.produto} · Origem ${filters.origem} · Status ${filters.status}.`}
         right={
           <button className="inline-flex items-center gap-1.5 rounded-md bg-brand px-3 py-2 text-xs font-semibold text-brand-foreground hover:bg-brand-strong">
             <Download className="h-3.5 w-3.5" /> Exportar
@@ -59,15 +61,19 @@ export function CrmRelatorios({ scope }: { scope: CrmScope }) {
       />
 
       <FilterBar
+        onReset={reset}
         filters={[
-          { label: "Período", value: "Últimos 90 dias" },
-          { label: "Comparativo", value: "Mesmo período anterior" },
-          { label: "Produto", value: "Todos" },
-          { label: "Origem", value: "Todas" },
-          ...(isCorr ? [{ label: "Corretor", value: "Todos" }, { label: "Imobiliária", value: "Todas" }] : []),
-          { label: "Status", value: "Todos" },
+          { label: "Período", value: filters.periodo, options: PERIODOS, onChange: set("periodo") },
+          { label: "Produto", value: filters.produto, options: ["Todos", "Financiamento Imobiliário", "Home Equity"], onChange: set("produto") },
+          { label: "Origem", value: filters.origem, options: ["Todas", "Indicação", "Site", "Imobiliária", "Anúncio", "Parceiro"], onChange: set("origem") },
+          ...(isCorr ? [
+            { label: "Corretor", value: filters.corretor, options: ["Todos", "Rafael Lima", "Bianca Torres", "Henrique Sá"], onChange: set("corretor") },
+            { label: "Imobiliária", value: filters.imobiliaria, options: ["Todas", "Lopes", "Coelho da Fonseca", "RE/MAX", "Brasil Brokers"], onChange: set("imobiliaria") },
+          ] : []),
+          { label: "Status", value: filters.status, options: ["Todos", "Ativo", "Em simulação", "Em aprovação", "Aprovada", "Reprovada", "Pendência docs"], onChange: set("status") },
         ]}
       />
+
 
       {/* Resumo */}
       <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">

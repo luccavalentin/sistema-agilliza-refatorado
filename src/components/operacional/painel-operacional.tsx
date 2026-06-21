@@ -22,6 +22,7 @@ import {
 } from "@/lib/operacional/mock-data";
 import { ETAPAS_PROPOSTA } from "@/lib/operacional/types";
 import { formatBRL, formatDataHora } from "@/lib/operacional/formatters";
+import { useDashboardFilters, PERIODOS } from "@/hooks/use-dashboard-filters";
 
 type Escopo = "correspondente" | "corretor";
 
@@ -47,14 +48,15 @@ function PainelOperacionalInner({
   usuarioAtualId?: string;
 }) {
   const { open } = useDashboardDetail();
+  const { filters, set, reset, apply } = useDashboardFilters();
   const drill = (title: string, value: string, count = 16, hint?: { banco?: string; status?: string }) =>
     open({
       title,
       subtitle: `Painel Operacional · ${escopo === "correspondente" ? "Correspondente" : "Corretor"}`,
-      period: "Últimos 30 dias",
+      period: filters.periodo,
       kpis: [
         { label: title, value },
-        { label: "Período", value: "30 dias" },
+        { label: "Período", value: filters.periodo },
         { label: "Escopo", value: escopo === "correspondente" ? "Ecossistema" : "Meus dados" },
         { label: "Registros", value: String(count) },
       ],
@@ -64,31 +66,46 @@ function PainelOperacionalInner({
     escopo === "corretor" ? "individual" : "geral",
   );
 
-  // Recorte do escopo
+  // Recorte do escopo + filtros
   const props = useMemo(() => {
-    if (escopo === "corretor" || visao === "individual") {
-      return propostas.filter((p) => p.corretorId === usuarioAtualId || p.responsavelId === usuarioAtualId);
-    }
-    return propostas;
-  }, [escopo, visao, usuarioAtualId]);
+    const base = (escopo === "corretor" || visao === "individual")
+      ? propostas.filter((p) => p.corretorId === usuarioAtualId || p.responsavelId === usuarioAtualId)
+      : propostas;
+    return apply(base, {
+      data: (p) => p.atualizadaEm,
+      produto: (p) => p.produto,
+      bancoSigla: (p) => bancoById(p.bancoId)?.sigla,
+      status: (p) => p.status,
+      fase: (p) => p.etapa,
+      corretor: (p) => usuarioById(p.responsavelId)?.nome,
+    });
+  }, [escopo, visao, usuarioAtualId, apply]);
 
   const sims = useMemo(() => {
-    if (escopo === "corretor" || visao === "individual") {
-      return simulacoes.filter((s) => s.corretorId === usuarioAtualId || s.usuarioId === usuarioAtualId);
-    }
-    return simulacoes;
-  }, [escopo, visao, usuarioAtualId]);
+    const base = (escopo === "corretor" || visao === "individual")
+      ? simulacoes.filter((s) => s.corretorId === usuarioAtualId || s.usuarioId === usuarioAtualId)
+      : simulacoes;
+    return apply(base, {
+      data: (s) => s.criadaEm,
+      produto: (s) => s.produto,
+      status: (s) => s.status,
+    });
+  }, [escopo, visao, usuarioAtualId, apply]);
 
   const dems = useMemo(() => {
-    if (escopo === "corretor" || visao === "individual") {
-      return demandas.filter((d) =>
-        d.responsavelId === usuarioAtualId ||
-        d.criadoPorId === usuarioAtualId ||
-        d.participantesIds.includes(usuarioAtualId),
-      );
-    }
-    return demandas;
-  }, [escopo, visao, usuarioAtualId]);
+    const base = (escopo === "corretor" || visao === "individual")
+      ? demandas.filter((d) =>
+          d.responsavelId === usuarioAtualId ||
+          d.criadoPorId === usuarioAtualId ||
+          d.participantesIds.includes(usuarioAtualId),
+        )
+      : demandas;
+    return apply(base, {
+      data: (d) => d.criadaEm,
+      status: (d) => d.status,
+      corretor: (d) => usuarioById(d.responsavelId)?.nome,
+    });
+  }, [escopo, visao, usuarioAtualId, apply]);
 
   const tars = useMemo(
     () => tarefas.filter((t) => t.usuarioId === usuarioAtualId),
@@ -277,20 +294,17 @@ function PainelOperacionalInner({
       />
 
       <FilterBar
+        onReset={reset}
         filters={[
-          { label: "Período", value: "Últimos 30 dias" },
-          { label: "Usuário", value: "Todos" },
-          { label: "Corretor", value: "Todos" },
-          { label: "Analista", value: "Todos" },
-          { label: "Backoffice", value: "Todos" },
-          { label: "Banco", value: "Todos" },
-          { label: "Produto", value: "Todos" },
-          { label: "Status", value: "Todos" },
-          { label: "Etapa", value: "Todas" },
-          { label: "SLA", value: "Todos" },
-          { label: "Prioridade", value: "Todas" },
+          { label: "Período", value: filters.periodo, options: PERIODOS, onChange: set("periodo") },
+          { label: "Corretor", value: filters.corretor, options: ["Todos", ...usuarios.filter(u => u.papel === "corretor" || u.papel === "correspondente").map(u => u.nome)], onChange: set("corretor") },
+          { label: "Banco", value: filters.banco, options: ["Todos", ...bancos.map(b => b.sigla)], onChange: set("banco") },
+          { label: "Produto", value: filters.produto, options: ["Todos", "Financiamento Imobiliário", "Home Equity"], onChange: set("produto") },
+          { label: "Status", value: filters.status, options: ["Todos", "Em aprovação", "Sequenciada", "Não sequenciada", "Aprovada", "Reprovada", "Em tratativa", "Documentação pendente", "Aguardando banco", "Análise jurídica", "Contrato emitido", "Finalizada"], onChange: set("status") },
+          { label: "Etapa", value: filters.fase, options: ["Todas", ...ETAPAS_PROPOSTA], onChange: set("fase") },
         ]}
       />
+
 
       {/* KPIs principais */}
       <section className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-4">

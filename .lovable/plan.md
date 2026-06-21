@@ -1,127 +1,66 @@
-## Objetivo
+# Refatoração: Filtros Funcionais em Todas as Telas
 
-Substituir os mocks espalhados (`buildMockRows`, arrays hardcoded em cada componente) por uma **camada de dados única, reativa e persistente** — sem Supabase. Tudo roda no navegador com `localStorage` como "banco", mas com a mesma API que será trocada por server functions depois (só troca a implementação do repositório, os componentes não mudam).
+## Diagnóstico
 
----
+O componente `FilterBar` (`src/components/dashboards/primitives.tsx`) atualmente renderiza apenas `<button>` decorativos — sem estado, sem `onChange`, sem opções. Ele é consumido em ~12 telas e por isso **nenhum filtro de dashboard funciona**. As telas de listas (Kanban, Tarefas, Contas a Pagar/Receber, etc.) já têm filtros funcionais com `useState` + busca global; o problema concentra-se nos dashboards e painéis.
 
-## Arquitetura
+## Solução
+
+### Etapa 1 — Refatorar a primitiva `FilterBar` (1 arquivo)
+
+Transformar em componente controlado de verdade:
 
 ```text
-src/data/
-├── types.ts                  # entidades canônicas (Cliente, Proposta, Lancamento, Comissao, Tarefa, Tratativa, Notificacao...)
-├── seed.ts                   # dados iniciais ricos e coerentes entre módulos
-├── store.ts                  # store reativo (Zustand) + persist no localStorage
-├── repositories/
-│   ├── clientes.ts           # CRUD + filtros + agregações
-│   ├── propostas.ts          # CRUD + mudança de etapa Kanban + timeline
-│   ├── financeiro.ts         # lançamentos, recorrências, conciliação
-│   ├── comissoes.ts          # geração automática a partir de propostas aprovadas
-│   ├── tarefas.ts
-│   └── notificacoes.ts       # gera notificações ao mudar estados
-├── hooks/
-│   ├── use-clientes.ts       # hooks React tipados que consomem o store
-│   ├── use-propostas.ts
-│   ├── use-financeiro.ts
-│   ├── use-comissoes.ts
-│   ├── use-dashboard.ts      # KPIs derivados (computed selectors)
-│   └── use-detail-rows.ts    # alimenta o detail-dialog com dados reais
-└── index.ts
+FilterBar({
+  filters: [{ key, label, value, options: string[], onChange }],
+  onReset?, extra?
+})
 ```
 
-**Regras-chave:**
-- Uma única "fonte da verdade" por entidade. Componentes nunca mais declaram arrays mock locais.
-- Mutações disparam efeitos cruzados: aprovar proposta → gera comissão + lançamento a receber + notificação + tratativa.
-- Seletores derivam KPIs em tempo real (entradas previstas vs realizadas, funil CRM, SLA, etc.).
-- Tudo persistido em `localStorage` sob a chave `gestcred.db.v1`, com botão "Resetar dados demo" nas configurações.
+- Renderizar `<select>` real (estilo shadcn) para cada filtro
+- Botão "Limpar" quando algum filtro for diferente do default
+- Suportar filtro de período com opções padronizadas (7/30/90 dias, Ano, Personalizado)
+- Manter o mesmo visual (FILTROS · PERÍODO · ...) da imagem enviada
 
----
+### Etapa 2 — Hook utilitário `useDashboardFilters` (1 arquivo novo)
 
-## Entidades (resumo)
+`src/hooks/use-dashboard-filters.ts` — estado + helper de filtragem por período/banco/produto/corretor/status/imobiliária/analista, aplicável aos arrays de `mock-data` (propostas, simulações, lançamentos, leads).
 
-- **Cliente**: id, nome, cpf, telefone, email, origem, etapa CRM, score, tags, dataCadastro, owner
-- **Proposta**: id, clienteId, banco, produto, valor, parcelas, taxa, etapa Kanban, status, criadoEm, atualizadoEm, documentos[], chat[], timeline[]
-- **Comissao**: id, propostaId, valor, percentual, status (prevista/aprovada/paga/cancelada), dataPrevista, dataPagamento, banco
-- **Lancamento**: id, tipo (entrada/saida), categoria, descricao, valor, vencimento, pagamento, status, contaId, recorrenciaId?
-- **Tarefa**: id, titulo, descricao, prioridade, prazo, status, propostaId?, clienteId?, atribuido
-- **Tratativa**: id, propostaId|clienteId, autor, mensagem, tipo, criadoEm
-- **Notificacao**: id, categoria, titulo, descricao, lida, criadoEm, link
+### Etapa 3 — Aplicar em cada dashboard (12 arquivos)
 
-Seed gera ~60 clientes, ~120 propostas espalhadas em todas as etapas, comissões/lançamentos derivados, tarefas e notificações coerentes com os últimos 90 dias.
+Para cada tela abaixo: instanciar o hook, passar `filters` ao `FilterBar`, e usar os arrays filtrados nos KPIs, gráficos, listas e funis:
 
----
+1. `correspondente-dashboard.tsx`
+2. `corretor-dashboard.tsx`
+3. `cliente-dashboard.tsx` (período + status do próprio processo)
+4. `crm/crm-dashboard.tsx`
+5. `crm/crm-relatorios.tsx`
+6. `operacional/painel-operacional.tsx`
+7. `operacional/minhas-simulacoes.tsx`
+8. `operacional/consultas-operacionais.tsx` (consolidar com filtros locais existentes)
+9. `financeiro/painel-financeiro.tsx`
+10. `financeiro/comissoes-view.tsx`
+11. `financeiro/conciliacao-view.tsx`
+12. `financeiro/relatorios-financeiros.tsx`
 
-## Migração dos componentes
+`relatorios-gerenciais.tsx` já tem filtros próprios funcionais — apenas validar.
 
-Substituir por hooks reais (sem mudar a UI):
+### Etapa 4 — Validação
 
-| Arquivo | Antes | Depois |
-|---|---|---|
-| `dashboards/*-dashboard.tsx` | KPIs hardcoded | `useDashboard(role)` |
-| `dashboards/detail-dialog.tsx` | `buildMockRows()` | `useDetailRows(key, filters)` lendo do store |
-| `operacional/propostas-kanban.tsx` | array local | `usePropostas()` + `moveProposta(id, etapa)` |
-| `operacional/minhas-tarefas.tsx` | mock | `useTarefas()` |
-| `operacional/minhas-simulacoes.tsx` | mock | `useSimulacoes()` (já existe arquivo de mock, vira repo) |
-| `financeiro/fluxo-caixa.tsx` | mock | `useFluxoCaixa(periodo)` derivado de lançamentos |
-| `financeiro/comissoes-view.tsx` | mock | `useComissoes(filtro)` |
-| `financeiro/conciliacao-view.tsx` | mock | `useConciliacao()` |
-| `financeiro/lancamentos-lista.tsx` | mock | `useLancamentos(filtro)` |
-| `financeiro/recorrencias-view.tsx` | mock | `useRecorrencias()` |
-| `financeiro/categorias-view.tsx` | mock | `useCategorias()` |
-| `crm/crm-dashboard.tsx`, `crm-consultas.tsx`, `crm-cadastro.tsx` | mock | `useClientes()` + mutações |
-| `cliente/cliente-acompanhamento.tsx` | mock | `usePropostasDoCliente(clienteId)` |
-| `portal/notifications-center.tsx` | seed local | `useNotificacoes()` (já tem persist, refatorar pro store central) |
+- Rodar Playwright em 3 telas-amostra (Correspondente dashboard, CRM dashboard, Painel Financeiro): mudar Banco → KPIs e gráficos refletem; trocar Período → série temporal muda; "Limpar" → volta ao default.
+- Garantir que telas de lista (Kanban, Tarefas, Contas, etc.) continuam funcionando — elas não usam `FilterBar`, só busca local + global; não serão tocadas.
 
----
+## Fora do escopo
 
-## Cross-module reactivity (o que faz o sistema "viver")
-
-Quando o usuário **aprova uma proposta no Kanban**:
-1. Status muda → timeline ganha entrada
-2. Comissão automaticamente gerada (status "prevista")
-3. Lançamento "a receber" criado no financeiro
-4. Notificação disparada
-5. KPIs dos 3 dashboards (correspondente/corretor/cliente) recalculam na hora
-6. Funil CRM avança
-
-Tudo isso fica em `repositories/propostas.ts` numa única função `aprovarProposta(id)`.
-
----
-
-## Stack técnica
-
-- **Zustand** com middleware `persist` — leve, sem boilerplate, já compatível com React 19
-- Seletores memoizados para KPIs
-- `nanoid` para IDs (já existe via deps transitivas, ou adicionar)
-- Zero mudança em rotas, layout, design tokens
-
----
+- Telas de listas que já têm filtros funcionais (Kanban, Tarefas, Contas a Pagar/Receber, Comissões-lista, Lançamentos, Recorrências, CRM Consultas) — não mexer.
+- Persistir filtros em URL (`validateSearch`) — pode ser etapa futura se você quiser shareable links.
+- Backend/Supabase — continua mock, conforme combinado anteriormente.
 
 ## Detalhes técnicos
 
-- `store.ts` expõe `useDB()` com slices: `clientes`, `propostas`, `lancamentos`, `comissoes`, `tarefas`, `notificacoes`, `tratativas`, `categorias`, `recorrencias`, `bancos`
-- Persist com versionamento (`version: 1`) e migração futura
-- Botão "Resetar para dados demo" em `configuracoes` que limpa o storage e re-seeda
-- Botão "Limpar tudo" que zera para banco vazio (útil pra testar fluxo)
-- Quando trocar pra Supabase depois: só reimplementar `repositories/*` — hooks e componentes ficam intactos
+- Filtros como `useState` local em cada dashboard (sem URL por enquanto)
+- Filtragem 100% client-side sobre os arrays de `mock-data`
+- Tipos compartilhados em `src/hooks/use-dashboard-filters.ts`
+- Visual idêntico ao da imagem de referência (FILTROS · labels uppercase · selects bordas suaves)
 
----
-
-## Entregáveis desta etapa
-
-1. Estrutura `src/data/` completa com types, seed, store e repositórios
-2. Refatoração de todos os componentes da tabela acima para consumir os hooks
-3. `detail-dialog` lendo dados reais filtrados (não mais mock por KPI)
-4. Ações do Kanban e cards realmente mutando o estado e refletindo nos outros módulos
-5. Botões de reset/seed nas configurações
-6. Mantém 100% da UI atual — só troca a fonte dos dados
-
----
-
-## Fora do escopo (deixar para depois)
-
-- Backend real (Supabase/API)
-- Autenticação real
-- Multi-usuário/sync entre abas (dá pra adicionar com `BroadcastChannel` num próximo passo)
-- Upload real de arquivos (continua mock)
-
-Posso começar?
+Posso prosseguir?

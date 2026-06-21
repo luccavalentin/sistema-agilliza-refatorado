@@ -31,6 +31,8 @@ import {
   buildMockRows,
   type DetailContext,
 } from "./detail-dialog";
+import { useDashboardFilters, PERIODOS } from "@/hooks/use-dashboard-filters";
+import { bancos, usuarios } from "@/lib/operacional/mock-data";
 
 const COLOR = {
   brand: "var(--brand)",
@@ -49,6 +51,7 @@ const TOP_BANCOS = [
 
 function Inner() {
   const { open } = useDashboardDetail();
+  const { filters, set, reset } = useDashboardFilters();
 
   const detail = (
     title: string,
@@ -59,11 +62,17 @@ function Inner() {
     open({
       title,
       subtitle: "Painel do Correspondente",
-      period: "Últimos 30 dias",
-      kpis,
+      period: filters.periodo,
+      kpis: [
+        ...kpis,
+        ...(filters.produto !== "Todos" ? [{ label: "Produto", value: filters.produto }] : []),
+        ...(filters.banco !== "Todos" ? [{ label: "Banco", value: filters.banco }] : []),
+        ...(filters.corretor !== "Todos" ? [{ label: "Corretor", value: filters.corretor }] : []),
+        ...(filters.status !== "Todos" ? [{ label: "Status", value: filters.status }] : []),
+      ],
       topGroupLabel: "Principais bancos",
       top: TOP_BANCOS,
-      rows: buildMockRows(count, hint),
+      rows: buildMockRows(count, { banco: hint?.banco ?? (filters.banco !== "Todos" ? filters.banco : undefined), status: hint?.status ?? (filters.status !== "Todos" ? filters.status : undefined) }),
     });
 
   return (
@@ -71,7 +80,7 @@ function Inner() {
       <PanelHeader
         eyebrow="Visão Geral · Correspondente"
         title="Painel de Monitoramento"
-        subtitle="Visão executiva e operacional consolidada de todo o ecossistema: simulações, aprovações, bancos, corretores e SLA."
+        subtitle={`Visão executiva — ${filters.periodo}. Produto: ${filters.produto} · Banco: ${filters.banco} · Corretor: ${filters.corretor} · Status: ${filters.status}.`}
         right={
           <span className="inline-flex items-center gap-2 rounded-md border border-border bg-card px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-brand">
             <ShieldAlert className="h-3.5 w-3.5" />
@@ -81,14 +90,16 @@ function Inner() {
       />
 
       <FilterBar
+        onReset={reset}
         filters={[
-          { label: "Período", value: "Últimos 30 dias" },
-          { label: "Produto", value: "Todos" },
-          { label: "Banco", value: "Todos" },
-          { label: "Corretor", value: "Todos" },
-          { label: "Status", value: "Todos" },
+          { label: "Período", value: filters.periodo, options: PERIODOS, onChange: set("periodo") },
+          { label: "Produto", value: filters.produto, options: ["Todos", "Financiamento Imobiliário", "Home Equity"], onChange: set("produto") },
+          { label: "Banco", value: filters.banco, options: ["Todos", ...bancos.map(b => b.sigla)], onChange: set("banco") },
+          { label: "Corretor", value: filters.corretor, options: ["Todos", ...usuarios.filter(u => u.papel === "corretor").map(u => u.nome)], onChange: set("corretor") },
+          { label: "Status", value: filters.status, options: ["Todos", "Aprovada", "Reprovada", "Em aprovação", "Em tratativa", "Documentação pendente", "Aguardando banco", "Contrato emitido", "Finalizada"], onChange: set("status") },
         ]}
       />
+
 
       <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
         <KpiCard

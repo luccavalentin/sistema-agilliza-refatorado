@@ -30,6 +30,7 @@ import {
   useDashboardDetail,
   buildMockRows,
 } from "@/components/dashboards/detail-dialog";
+import { useDashboardFilters, PERIODOS } from "@/hooks/use-dashboard-filters";
 
 const COLOR = {
   brand: "var(--brand)",
@@ -51,6 +52,9 @@ export function CrmDashboard({ scope }: { scope: CrmScope }) {
 
 function CrmDashboardInner({ scope }: { scope: CrmScope }) {
   const { open } = useDashboardDetail();
+  const isCorr = scope === "correspondente";
+  const { filters, set, reset } = useDashboardFilters();
+
   const drill = (
     title: string,
     value: string,
@@ -59,17 +63,24 @@ function CrmDashboardInner({ scope }: { scope: CrmScope }) {
   ) =>
     open({
       title,
-      subtitle: `CRM · ${scope === "correspondente" ? "Correspondente" : "Corretor"}`,
-      period: "Últimos 30 dias",
+      subtitle: `CRM · ${isCorr ? "Correspondente" : "Corretor"}`,
+      period: filters.periodo,
       kpis: [
         { label: title, value },
-        { label: "Período", value: "30 dias" },
-        { label: "Escopo", value: scope === "correspondente" ? "Ecossistema" : "Minha carteira" },
+        { label: "Período", value: filters.periodo },
+        { label: "Escopo", value: isCorr ? "Ecossistema" : "Minha carteira" },
+        { label: "Produto", value: filters.produto },
+        { label: "Origem", value: filters.origem },
+        { label: "Status", value: filters.status },
+        ...(isCorr ? [
+          { label: "Corretor", value: filters.corretor },
+          { label: "Imobiliária", value: filters.imobiliaria },
+          { label: "Analista", value: filters.analista },
+        ] : []),
         { label: "Registros", value: String(count) },
       ],
-      rows: buildMockRows(count, extra),
+      rows: buildMockRows(count, { banco: extra?.banco, status: extra?.status ?? (filters.status !== "Todos" ? filters.status : undefined) }),
     });
-  const isCorr = scope === "correspondente";
   const totalClientes = isCorr ? "1.284" : "186";
   const novosMes = isCorr ? "142" : "21";
   const ativos = isCorr ? "918" : "134";
@@ -80,39 +91,29 @@ function CrmDashboardInner({ scope }: { scope: CrmScope }) {
   const semMov = isCorr ? "146" : "18";
   const pendDoc = isCorr ? "203" : "29";
 
-  const filters = isCorr
-    ? [
-        { label: "Período", value: "Últimos 30 dias" },
-        { label: "Origem", value: "Todas" },
-        { label: "Imobiliária", value: "Todas" },
-        { label: "Corretor", value: "Todos" },
-        { label: "Analista", value: "Todos" },
-        { label: "Backoffice", value: "Todos" },
-        { label: "Comercial", value: "Todos" },
-        { label: "Status", value: "Todos" },
-        { label: "Produto", value: "Todos" },
-        { label: "Cidade", value: "Todas" },
-        { label: "UF", value: "Todas" },
-      ]
-    : [
-        { label: "Período", value: "Últimos 30 dias" },
-        { label: "Origem", value: "Todas" },
-        { label: "Status", value: "Todos" },
-        { label: "Produto", value: "Todos" },
-        { label: "Cidade", value: "Todas" },
-        { label: "UF", value: "Todas" },
-      ];
+  const baseFilters = [
+    { label: "Período", value: filters.periodo, options: PERIODOS, onChange: set("periodo") },
+    { label: "Origem", value: filters.origem, options: ["Todas", "Indicação", "Site", "Imobiliária", "Anúncio", "Parceiro"], onChange: set("origem") },
+    { label: "Status", value: filters.status, options: ["Todos", "Ativo", "Em simulação", "Em aprovação", "Aprovada", "Reprovada", "Pendência docs"], onChange: set("status") },
+    { label: "Produto", value: filters.produto, options: ["Todos", "Financiamento Imobiliário", "Home Equity"], onChange: set("produto") },
+    { label: "Cidade", value: filters.cidade, options: ["Todas", "São Paulo", "Rio de Janeiro", "Belo Horizonte", "Curitiba", "Porto Alegre"], onChange: set("cidade") },
+    { label: "UF", value: filters.uf, options: ["Todas", "SP", "RJ", "MG", "PR", "RS", "SC"], onChange: set("uf") },
+  ];
+  const corrExtras = [
+    { label: "Imobiliária", value: filters.imobiliaria, options: ["Todas", "Lopes", "Coelho da Fonseca", "RE/MAX", "Brasil Brokers"], onChange: set("imobiliaria") },
+    { label: "Corretor", value: filters.corretor, options: ["Todos", "Rafael Lima", "Bianca Torres", "Henrique Sá"], onChange: set("corretor") },
+    { label: "Analista", value: filters.analista, options: ["Todos", "Camila Reis", "Pedro Nogueira"], onChange: set("analista") },
+    { label: "Backoffice", value: filters.backoffice, options: ["Todos", "Lara Mendes", "Felipe Castro"], onChange: set("backoffice") },
+    { label: "Comercial", value: filters.comercial, options: ["Todos", "Marina Souza", "Diego Almeida"], onChange: set("comercial") },
+  ];
+  const filterItems = isCorr ? [...baseFilters, ...corrExtras] : baseFilters;
 
   return (
     <div className="space-y-6">
       <PanelHeader
         eyebrow={`CRM de Clientes · ${isCorr ? "Correspondente" : "Corretor"}`}
         title="Dashboard de Clientes"
-        subtitle={
-          isCorr
-            ? "Visão consolidada de toda a base de clientes do ecossistema, vínculos operacionais e conversão."
-            : "Visão da sua carteira: clientes vinculados a você, vínculos operacionais e conversão."
-        }
+        subtitle={`${isCorr ? "Base consolidada do ecossistema" : "Sua carteira"} — ${filters.periodo} · Status: ${filters.status} · Produto: ${filters.produto} · Origem: ${filters.origem}.`}
         right={
           <span className="inline-flex items-center gap-2 rounded-md border border-border bg-card px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-brand">
             {isCorr ? "Escopo total" : "Minha carteira"}
@@ -120,7 +121,8 @@ function CrmDashboardInner({ scope }: { scope: CrmScope }) {
         }
       />
 
-      <FilterBar filters={filters} />
+      <FilterBar filters={filterItems} onReset={reset} />
+
 
       {/* KPI cards */}
       <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

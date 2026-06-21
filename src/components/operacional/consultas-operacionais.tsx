@@ -11,8 +11,10 @@ import {
   bancoById, bancos, clienteById, clientes, demandas,
   propostas, simulacoes, usuarioById, usuarios,
 } from "@/lib/operacional/mock-data";
+import { ETAPAS_PROPOSTA } from "@/lib/operacional/types";
 import { formatBRL, formatDataHora } from "@/lib/operacional/formatters";
 import { useGlobalSearch } from "@/components/portal/global-search";
+import { useDashboardFilters, PERIODOS } from "@/hooks/use-dashboard-filters";
 
 type Aba = "propostas" | "simulacoes" | "demandas";
 
@@ -27,14 +29,24 @@ export function ConsultasOperacionais({
   const [busca, setBusca] = useState("");
   const globalQ = useGlobalSearch();
   const [sel, setSel] = useState<Set<string>>(new Set());
+  const { filters, set, reset, apply } = useDashboardFilters();
 
   const restritoCorretor = escopo === "corretor";
   const term = (busca || globalQ).toLowerCase();
 
   const linhasProp = useMemo(() => {
-    const src = restritoCorretor
+    const base = restritoCorretor
       ? propostas.filter((p) => p.corretorId === usuarioAtualId || p.responsavelId === usuarioAtualId)
       : propostas;
+    const src = apply(base, {
+      data: (p) => p.atualizadaEm,
+      produto: (p) => p.produto,
+      bancoSigla: (p) => bancoById(p.bancoId)?.sigla,
+      status: (p) => p.status,
+      cliente: (p) => clienteById(p.clienteId)?.nome,
+      fase: (p) => p.etapa,
+      corretor: (p) => usuarioById(p.responsavelId)?.nome,
+    });
     return src.filter((p) => {
       if (!term) return true;
       const cli = clienteById(p.clienteId);
@@ -47,12 +59,18 @@ export function ConsultasOperacionais({
         p.status.toLowerCase().includes(term)
       );
     });
-  }, [term, restritoCorretor, usuarioAtualId]);
+  }, [term, restritoCorretor, usuarioAtualId, apply]);
 
   const linhasSim = useMemo(() => {
-    const src = restritoCorretor
+    const base = restritoCorretor
       ? simulacoes.filter((s) => s.corretorId === usuarioAtualId || s.usuarioId === usuarioAtualId)
       : simulacoes;
+    const src = apply(base, {
+      data: (s) => s.criadaEm,
+      produto: (s) => s.produto,
+      status: (s) => s.status,
+      cliente: (s) => clienteById(s.clienteId)?.nome,
+    });
     return src.filter((s) => {
       if (!term) return true;
       const cli = clienteById(s.clienteId);
@@ -63,16 +81,22 @@ export function ConsultasOperacionais({
         s.status.toLowerCase().includes(term)
       );
     });
-  }, [term, restritoCorretor, usuarioAtualId]);
+  }, [term, restritoCorretor, usuarioAtualId, apply]);
 
   const linhasDem = useMemo(() => {
-    const src = restritoCorretor
+    const base = restritoCorretor
       ? demandas.filter((d) =>
           d.responsavelId === usuarioAtualId ||
           d.criadoPorId === usuarioAtualId ||
           d.participantesIds.includes(usuarioAtualId),
         )
       : demandas;
+    const src = apply(base, {
+      data: (d) => d.criadaEm,
+      status: (d) => d.status,
+      cliente: (d) => clienteById(d.clienteId)?.nome,
+      corretor: (d) => usuarioById(d.responsavelId)?.nome,
+    });
     return src.filter((d) => {
       if (!term) return true;
       return (
@@ -81,7 +105,7 @@ export function ConsultasOperacionais({
         d.status.toLowerCase().includes(term)
       );
     });
-  }, [term, restritoCorretor, usuarioAtualId]);
+  }, [term, restritoCorretor, usuarioAtualId, apply]);
 
   const total =
     aba === "propostas" ? linhasProp.length :
@@ -96,6 +120,12 @@ export function ConsultasOperacionais({
     });
   };
 
+  const statusOpts = aba === "propostas"
+    ? ["Todos", "Em aprovação", "Sequenciada", "Não sequenciada", "Aprovada", "Reprovada", "Em tratativa", "Documentação pendente", "Aguardando banco", "Análise jurídica", "Contrato emitido", "Finalizada"]
+    : aba === "simulacoes"
+    ? ["Todos", "Rascunho", "Em andamento", "Concluída", "Enviada para proposta", "Arquivada"]
+    : ["Todos", "Nova", "Aguardando aceite", "Em andamento", "Aguardando retorno", "Em revisão", "Concluída", "Reaberta", "Cancelada"];
+
   return (
     <div className="space-y-5">
       <PanelHeader
@@ -105,19 +135,18 @@ export function ConsultasOperacionais({
       />
 
       <FilterBar
+        onReset={reset}
         filters={[
-          { label: "Cliente", value: "Todos" },
-          { label: "Banco", value: "Todos" },
-          { label: "Produto", value: "Todos" },
-          { label: "Status", value: "Todos" },
-          { label: "Etapa", value: "Todas" },
-          { label: "Responsável", value: "Todos" },
-          { label: "Período", value: "Últimos 30 dias" },
-          { label: "SLA", value: "Todos" },
-          { label: "Prioridade", value: "Todas" },
-          { label: "Origem", value: "Todas" },
+          { label: "Cliente", value: filters.cliente, options: ["Todos", ...clientes.map(c => c.nome)], onChange: set("cliente") },
+          { label: "Banco", value: filters.banco, options: ["Todos", ...bancos.map(b => b.sigla)], onChange: set("banco") },
+          { label: "Produto", value: filters.produto, options: ["Todos", "Financiamento Imobiliário", "Home Equity"], onChange: set("produto") },
+          { label: "Status", value: filters.status, options: statusOpts, onChange: set("status") },
+          { label: "Etapa", value: filters.fase, options: ["Todas", ...ETAPAS_PROPOSTA], onChange: set("fase") },
+          { label: "Responsável", value: filters.corretor, options: ["Todos", ...usuarios.map(u => u.nome)], onChange: set("corretor") },
+          { label: "Período", value: filters.periodo, options: PERIODOS, onChange: set("periodo") },
         ]}
       />
+
 
       <section className="rounded-lg border border-border bg-card">
         <div className="flex flex-wrap items-center gap-2 border-b border-border p-3">
