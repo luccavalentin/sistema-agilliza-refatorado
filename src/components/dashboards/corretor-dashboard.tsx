@@ -32,6 +32,8 @@ import {
   buildMockRows,
   type DetailContext,
 } from "./detail-dialog";
+import { useDashboardFilters, PERIODOS } from "@/hooks/use-dashboard-filters";
+import { bancos, clientes } from "@/lib/operacional/mock-data";
 
 const COLOR = {
   brand: "var(--brand)",
