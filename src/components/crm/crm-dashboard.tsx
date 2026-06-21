@@ -30,6 +30,7 @@ import {
   useDashboardDetail,
   buildMockRows,
 } from "@/components/dashboards/detail-dialog";
+import { useDashboardFilters, PERIODOS } from "@/hooks/use-dashboard-filters";
 
 const COLOR = {
   brand: "var(--brand)",
