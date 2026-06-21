@@ -306,4 +306,221 @@ Cada etapa entrega valor isolado e pode ser revisada antes da próxima.
 
 ---
 
-**Fim do prompt mestre.** Use cada seção como instrução individual ao agente — uma seção por turno garante execução limpa.
+**Fim do prompt mestre principal.** A seguir, o **Apêndice de Completude** — preenche lacunas detectadas na auditoria contra o sistema real (rotas, telas, botões, tabelas, estados, integrações). Trate cada item como obrigatório para entrar em produção.
+
+---
+
+# APÊNDICE A — Telas e rotas que faltavam no corpo principal
+
+Algumas telas estavam citadas só no menu (seção 6) sem etapa de construção. Adicione:
+
+### A.1 — Landing pública `/`
+Marketing institucional: hero, prova social, módulos, planos resumidos, CTA "Começar grátis" → onboarding. SEO completo + JSON-LD. Não usa PortalShell.
+
+### A.2 — `/login`, `/cadastro`, `/recuperar-senha`, `/redefinir-senha/:token`, `/auth/callback`
+Fluxo completo: login, signup correspondente, esqueci senha (envio email), redefinir via token, callback OAuth (Google/Microsoft). Tela de **2FA challenge** (TOTP/SMS) após login quando ativado.
+
+### A.3 — `/convite/:token`
+Usuário convidado (corretor, financeiro, operacional ou cliente final) define senha e aceita LGPD → entra com role correto.
+
+### A.4 — Super Admin (`/admin`)
+Console interno (role `super_admin`): lista de correspondentes (tenants), planos, métricas globais (MRR, churn, uso), suporte (impersonar tenant com audit), feature flags, banco global de bancos/produtos.
+
+### A.5 — Painel de Monitoramento (Visão Geral)
+Distinto dos Dashboards de KPIs. **Saúde operacional em tempo real**: propostas paradas há +X dias, SLA estourado, documentos vencidos, conciliação pendente, integrações fora do ar, fila de tarefas atrasadas. Cards clicáveis levam direto à ação corretiva.
+
+### A.6 — Scan IA (`/{portal}/crm/scan-ia`)
+Upload de documento (RG, CNH, contracheque, IR) → OCR + extração estruturada → pré-preenche cadastro. Mostra confidence score por campo, permite revisão.
+
+### A.7 — Flash IA (`/{portal}/crm/flash-ia`)
+Assistente conversacional: usuário descreve o caso, IA sugere produtos + bancos + simulação inicial + roteiro de tratativa.
+
+### A.8 — Painel Operacional (`/{portal}/operacional`)
+Visão única consolidando Kanban resumido + tarefas do dia + SLA crítico + últimas tratativas + chat ao vivo. Diferente do Painel de Monitoramento (executivo vs. tático/diário).
+
+### A.9 — Consultas Operacionais (`/{portal}/operacional/consultas`)
+Consulta de CPF/CNPJ em bureaus (Serasa, SPC, Quod), matrícula de imóvel, FGTS. Cada consulta gera evento auditável e custo.
+
+### A.10 — Configurações > Sub-telas detalhadas
+Cada item da seção 7.25 vira sub-rota:
+- `/correspondente/configuracoes/empresa` — dados, logotipo, endereço, marca branca.
+- `/correspondente/configuracoes/usuarios` — lista, convidar, editar role, suspender, ver sessões.
+- `/correspondente/configuracoes/bancos` — habilitar bancos, credenciais por banco, ativar produtos.
+- `/correspondente/configuracoes/tabelas-comissao` — CRUD (banco × produto × faixa × % corretor × % correspondente × override).
+- `/correspondente/configuracoes/integracoes` — OFX/CNAB, e-Sign (D4Sign, Clicksign), WhatsApp Business, SMTP, webhooks de banco, API keys.
+- `/correspondente/configuracoes/plano` — plano atual, uso vs limite, upgrade/downgrade, faturas, método de pagamento, cancelar.
+- `/correspondente/configuracoes/seguranca` — política de senha, sessões ativas, IPs permitidos, exigir 2FA.
+- `/correspondente/configuracoes/auditoria` — visualizador do `audit_log` com filtros.
+
+### A.11 — Portal Cliente: sub-telas
+- `/cliente/documentos` — upload guiado por checklist, lista por proposta, validade, status.
+- `/cliente/historico` — propostas anteriores + contratos baixáveis.
+- `/cliente/conta` — perfil, senha, 2FA, exportar dados (LGPD), excluir conta.
+- `/cliente/proposta/:id/aceite` — aceite do contrato com e-sign embed.
+
+### A.12 — Páginas utilitárias globais
+`/404` · `/403` · `/500` · `/manutencao` (feature flag) · `/offline` (PWA).
+
+---
+
+# APÊNDICE B — Componentes compartilhados obrigatórios
+
+Construir em `src/components/shared/` antes das telas:
+
+1. **DataTable** — paginação, ordenação, filtros, seleção em massa, ações em linha, export CSV, colunas configuráveis por usuário, densidade.
+2. **KpiCard** — valor + delta vs período anterior + sparkline + clique → drill-down.
+3. **DetailDialog / DrillDownDialog** — dialog lateral 720px com tabela filtrada + export.
+4. **EmptyState** — ilustração + título + descrição + CTA.
+5. **ErrorBoundary** — fallback amigável com "tentar novamente" (`router.invalidate()` + `reset()`).
+6. **Skeletons específicos** — TableSkeleton, CardSkeleton, KanbanSkeleton.
+7. **ConfirmDialog** — confirmação destrutiva exigindo digitar "CONFIRMAR".
+8. **FilterBar** — filtros reutilizáveis (período, banco, corretor, status, busca) com chips e "salvar filtro".
+9. **PeriodPicker** — hoje, 7d, 30d, mês, trimestre, ano, custom.
+10. **Inputs mascarados** — Currency, Cpf, Cnpj, Cep, Phone, Percent, Date.
+11. **StatusBadge** — semântico (success/warning/danger/info/muted) com fundo 12%.
+12. **CommandPalette (⌘K)** — busca global (clientes, propostas, lançamentos) + navegação + ações rápidas.
+13. **Toaster (sonner)** — feedback de toda mutação.
+14. **AuditTimeline** — render de `audit_log` por entidade.
+15. **FileUpload** — drag-drop, múltiplos, preview, validação MIME/tamanho, URL assinada.
+16. **Chat / PopoutChat** — janela flutuante destacável (padronizar o existente).
+17. **ExportMenu** — CSV, XLSX, PDF, imprimir.
+18. **PrintLayout** — wrapper para impressão (`@media print`).
+
+---
+
+# APÊNDICE C — Inventário de botões e ações por tela
+
+Padronizar nomenclatura. Toda ação mutativa: toast + realtime + `audit_log`.
+
+| Tela | Ações obrigatórias |
+|---|---|
+| Dashboard (qualquer) | Trocar período · Exportar · Imprimir · Clicar KPI → drill-down |
+| CRM Consultas | Novo cliente · Importar CSV · Exportar · Editar · Arquivar · Criar simulação · Criar proposta · Mover etapa · Tag · Atribuir corretor |
+| CRM Cadastro | Salvar · Salvar e novo · Cancelar · Anexar documento · Buscar CEP · Validar CPF |
+| Simulador | Calcular · Salvar · Enviar ao cliente (email/WhatsApp) · Comparar bancos · Converter em proposta |
+| Propostas Kanban | Arrastar · Nova · Filtrar · Abrir drawer · Aprovar · Reprovar · Cancelar · Anexar · Tratativa · Atribuir tarefa · Exportar |
+| Atualização de Proposta | Buscar nº · Anexar · Tratativa · Mover etapa · Notificar cliente |
+| Tarefas | Nova · Concluir · Adiar · Reatribuir · Filtrar · Visão lista/calendário/kanban |
+| Demandas & SLA | Filtrar banco · Escalar · Marcar resolvido · Exportar |
+| Contas a Pagar/Receber | Novo · Pagar/Receber · Editar · Excluir · Duplicar · Conciliar · Importar OFX · Exportar |
+| Comissões | Filtrar · Bloquear · Liberar · Pagar (gera lançamento) · Recalcular · Detalhe · Exportar · Imprimir recibo |
+| Conciliação | Importar OFX/CNAB · Match automático · Confirmar · Criar lançamento · Ignorar · Desfazer |
+| Fluxo de Caixa | Granularidade (dia/semana/mês) · Trocar conta · Incluir recorrências · Exportar |
+| Recorrências | Nova · Editar · Pausar · Excluir · Gerar próxima |
+| Categorias/Centros | Nova · Editar · Arquivar · Reordenar |
+| Notificações | Marcar lida · Marcar todas · Limpar · Filtrar · Configurar canais |
+| Minha Conta | Avatar/senha · Ativar 2FA · Encerrar sessão · Exportar dados · Excluir conta |
+| Config Usuários | Convidar · Editar role · Suspender · Reenviar convite · Forçar logout · Auditoria |
+| Config Bancos | Habilitar · Salvar credenciais · Testar conexão · Mapear produtos |
+| Config Tabelas Comissão | Nova · Duplicar · Editar faixas · Ativar/desativar · Vigência |
+| Config Integrações | Conectar/desconectar · Reautenticar · Ver logs · Webhook URL + secret |
+| Config Plano | Trocar plano · Atualizar cartão · Baixar fatura · Cancelar |
+| Portal Cliente | Aceitar contrato · Recusar · Enviar documento · Chat · Baixar contrato · Solicitar atendimento |
+
+---
+
+# APÊNDICE D — Tabelas que faltavam no schema (seção 4)
+
+Mesma regra de GRANT + ENABLE RLS + POLICIES:
+
+22. `convites` (id, correspondente_id, email, role, token_hash, expira_em, aceito_em?, criado_por)
+23. `sessoes` (id, user_id, ip, user_agent, criada_em, ultima_atividade, revogada_em?)
+24. `planos` (id, nome, preco_mensal, limite_usuarios, limite_propostas_mes, recursos_jsonb) — global
+25. `assinaturas` (id, correspondente_id, plano_id, status, inicio, proxima_cobranca, gateway_id, cartao_final)
+26. `faturas` (id, assinatura_id, valor, vencimento, pago_em?, link_pdf, status)
+27. `tabelas_comissao` (id, correspondente_id, banco_id, produto_id, vigencia_inicio, vigencia_fim?, faixas_jsonb, perc_corretor, perc_correspondente, override)
+28. `bancos_credenciais` (id, correspondente_id, banco_id, credenciais_cifradas, ativo, ultima_validacao)
+29. `integracoes` (id, correspondente_id, tipo, status, config_jsonb, ultimo_evento_em)
+30. `webhooks_recebidos` (id, correspondente_id, origem, payload_jsonb, assinatura_valida, processado_em, erro?)
+31. `mensagens_chat` (id, correspondente_id, proposta_id?, cliente_id, autor_id, autor_tipo, conteudo, anexos_jsonb, lida_em?, criado_em)
+32. `consentimentos_lgpd` (id, user_id, versao_termo, aceito_em, ip)
+33. `consultas_bureau` (id, correspondente_id, cliente_id, tipo, provedor, resultado_jsonb, custo, criado_em, autor_id)
+34. `arquivos_export` (id, correspondente_id, tipo, status, storage_path, gerado_por, criado_em, expira_em)
+35. `feature_flags` (id, chave, valor_jsonb, escopo)
+
+Triggers/funções obrigatórias:
+- `tg_proposta_aprovada()` → gera comissão + lançamentos + notificações.
+- `tg_lancamento_pago()` → atualiza saldo de conta.
+- `tg_audit()` genérico em todas as tabelas mutáveis.
+- `fn_gerar_recorrencias_diarias()` (cron diário).
+- `fn_calcular_sla_propostas()` (cron horário, escreve em `notificacoes`).
+- `fn_expirar_simulacoes()` (cron diário).
+- `fn_anonimizar_usuario(user_id)` (LGPD exclusão).
+
+---
+
+# APÊNDICE E — Estados obrigatórios por tela
+
+Toda tela com dados implementa **os 6 estados**:
+1. **Loading** — skeleton específico, nunca spinner genérico.
+2. **Empty primeiro uso** — ilustração + CTA de criação.
+3. **Empty filtrado** — "nenhum resultado" + limpar filtros.
+4. **Erro** — mensagem amigável + retry + link suporte.
+5. **Sem permissão** — 403 contextual.
+6. **Sucesso** — conteúdo + ações.
+
+Mutações: **otimistas** com rollback no erro + toast.
+
+---
+
+# APÊNDICE F — Realtime, jobs e webhooks
+
+- **Canais por tenant**: `propostas`, `notificacoes`, `tarefas`, `comissoes`, `lancamentos`, `chat:{proposta_id}`.
+- **Cron** (pg_cron ou Vercel Cron via `/api/public/cron/*` com header secreto):
+  - Hora cheia: SLA propostas, expirar URLs assinadas.
+  - Diário 00:05: gerar recorrências, expirar simulações, snapshot de KPIs.
+  - Diário 06:00: digest de notificações por email (opt-in).
+  - Semanal seg 07:00: relatório executivo ao correspondente_admin.
+- **Webhooks recebidos** em `/api/public/webhook/*`: banco (status), e-sign (assinado), gateway (fatura paga), WhatsApp (mensagem). Verificam HMAC, gravam em `webhooks_recebidos`.
+
+---
+
+# APÊNDICE G — Acessibilidade, atalhos e i18n
+
+- WCAG AA: contraste 4.5:1, foco visível (ring 2px brand), navegação por teclado completa, aria-labels, skip-to-content.
+- Atalhos: `⌘K` busca · `⌘/` ajuda · `g d` dashboard · `g p` propostas · `g c` clientes · `g f` financeiro · `n` novo (contextual) · `?` lista · `esc` fecha modal.
+- Dialogs com focus trap + restaurar foco.
+- i18n: `pt-BR` default, chaves em `src/i18n/`, `Intl` para moeda/data/número, estrutura pronta para `en`, `es`.
+- Tema claro default, **dark mode** opcional em Minha Conta > Preferências, SSR-safe (sem flicker).
+
+---
+
+# APÊNDICE H — Observabilidade, segurança, LGPD
+
+- **Erros**: `window.onerror` + `unhandledrejection` + server functions → sink (Sentry-compatível).
+- **Métricas de produto**: `proposta_criada`, `proposta_aprovada`, `simulacao_enviada`, `comissao_paga`, `login`, etc.
+- **Rate limit** em `/api/public/*` por IP + por tenant.
+- **CSRF**: server functions já protegidas; webhooks via HMAC.
+- **CSP** estrita no `__root.tsx`.
+- **Sanitização** de chat/tratativas (DOMPurify).
+- **Storage**: buckets privados, URLs assinadas TTL curto, AV opcional.
+- **LGPD**: termo versionado, registro de consentimento, exportação assíncrona em `arquivos_export`, exclusão com anonimização (`fn_anonimizar_usuario`), DPO no rodapé.
+- **Backups**: PITR no Postgres + export semanal off-site.
+
+---
+
+# APÊNDICE I — Definition of Done (checklist por tela)
+
+Antes de marcar uma etapa concluída:
+- [ ] Rota criada com `createFileRoute` no caminho exato do menu (seção 6).
+- [ ] `head()` com title/description únicos.
+- [ ] PortalShell aplicado (sidebar + topbar + breadcrumb).
+- [ ] Loading skeleton específico.
+- [ ] Empty state com CTA.
+- [ ] Erro com retry.
+- [ ] Permissão validada (role + tenant) no servidor.
+- [ ] RLS testada (usuário de outro tenant não acessa).
+- [ ] Mutações gravam `audit_log`.
+- [ ] Mutações disparam realtime nos canais corretos.
+- [ ] Toast em sucesso e erro.
+- [ ] Filtros persistidos na URL (search params).
+- [ ] Export CSV onde aplicável.
+- [ ] Responsivo mobile (sidebar → drawer, tabelas → cards).
+- [ ] Teclado, foco visível, aria-labels.
+- [ ] i18n: nenhum texto hardcoded.
+- [ ] Sem cores hardcoded — só tokens semânticos.
+- [ ] Teste mínimo: server function + happy path E2E.
+
+---
+
+**Fim do documento.** Corpo principal + apêndices A–I cobrem 100% das telas, rotas, tabelas, componentes, estados, jobs, integrações e checks necessários para produção.
