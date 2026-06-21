@@ -1,7 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useMemo, useState, type ComponentType, type ReactNode } from "react";
 import {
-  Bell,
   Menu,
   X,
   ChevronsLeft,
@@ -12,6 +11,8 @@ import {
   Building2,
   Search,
 } from "lucide-react";
+import { NotificationsCenter } from "@/components/portal/notifications-center";
+import { AccountMenu } from "@/components/portal/account-menu";
 
 export type PortalNavItem = {
   label: string;
