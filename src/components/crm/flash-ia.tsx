@@ -463,6 +463,20 @@ export function FlashIaView({ scope }: { scope: CrmScope }) {
         }
       />
 
+      {/* Faixa: aguardando integração da API */}
+      <section
+        role="status"
+        aria-live="polite"
+        className="flex items-center gap-3 rounded-lg border-2 border-amber-400 bg-amber-100 px-5 py-3 text-amber-900 animate-pulse"
+      >
+        <AlertTriangle className="h-5 w-5 shrink-0 text-amber-700" />
+        <p className="text-sm font-semibold tracking-wide">
+          Aguardando integração da API
+        </p>
+      </section>
+
+
+
       <div className={`grid gap-5 ${chatAberto ? "lg:grid-cols-[1fr_380px]" : "lg:grid-cols-[1fr_300px]"}`}>
         {/* ── Coluna principal ── */}
         <div className="space-y-4">
