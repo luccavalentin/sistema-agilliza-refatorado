@@ -3,6 +3,8 @@ import { useState } from "react";
 import { Building2, Users, User, ShieldCheck, Lock, ArrowRight, IdCard, Calendar } from "lucide-react";
 import { findCrmClientByLogin, formatCpf, isValidCpfFormat, onlyDigits } from "@/lib/crm-clients";
 import { MaskedInput } from "@/components/ui/masked-input";
+import agillizaLogo from "@/assets/agilliza-logo.png";
+import agillizaMark from "@/assets/agilliza-mark.png";
 
 type Profile = "correspondente" | "corretor" | "cliente";
 
@@ -39,8 +41,8 @@ const profiles: Array<{
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Acesso à Plataforma — Crédito Imobiliário & Home Equity" },
-      { name: "description", content: "Login institucional para correspondentes, corretores e clientes." },
+      { title: "Agilliza — Acesso à Plataforma de Crédito Imobiliário" },
+      { name: "description", content: "Login institucional Agilliza para correspondentes, corretores e clientes." },
     ],
   }),
   component: LoginPage,
@@ -78,7 +80,7 @@ function LoginPage() {
           JSON.stringify({ cpf: onlyDigits(cpf), nome: match.nome }),
         );
       } catch {
-        // sessionStorage indisponível — segue sem persistir
+        // sessionStorage indisponível
       }
       navigate({ to: "/cliente" });
       return;
@@ -88,229 +90,230 @@ function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-secondary flex flex-col">
-      {/* Top institutional bar */}
-      <header className="border-b border-border bg-background">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-3">
-            <div className="grid h-9 w-9 place-items-center rounded-md bg-brand text-brand-foreground">
-              <Building2 className="h-5 w-5" strokeWidth={2.25} />
-            </div>
-            <div className="min-w-0">
-              <p className="text-sm font-bold tracking-tight text-graphite">Plataforma de Crédito</p>
-              <p className="text-xs text-muted-foreground">Imobiliário & Home Equity</p>
+    <div className="relative min-h-screen overflow-hidden bg-[radial-gradient(120%_120%_at_50%_0%,#f6f8fc_0%,#eef2f8_45%,#e6ecf5_100%)]">
+      {/* Decorative brand ornament */}
+      <img
+        src={agillizaMark}
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-32 -top-32 h-[520px] w-auto opacity-[0.05] select-none"
+      />
+      <img
+        src={agillizaMark}
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute -bottom-40 -left-24 h-[420px] w-auto opacity-[0.04] select-none rotate-12"
+      />
+      {/* Subtle grid */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 opacity-[0.35]"
+        style={{
+          backgroundImage:
+            "linear-gradient(to right, rgba(15,23,42,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(15,23,42,0.04) 1px, transparent 1px)",
+          backgroundSize: "44px 44px",
+          maskImage: "radial-gradient(ellipse at center, black 40%, transparent 80%)",
+        }}
+      />
+
+      <div className="relative flex min-h-screen flex-col">
+        {/* Top bar */}
+        <header className="px-6 py-5">
+          <div className="mx-auto flex max-w-6xl items-center justify-between">
+            <img src={agillizaLogo} alt="Agilliza Crédito Imobiliário" className="h-9 w-auto" />
+            <div className="hidden items-center gap-2 rounded-full border border-border/60 bg-white/60 px-3 py-1.5 text-[11px] font-medium text-muted-foreground backdrop-blur sm:flex">
+              <ShieldCheck className="h-3.5 w-3.5 text-brand" />
+              Ambiente seguro · Conexão criptografada
             </div>
           </div>
-          <div className="hidden items-center gap-2 text-xs text-muted-foreground sm:flex">
-            <ShieldCheck className="h-4 w-4 text-brand" />
-            <span>Ambiente seguro · Conexão criptografada</span>
-          </div>
-        </div>
-      </header>
+        </header>
 
-      <main className="flex flex-1 items-center justify-center px-4 py-10">
-        <div className="grid w-full max-w-6xl gap-8 lg:grid-cols-[1.05fr_1fr]">
-          {/* Left — institutional panel */}
-          <section className="hidden flex-col justify-between rounded-lg bg-brand p-10 text-brand-foreground lg:flex">
-            <div>
-              <span className="inline-flex items-center gap-2 rounded-sm border border-white/20 bg-white/5 px-2.5 py-1 text-[11px] font-medium uppercase tracking-wider">
-                <span className="h-1.5 w-1.5 rounded-full bg-direction" />
-                Ecossistema integrado
-              </span>
-              <h1 className="mt-6 text-3xl font-bold leading-tight tracking-tight">
-                Operação, controle e confiança em uma única plataforma.
-              </h1>
-              <p className="mt-4 max-w-md text-sm leading-relaxed text-white/75">
-                Correspondentes, corretores e clientes conectados em um único ambiente,
-                com permissões segregadas e trilha de auditoria.
-              </p>
-            </div>
+        {/* Centered login card */}
+        <main className="flex flex-1 items-center justify-center px-4 py-8">
+          <div className="w-full max-w-md">
+            <div className="relative rounded-2xl border border-border/70 bg-white/85 p-8 shadow-[0_20px_60px_-25px_rgba(15,23,42,0.25)] backdrop-blur-md sm:p-10">
+              {/* Brand accent bar */}
+              <div className="absolute inset-x-8 top-0 h-[3px] rounded-b-full bg-gradient-to-r from-brand via-brand to-direction" />
 
-            <ul className="mt-10 grid gap-3 text-sm">
-              {[
-                "Separação de permissões por perfil",
-                "Sessões seguras e auditoria de acessos",
-                "Proteção de dados sensíveis e documentos",
-              ].map((item) => (
-                <li key={item} className="flex items-start gap-3 text-white/85">
-                  <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-direction" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </section>
-
-          {/* Right — login form */}
-          <section className="rounded-lg border border-border bg-card p-8 shadow-sm sm:p-10">
-            <h2 className="text-xl font-bold tracking-tight text-graphite">Acessar a plataforma</h2>
-            <p className="mt-1 text-sm text-muted-foreground">Selecione o seu perfil de acesso para continuar.</p>
-
-            {/* Profile selector */}
-            <div className="mt-6 grid grid-cols-3 gap-2" role="tablist" aria-label="Perfil de acesso">
-              {profiles.map((p) => {
-                const Icon = p.icon;
-                const active = p.id === selected;
-                return (
-                  <button
-                    key={p.id}
-                    type="button"
-                    role="tab"
-                    aria-selected={active}
-                    onClick={() => setSelected(p.id)}
-                    className={[
-                      "flex flex-col items-center gap-2 rounded-md border px-3 py-3 text-xs font-medium transition-colors",
-                      active
-                        ? "border-brand bg-accent text-brand"
-                        : "border-border bg-background text-muted-foreground hover:border-brand/40 hover:text-graphite",
-                    ].join(" ")}
-                  >
-                    <Icon className="h-5 w-5" strokeWidth={active ? 2.25 : 1.75} />
-                    <span>{p.title}</span>
-                  </button>
-                );
-              })}
-            </div>
-
-            <p className="mt-3 text-xs text-muted-foreground">{current.description}</p>
-
-            <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
-              {selected === "cliente" ? (
-                <>
-                  <div className="space-y-1.5">
-                    <label htmlFor="cpf" className="text-xs font-medium text-graphite flex items-center gap-1.5">
-                      <IdCard className="h-3.5 w-3.5 text-brand" />
-                      CPF do titular (cadastrado no CRM)
-                    </label>
-                    <input
-                      id="cpf"
-                      type="text"
-                      inputMode="numeric"
-                      autoComplete="username"
-                      placeholder="000.000.000-00"
-                      value={cpf}
-                      onChange={(e) => setCpf(formatCpf(e.target.value))}
-                      maxLength={14}
-                      className="w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-brand focus:ring-2 focus:ring-brand/15"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label htmlFor="birth" className="text-xs font-medium text-graphite flex items-center gap-1.5">
-                      <Calendar className="h-3.5 w-3.5 text-brand" />
-                      Data de nascimento (senha)
-                    </label>
-                    <input
-                      id="birth"
-                      type="date"
-                      autoComplete="bday"
-                      value={birth}
-                      onChange={(e) => setBirth(e.target.value)}
-                      className="w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-brand focus:ring-2 focus:ring-brand/15"
-                    />
-                  </div>
-
-                  {/* Painel de credenciais de demonstração */}
-                  <div className="rounded-md border border-dashed border-brand/40 bg-brand/5 p-3">
-                    <p className="text-[11px] font-bold uppercase tracking-wider text-brand mb-2">
-                      Acesso de demonstração
-                    </p>
-                    <p className="text-[11px] text-muted-foreground mb-2">
-                      Clique em um cliente mock para preencher e entrar:
-                    </p>
-                    <div className="space-y-1.5">
-                      {[
-                        { cpf: "12345678900", nome: "João da Silva", nasc: "1985-04-12" },
-                        { cpf: "98765432100", nome: "Maria Oliveira", nasc: "1990-09-23" },
-                        { cpf: "11122233344", nome: "Carlos Pereira", nasc: "1978-12-01" },
-                      ].map((c) => (
-                        <button
-                          key={c.cpf}
-                          type="button"
-                          onClick={() => {
-                            setCpf(formatCpf(c.cpf));
-                            setBirth(c.nasc);
-                            setError(null);
-                          }}
-                          className="flex w-full items-center justify-between rounded border border-border bg-background px-2.5 py-1.5 text-[11px] text-graphite hover:border-brand/60 hover:bg-accent"
-                        >
-                          <span className="font-medium">{c.nome}</span>
-                          <span className="text-muted-foreground">{formatCpf(c.cpf)} · {c.nasc.split("-").reverse().join("/")}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </>
-              ) : (
-
-                <>
-                  <div className="space-y-1.5">
-                    <label htmlFor="email" className="text-xs font-medium text-graphite">
-                      E-mail corporativo
-                    </label>
-                    <MaskedInput
-                      id="email"
-                      type="email"
-                      validate="email"
-                      autoComplete="email"
-                      placeholder="nome@empresa.com.br"
-                      className="px-3 py-2.5"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <label htmlFor="password" className="text-xs font-medium text-graphite">
-                        Senha
-                      </label>
-                      <button type="button" className="text-xs font-medium text-brand hover:underline">
-                        Esqueci minha senha
-                      </button>
-                    </div>
-                    <input
-                      id="password"
-                      type="password"
-                      autoComplete="current-password"
-                      placeholder="••••••••••"
-                      className="w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-brand focus:ring-2 focus:ring-brand/15"
-                    />
-                  </div>
-                </>
-              )}
-
-              {error && (
-                <p className="rounded-md border border-direction/30 bg-direction/5 px-3 py-2 text-xs font-medium text-direction">
-                  {error}
+              <div className="mb-7 text-center">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-brand/15 bg-brand/[0.06] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-brand">
+                  <span className="h-1 w-1 rounded-full bg-direction" />
+                  Plataforma Agilliza
+                </span>
+                <h1 className="mt-4 text-[22px] font-bold tracking-tight text-graphite">
+                  Acesse sua conta
+                </h1>
+                <p className="mt-1.5 text-sm text-muted-foreground">
+                  Selecione o seu perfil para continuar.
                 </p>
-              )}
-
-              <label className="flex items-center gap-2 text-xs text-muted-foreground">
-                <input type="checkbox" className="h-3.5 w-3.5 rounded border-input accent-[color:var(--brand)]" />
-                Manter sessão neste dispositivo
-              </label>
-
-              <button
-                type="submit"
-                className="group inline-flex w-full items-center justify-center gap-2 rounded-md bg-brand px-4 py-2.5 text-sm font-semibold text-brand-foreground transition-colors hover:bg-brand/90"
-              >
-                Entrar como {current.title}
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-              </button>
-
-              <div className="flex items-center justify-center gap-2 text-[11px] text-muted-foreground">
-                <Lock className="h-3 w-3" />
-                Autenticação protegida · Conformidade com proteção de dados
               </div>
-            </form>
-          </section>
-        </div>
-      </main>
 
-      <footer className="border-t border-border bg-background">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-6 py-4 text-xs text-muted-foreground sm:flex-row">
-          <span>© {new Date().getFullYear()} Plataforma de Crédito · Todos os direitos reservados</span>
-          <span>Suporte institucional · Termos · Privacidade</span>
-        </div>
-      </footer>
+              {/* Profile selector */}
+              <div className="grid grid-cols-3 gap-2" role="tablist" aria-label="Perfil de acesso">
+                {profiles.map((p) => {
+                  const Icon = p.icon;
+                  const active = p.id === selected;
+                  return (
+                    <button
+                      key={p.id}
+                      type="button"
+                      role="tab"
+                      aria-selected={active}
+                      onClick={() => setSelected(p.id)}
+                      className={[
+                        "group relative flex flex-col items-center gap-1.5 rounded-xl border px-2 py-3 text-[11px] font-semibold transition-all",
+                        active
+                          ? "border-brand bg-brand text-brand-foreground shadow-[0_8px_20px_-10px_rgba(26,35,126,0.55)]"
+                          : "border-border bg-white text-muted-foreground hover:border-brand/40 hover:text-graphite",
+                      ].join(" ")}
+                    >
+                      <Icon className="h-[18px] w-[18px]" strokeWidth={active ? 2.4 : 1.85} />
+                      <span>{p.title}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <p className="mt-3 text-center text-[11px] text-muted-foreground">{current.description}</p>
+
+              <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
+                {selected === "cliente" ? (
+                  <>
+                    <div className="space-y-1.5">
+                      <label htmlFor="cpf" className="flex items-center gap-1.5 text-xs font-medium text-graphite">
+                        <IdCard className="h-3.5 w-3.5 text-brand" />
+                        CPF do titular
+                      </label>
+                      <input
+                        id="cpf"
+                        type="text"
+                        inputMode="numeric"
+                        autoComplete="username"
+                        placeholder="000.000.000-00"
+                        value={cpf}
+                        onChange={(e) => setCpf(formatCpf(e.target.value))}
+                        maxLength={14}
+                        className="w-full rounded-lg border border-input bg-white px-3.5 py-2.5 text-sm text-foreground outline-none transition-all placeholder:text-muted-foreground focus:border-brand focus:ring-4 focus:ring-brand/10"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label htmlFor="birth" className="flex items-center gap-1.5 text-xs font-medium text-graphite">
+                        <Calendar className="h-3.5 w-3.5 text-brand" />
+                        Data de nascimento
+                      </label>
+                      <input
+                        id="birth"
+                        type="date"
+                        autoComplete="bday"
+                        value={birth}
+                        onChange={(e) => setBirth(e.target.value)}
+                        className="w-full rounded-lg border border-input bg-white px-3.5 py-2.5 text-sm text-foreground outline-none transition-all focus:border-brand focus:ring-4 focus:ring-brand/10"
+                      />
+                    </div>
+
+                    <div className="rounded-lg border border-dashed border-brand/30 bg-brand/[0.04] p-3">
+                      <p className="mb-2 text-[10px] font-bold uppercase tracking-wider text-brand">
+                        Acesso de demonstração
+                      </p>
+                      <div className="space-y-1.5">
+                        {[
+                          { cpf: "12345678900", nome: "João da Silva", nasc: "1985-04-12" },
+                          { cpf: "98765432100", nome: "Maria Oliveira", nasc: "1990-09-23" },
+                          { cpf: "11122233344", nome: "Carlos Pereira", nasc: "1978-12-01" },
+                        ].map((c) => (
+                          <button
+                            key={c.cpf}
+                            type="button"
+                            onClick={() => {
+                              setCpf(formatCpf(c.cpf));
+                              setBirth(c.nasc);
+                              setError(null);
+                            }}
+                            className="flex w-full items-center justify-between rounded-md border border-border bg-white px-2.5 py-1.5 text-[11px] text-graphite hover:border-brand/60 hover:bg-brand/5"
+                          >
+                            <span className="font-medium">{c.nome}</span>
+                            <span className="text-muted-foreground">{formatCpf(c.cpf)}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="space-y-1.5">
+                      <label htmlFor="email" className="text-xs font-medium text-graphite">
+                        E-mail corporativo
+                      </label>
+                      <MaskedInput
+                        id="email"
+                        type="email"
+                        validate="email"
+                        autoComplete="email"
+                        placeholder="nome@empresa.com.br"
+                        className="px-3.5 py-2.5"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <label htmlFor="password" className="text-xs font-medium text-graphite">
+                          Senha
+                        </label>
+                        <button type="button" className="text-xs font-medium text-brand hover:underline">
+                          Esqueci minha senha
+                        </button>
+                      </div>
+                      <input
+                        id="password"
+                        type="password"
+                        autoComplete="current-password"
+                        placeholder="••••••••••"
+                        className="w-full rounded-lg border border-input bg-white px-3.5 py-2.5 text-sm text-foreground outline-none transition-all placeholder:text-muted-foreground focus:border-brand focus:ring-4 focus:ring-brand/10"
+                      />
+                    </div>
+                  </>
+                )}
+
+                {error && (
+                  <p className="rounded-lg border border-direction/30 bg-direction/5 px-3 py-2 text-xs font-medium text-direction">
+                    {error}
+                  </p>
+                )}
+
+                <label className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <input type="checkbox" className="h-3.5 w-3.5 rounded border-input accent-[color:var(--brand)]" />
+                  Manter sessão neste dispositivo
+                </label>
+
+                <button
+                  type="submit"
+                  className="group inline-flex w-full items-center justify-center gap-2 rounded-lg bg-brand px-4 py-2.5 text-sm font-semibold text-brand-foreground shadow-[0_10px_25px_-12px_rgba(26,35,126,0.6)] transition-all hover:bg-brand/90 hover:shadow-[0_14px_30px_-12px_rgba(26,35,126,0.65)]"
+                >
+                  Entrar como {current.title}
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                </button>
+
+                <div className="flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground">
+                  <Lock className="h-3 w-3" />
+                  Autenticação protegida · Conformidade LGPD
+                </div>
+              </form>
+            </div>
+
+            <p className="mt-5 text-center text-[11px] text-muted-foreground">
+              Problemas para acessar? <span className="font-medium text-brand">Fale com o suporte institucional</span>
+            </p>
+          </div>
+        </main>
+
+        <footer className="px-6 py-5">
+          <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 text-[11px] text-muted-foreground sm:flex-row">
+            <span>© {new Date().getFullYear()} Agilliza Crédito Imobiliário · Todos os direitos reservados</span>
+            <span>Termos · Privacidade · Suporte</span>
+          </div>
+        </footer>
+      </div>
     </div>
   );
 }
