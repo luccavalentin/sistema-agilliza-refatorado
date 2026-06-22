@@ -6,6 +6,7 @@
 
 @theme inline {
   --font-sans: "Inter", "Arial", system-ui, sans-serif;
+  --font-display: "Urbanist", "Inter", system-ui, sans-serif;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -13,6 +14,17 @@
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
+
+  /* Elevations */
+  --shadow-sm: 0 1px 2px 0 rgb(15 23 42 / 0.04);
+  --shadow-md: 0 4px 12px -2px rgb(15 23 42 / 0.08);
+  --shadow-lg: 0 12px 32px -12px rgb(15 23 42 / 0.18);
+  --shadow-elegant: 0 20px 60px -25px rgb(15 23 42 / 0.25);
+  --shadow-brand: 0 14px 30px -12px rgb(0 15 159 / 0.55);
+
+  /* Brand gradient & surfaces */
+  --gradient-brand: linear-gradient(135deg, var(--brand) 0%, #1a2cc4 100%);
+  --gradient-surface: radial-gradient(120% 120% at 50% 0%, #f6f8fc 0%, #eef2f8 45%, #e6ecf5 100%);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
