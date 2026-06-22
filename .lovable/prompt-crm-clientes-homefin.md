@@ -222,3 +222,14 @@ Mesma identidade dos demais módulos: Azul Profundo (institucional), Vermelho Di
 ## Resultado esperado
 
 Um **CRM de Clientes único, hierárquico e auditável**, em que cada campo é um espelho fiel do contrato da API HomeFin — pronto para que a integração real (Edge Functions) seja apenas o transporte do payload, sem precisar redesenhar formulário, validação nem domínio de valores.
+
+---
+
+## 16. Tela "Cadastro de Cliente" (/crm/cadastro)
+Wizard 6 etapas espelhando CreateParticipantRequest: Identificação, Estado Civil/Cônjuge, Documento, Contato/Endereço, Renda/Banco, LGPD/Vínculo. Campo "Buscar cliente existente" como <input type="text"> com autocomplete (anti-duplicidade). idUsuarioParceiro fixo para Corretor. Salva rascunho por etapa e grava histórico.
+
+## 17. Tela "Consultas de Clientes" (/crm/consultas)
+Filtros: busca livre (cpfCnpj, nome, email, celular, idCliente, codigoOportunidade), tipoPessoa, tipoSituacao, tipoQualificacao, uf, municipio, idUsuarioParceiro, idParceiro, idRegional, faixaRenda, possuiOportunidade, tipoTemperaturaOportunidade, período, fgAutorizacaoDados. Tabela densa com ações por linha e em massa. Escopo: Correspondente (tudo), Corretor (só sua carteira).
+
+## 18. Tela "Relatórios de Clientes" (/crm/relatorios)
+Relatórios: Carteira, Produção por Corretor, Funil Comercial, Qualidade da Base, LGPD & Compliance, Origem/Captação. Exportação CSV/XLSX/PDF. Mesmos dados do Painel de Monitoramento — consistência total entre dashboards e relatórios.
