@@ -308,6 +308,20 @@ export function ScanIaView({ scope }: { scope: CrmScope }) {
         }
       />
 
+      {/* Faixa: aguardando integração da API */}
+      <section
+        role="status"
+        aria-live="polite"
+        className="flex items-center gap-3 rounded-lg border-2 border-amber-400 bg-amber-100 px-5 py-3 text-amber-900 animate-pulse"
+      >
+        <AlertTriangle className="h-5 w-5 shrink-0 text-amber-700" />
+        <p className="text-sm font-semibold tracking-wide">
+          Aguardando integração da API
+        </p>
+      </section>
+
+
+
       {/* Banner: API Key faltando */}
       {apiKeyFaltando && (
         <section className="flex items-start gap-3 rounded-lg border border-red-300 bg-red-50 px-5 py-4">
